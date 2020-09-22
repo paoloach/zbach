@@ -1,0 +1,10 @@
+*.s51
+*.a51
+*.d51
+*.hex
+*.map
+*.pbi
+*.xcl
+*.lst
+*.r51
+BuildLog.log
