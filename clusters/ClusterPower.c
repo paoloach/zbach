@@ -27,9 +27,12 @@ extern NodePowerDescriptorFormat_t ZDO_Config_Power_Descriptor;
 
 
 void powerClusterInit(byte appId) {
+	#if !defined RTR_NWK
 	osal_start_timerEx( appId, READ_BATTERY_LEVEL, BATTERY_POLL_TIME_MS );
+#endif
 }
 
+#if !defined RTR_NWK
 void powerClusterCheckBattery(byte appId) {
 	readBatteryVolt();
 	if (batteryVoltage > 0x30){
@@ -43,6 +46,7 @@ void powerClusterCheckBattery(byte appId) {
 	}
 	osal_start_timerEx( appId, READ_BATTERY_LEVEL, BATTERY_POLL_TIME_MS );
 }
+#endif
 
 void powerClusterReadAttribute(zclAttrRec_t * attribute) {
 	if (attribute == NULL){
@@ -69,6 +73,7 @@ void powerClusterReadAttribute(zclAttrRec_t * attribute) {
 	}
 }
 
+#if !defined RTR_NWK
 static void readBatteryVolt(void) {
 	ADCCON3 = 0x2F;
 	while (!(ADCCON1 & 0x80));
@@ -78,3 +83,4 @@ static void readBatteryVolt(void) {
 	v = (3*115*v)/256;
 	batteryVoltage = v / 10;
 }
+#endif

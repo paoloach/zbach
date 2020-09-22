@@ -1646,7 +1646,7 @@
                 </option>
                 <option>
                     <name>ChipconFlashLockInfo</name>
-                    <state>&lt;page size info. missing&gt;</state>
+                    <state>Page size info is missing</state>
                 </option>
                 <option>
                     <name>ChipconBootLock</name>
@@ -2111,7 +2111,7 @@
         </debuggerPlugins>
     </configuration>
     <configuration>
-        <name>Route2592</name>
+        <name>RouterPA</name>
         <toolchain>
             <name>8051</name>
         </toolchain>
@@ -2349,7 +2349,7 @@
                 </option>
                 <option>
                     <name>ChipconFlashLockInfo</name>
-                    <state>&lt;page size info. missing&gt;</state>
+                    <state>Page size info is missing</state>
                 </option>
                 <option>
                     <name>ChipconBootLock</name>

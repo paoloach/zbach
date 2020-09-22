@@ -171,11 +171,13 @@ uint16 temperatureSensorEventLoop( uint8 task_id, uint16 events ){
 		
 		return events ^ FAST_BLINK;
 	}
-	
+
+#if !defined RTR_NWK
 	if ( events & READ_BATTERY_LEVEL ) {
 		powerClusterCheckBattery(task_id);
 		events = events ^ READ_BATTERY_LEVEL;
 	}
+#endif	
 	
 //	if ( events & READ_TEMP_MASK ) {
 //		return readTemperatureLoop(events);

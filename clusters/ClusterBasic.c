@@ -17,6 +17,12 @@ uint8 locationDescription[LOCATION_DESCRIPTION_SIZE+1] = { 16, ' ',' ',' ',' ','
 uint8 physicalEnvironment = 0;
 uint8 deviceEnable = DEVICE_ENABLED;
 
+#if defined RTR_NWK
+  const uint8 powerSource = POWER_SOURCE_DC;
+#else
+  const uint8 powerSource = POWER_SOURCE_BATTERY;
+#endif  
+
 
 void basicResetCB( void ){
   // Reset all attributes to default values

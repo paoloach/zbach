@@ -26,5 +26,4 @@ extern const uint8 ZCLVersion;
 extern const uint8 manufacturerName[];
 extern const uint8 modelId[];
 extern const uint8 dateCode[];
-extern const uint8 powerSource;
 #endif
