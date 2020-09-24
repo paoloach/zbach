@@ -16,7 +16,9 @@
 #include "ioCC2530.h"
 #include "ClusterOSALEvents.h"
 
-static void readBatteryVolt(void);
+#if !defined RTR_NWK
+ static void readBatteryVolt(void);
+#endif
 
 static uint16 mainVoltage=0;
 static uint16 batteryVoltage=0xFF;
@@ -60,7 +62,9 @@ void powerClusterReadAttribute(zclAttrRec_t * attribute) {
 		attribute->dataPtr = (void *)&mainVoltage;
 		break;
 	case ATTRID_POWER_CFG_BATTERY_VOLTAGE:
+	#if !defined RTR_NWK		
 		readBatteryVolt();
+    #endif
 		attribute->dataType = ZCL_DATATYPE_UINT8;
 		attribute->dataPtr = (void *)&batteryVoltage;
 		break;

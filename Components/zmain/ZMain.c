@@ -67,10 +67,6 @@ static void zmain_cert_init( void );
 static void zmain_dev_info( void );
 static void zmain_vdd_check( void );
 
-#ifdef LCD_SUPPORTED
-static void zmain_lcd_init( void );
-#endif
-
 /*********************************************************************
  * @fn      main
  * @brief   First function called after startup.
@@ -123,14 +119,6 @@ int main( void )
 
   // Final board initialization
   InitBoard( OB_READY );
-
-  // Display information about this device
-  zmain_dev_info();
-
-  /* Display the device info on the LCD */
-#ifdef LCD_SUPPORTED
-  zmain_lcd_init();
-#endif
 
 #ifdef WDT_IN_PM1
   /* If WDT is used, this is a good place to enable it. */
@@ -292,75 +280,6 @@ static void zmain_cert_init(void)
 }
 #endif
 
-/**************************************************************************************************
- * @fn          zmain_dev_info
- *
- * @brief       This displays the IEEE (MSB to LSB) on the LCD.
- *
- * input parameters
- *
- * None.
- *
- * output parameters
- *
- * None.
- *
- * @return      None.
- **************************************************************************************************
- */
-static void zmain_dev_info(void)
-{
-#ifdef LCD_SUPPORTED
-  uint8 i;
-  uint8 *xad;
-  uint8 lcd_buf[Z_EXTADDR_LEN*2+1];
-
-  // Display the extended address.
-  xad = aExtendedAddress + Z_EXTADDR_LEN - 1;
-
-  for (i = 0; i < Z_EXTADDR_LEN*2; xad--)
-  {
-    uint8 ch;
-    ch = (*xad >> 4) & 0x0F;
-    lcd_buf[i++] = ch + (( ch < 10 ) ? '0' : '7');
-    ch = *xad & 0x0F;
-    lcd_buf[i++] = ch + (( ch < 10 ) ? '0' : '7');
-  }
-  lcd_buf[Z_EXTADDR_LEN*2] = '\0';
-  HalLcdWriteString( "IEEE: ", HAL_LCD_LINE_1 );
-  HalLcdWriteString( (char*)lcd_buf, HAL_LCD_LINE_2 );
-#endif
-}
-
-#ifdef LCD_SUPPORTED
-/*********************************************************************
- * @fn      zmain_lcd_init
- * @brief   Initialize LCD at start up.
- * @return  none
- *********************************************************************/
-static void zmain_lcd_init ( void )
-{
-#ifdef SERIAL_DEBUG_SUPPORTED
-  {
-    HalLcdWriteString( "TexasInstruments", HAL_LCD_LINE_1 );
-
-#if defined( MT_MAC_FUNC )
-#if defined( ZDO_COORDINATOR )
-      HalLcdWriteString( "MAC-MT Coord", HAL_LCD_LINE_2 );
-#else
-      HalLcdWriteString( "MAC-MT Device", HAL_LCD_LINE_2 );
-#endif // ZDO
-#elif defined( MT_NWK_FUNC )
-#if defined( ZDO_COORDINATOR )
-      HalLcdWriteString( "NWK Coordinator", HAL_LCD_LINE_2 );
-#else
-      HalLcdWriteString( "NWK Device", HAL_LCD_LINE_2 );
-#endif // ZDO
-#endif // MT_FUNC
-  }
-#endif // SERIAL_DEBUG_SUPPORTED
-}
-#endif
 
 /*********************************************************************
 *********************************************************************/

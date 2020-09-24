@@ -218,8 +218,11 @@ extern uint8 aExtendedAddress[8];
   #define INT_HEAP_LEN  2048
 #endif
 #endif
+#if defined RTR_NWK
+#define MAXMEMHEAP 3500
+#else
 #define MAXMEMHEAP 3900
-
+#endif
 #define KEY_CHANGE_SHIFT_IDX 1
 #define KEY_CHANGE_KEYS_IDX  2
 
