@@ -124,11 +124,12 @@ void ZDConfig_UpdateNodeDescriptor( void )
   ZDO_Config_Node_Descriptor.FrequencyBand = NODEFREQ_2400; // Frequency Band
 
   // MAC Capabilities
-  if ( ZSTACK_ROUTER_BUILD )
+  
+  if ( ZSTACK_ROUTER_BUILD  )
   {
     ZDO_Config_Node_Descriptor.CapabilityFlags
               = (CAPINFO_DEVICETYPE_FFD | CAPINFO_POWER_AC |
-                 CAPINFO_RCVR_ON_IDLE | CAPINFO_ALLOC_ADDR);
+                  CAPINFO_ALLOC_ADDR);
 
     if ( ZG_BUILD_COORDINATOR_TYPE && ZG_DEVICE_COORDINATOR_TYPE )
       ZDO_Config_Node_Descriptor.CapabilityFlags |= CAPINFO_ALTPANCOORD;
