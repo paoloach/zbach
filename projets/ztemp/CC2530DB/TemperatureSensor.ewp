@@ -4681,6 +4681,9 @@
             </file>
         </group>
         <file>
+            <name>$PROJ_DIR$\..\Source\ledBlink.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\Source\OSAL_TemperatureSensor.c</name>
         </file>
         <file>

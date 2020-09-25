@@ -37,9 +37,9 @@
 #include "clusters/ClusterBasic.h"
 #include "clusters/ClusterTemperatureMeasurement.h"
 #include "clusters/ClusterPower.h"
+#include "ledBlink.h"
 
-#define FAST_BLINK_TIME_ON 100	 
-#define FAST_BLINK_TIME_OFF 1000	 
+
 	 
 byte temperatureSensorTaskID;
 extern SimpleDescriptionFormat_t temperatureSimpleDesc;
@@ -49,35 +49,12 @@ static void processIncomingMsh( zclIncomingMsg_t *msg );
 static uint8 processInReadRspCmd( zclIncomingMsg_t *pInMsg );
 static uint8 processInWriteRspCmd( zclIncomingMsg_t *pInMsg );
 static uint8 processInDefaultRspCmd( zclIncomingMsg_t *pInMsg );
-static void fastBlinkOn(void);
 			   
-static void fastBlinkOff(void);
 #ifdef ZCL_DISCOVER
 static uint8 processInDiscRspCmd( zclIncomingMsg_t *pInMsg );
 #endif
 static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg );
 
-__sfr __no_init volatile struct  {
-	unsigned char DIR0_0: 1;
-	unsigned char DIR0_1: 1;
-	unsigned char DIR0_2: 1;
-	unsigned char DIR0_3: 1;
-	unsigned char DIR0_4: 1;
-	unsigned char DIR0_5: 1;
-	unsigned char DIR0_6: 1;
-	unsigned char DIR0_7: 1;
-} @ 0xFD;
-
-__sfr __no_init volatile struct  {
-	unsigned char P0SEL_0: 1;
-	unsigned char P0SEL_1: 1;
-	unsigned char P0SEL_2: 1;
-	unsigned char P0SEL_3: 1;
-	unsigned char P0SEL_4: 1;
-	unsigned char P0SEL_5: 1;
-	unsigned char P0SEL_6: 1;
-	unsigned char P0SEL_7: 1;
-} @ 0xF3;
 
 
 void temperatureSensorInit( byte task_id ){
@@ -101,20 +78,8 @@ void temperatureSensorInit( byte task_id ){
  	identifyInit(temperatureSensorTaskID);
 	ZMacSetTransmitPower(TX_PWR_PLUS_19);
 	//ZMacSetTransmitPower(POWER);
-	DIR0_1 = 1;
- 	P0SEL_1 = 0;
- 	P0_1 = 0;
-	fastBlinkOn();
-}
-
-static void fastBlinkOn(void){
-	osal_start_timerEx( temperatureSensorTaskID, FAST_BLINK, FAST_BLINK_TIME_ON );
-	P0_1 = 1;
-}
-			   
-static void fastBlinkOff(void){
-	osal_stop_timerEx( temperatureSensorTaskID, FAST_BLINK );
-	P0_1 = 0;
+    blinkLedInit();
+    blinkLedstart(temperatureSensorTaskID);
 }
 
 /*********************************************************************
@@ -143,7 +108,7 @@ uint16 temperatureSensorEventLoop( uint8 task_id, uint16 events ){
 					if (zclSampleSw_NwkState == DEV_NWK_DISC)
 						break;
 					if (zclSampleSw_NwkState == DEV_END_DEVICE || zclSampleSw_NwkState == DEV_ROUTER){
-						fastBlinkOff();
+						blinkLedEnd(temperatureSensorTaskID);
 					}
 					break;
 		       default:
@@ -161,14 +126,7 @@ uint16 temperatureSensorEventLoop( uint8 task_id, uint16 events ){
 	}
 	
 	if ( events & FAST_BLINK ) {
-		if (P0_1){
-			P0_1 = 0;
-			osal_start_timerEx( temperatureSensorTaskID, FAST_BLINK, FAST_BLINK_TIME_OFF );
-		}else{
-			P0_1 = 1;
-			osal_start_timerEx( temperatureSensorTaskID, FAST_BLINK, FAST_BLINK_TIME_ON );
-		}
-		
+		blinkLedAction(temperatureSensorTaskID);
 		return events ^ FAST_BLINK;
 	}
 

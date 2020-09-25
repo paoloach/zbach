@@ -64,7 +64,6 @@ static void zmain_ext_addr( void );
 #if defined ZCL_KEY_ESTABLISH
 static void zmain_cert_init( void );
 #endif
-static void zmain_dev_info( void );
 static void zmain_vdd_check( void );
 
 /*********************************************************************
