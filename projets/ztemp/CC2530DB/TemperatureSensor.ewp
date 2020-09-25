@@ -3964,7 +3964,7 @@
                 </option>
                 <option>
                     <name>Compiler Extra Options Edit</name>
-                    <state>-f $PROJ_DIR$\..\..\..\Tools\f8wEndev.cfg</state>
+                    <state>-f $PROJ_DIR$\..\..\..\Tools\f8wRouter.cfg</state>
                     <state>-f $PROJ_DIR$\..\..\..\Tools\f8wConfig.cfg</state>
                     <state>-f $PROJ_DIR$\..\..\..\Tools\f8wZCL.cfg</state>
                 </option>
