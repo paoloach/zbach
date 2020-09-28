@@ -38,6 +38,8 @@
 #include "clusters/ClusterTemperatureMeasurement.h"
 #include "clusters/ClusterPower.h"
 #include "ledBlink.h"
+#include "dht112.h"
+	  
 
 
 	 
@@ -80,6 +82,7 @@ void temperatureSensorInit( byte task_id ){
 	//ZMacSetTransmitPower(POWER);
     blinkLedInit();
     blinkLedstart(temperatureSensorTaskID);
+	
 }
 
 /*********************************************************************
@@ -137,9 +140,9 @@ uint16 temperatureSensorEventLoop( uint8 task_id, uint16 events ){
 	}
 #endif	
 	
-//	if ( events & READ_TEMP_MASK ) {
-//		return readTemperatureLoop(events);
-//	}
+	if ( events & READ_TEMP_MASK ) {
+		return readTemperatureLoop(events);
+	}
 
  	return 0;
 }

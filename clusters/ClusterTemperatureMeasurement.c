@@ -18,50 +18,11 @@ RESOURCES:
 #include "hal_led.h"
 #include "ClusterTemperatureMeasurement.h"
 #include "OSAL_PwrMgr.h"
+#include "regs.h"
+#include "dht112.h"
 
 
-__sfr __no_init volatile union {
-	struct {
-		unsigned char T3_mode: 2;
-		unsigned char T3_clear: 1;
-		unsigned char T3_OVFIM: 1;
-		unsigned char T3_start: 1;
-		unsigned char T3_div: 3;
-	};
-} @ 0xCB;
-
-__sfr __no_init volatile union {
-	struct {
-		unsigned char T3CCTL0_cap: 2;
-		unsigned char T3CCTL0_mode: 1;
-		unsigned char T3CCTL0_cmp: 3;
-		unsigned char T3CCTL0_im: 1;
-	};
-} @ 0xCC;
-
-__sfr __no_init volatile union {
-	struct {
-		unsigned char RFIE: 1;
-		unsigned char P2IE: 1;
-		unsigned char UTX0IE: 1;
-		unsigned char UTX11E: 1;
-		unsigned char P11E: 1;
-		unsigned char WDTIE: 1;
-	};
-} @ 0x9A
-
-__sfr __no_init volatile struct  {
-	unsigned char DIR1_0: 1;
-	unsigned char DIR1_1: 1;
-	unsigned char DIR1_2: 1;
-	unsigned char DIR1_3: 1;
-	unsigned char DIR1_4: 1;
-	unsigned char DIR1_5: 1;
-	unsigned char DIR1_6: 1;
-	unsigned char DIR1_7: 1;
-} @ 0xFE;
-
-
+#ifndef DHT12
 #define WAIT_FOR_480us 	T3_start=0;		T3CC0=240;T3_clear=1; T3_start=1;
 #define WAIT_FOR_2us T3_start=0;		T3CC0=8; T3_clear=1;T3_start=1;
 #define WAIT_FOR_1us T3_start=0;		T3CC0=4; T3_clear=1;T3_start=1;
@@ -93,34 +54,34 @@ __sfr __no_init volatile struct  {
 #define RESET_P1_5_INT st(P1IF=0; P1IFG =0;);
 
 
+#define TIME_READ_ms 30*1000
+#define MINUTES_BETWEEN 5
+uint8 countMinutes=0;
 
-int16 temperatureValue=0;
 int16 tempTemperatureValue;
 int16 decTemperatureValue;
-int16 minTemperatureValue=-10;
-int16 maxTemperatureValue=80;
-uint16 toleranceTemperature=10;
-
 
 static void write(unsigned char byte);
 static uint8  read(void);
 static void startReadSyncronus(void);
 static uint8 reset(void);
 static void finalizeReadTemp(void);
+#endif
 
+int16 temperatureValue=0;
+int16 minTemperatureValue=-10;
+int16 maxTemperatureValue=80;
+uint16 toleranceTemperature=10;
 
 extern byte temperatureSensorTaskID;
 extern devStates_t devState;
 
-#define TIME_READ_ms 30*1000
-#define MINUTES_BETWEEN 5
-uint8 countMinutes=0;
 
-// ---------------------------
-// P1_0 data
-// P1_5 enable
 
 void clusterTemperatureMeasurementeInit(void) {
+#ifdef DHT12
+	dht112_init(temperatureSensorTaskID);
+#else
 	P1SEL &=0xC6;
 	DIR1_0 = 0;
 	DIR1_5 = 1;
@@ -129,9 +90,12 @@ void clusterTemperatureMeasurementeInit(void) {
 	P1_3=1;
 	P1_0 = 0;
 
+	
+	
 	countMinutes = 2*MINUTES_BETWEEN;
 	readTemperature();
 	osal_start_timerEx( temperatureSensorTaskID, READ_TEMP_EVT, TIME_READ_ms );
+#endif
 }
 
 void temperatureClusterReadAttribute(zclAttrRec_t * statusRec) {
@@ -163,6 +127,12 @@ void temperatureClusterReadAttribute(zclAttrRec_t * statusRec) {
 }
 
 uint16 readTemperatureLoop(uint16 events) {
+#ifdef DHT12
+	if (events & READ_TEMP_EVT){
+		dht112_loop(temperatureSensorTaskID);
+		return ( events ^ READ_TEMP_EVT );
+	}
+#else
 	if (events & READ_TEMP_EVT){
 		readTemperature();
 		return ( events ^ READ_TEMP_EVT );
@@ -175,9 +145,11 @@ uint16 readTemperatureLoop(uint16 events) {
 		finalizeReadTemp();
 		return ( events ^ END_READ_TEMP_EVT );
 	}
+#endif
 	return events;
 }
 
+#ifndef DHT12
 void readTemperature(void) {
 	countMinutes++;
 	if (countMinutes >= 2*MINUTES_BETWEEN  || 1){
@@ -189,6 +161,7 @@ void readTemperature(void) {
 	}
 	osal_start_timerEx( temperatureSensorTaskID, READ_TEMP_EVT, TIME_READ_ms );
 }
+
 
 void startReadSyncronus(void) {
 	P1_5 = 1;
@@ -234,6 +207,7 @@ void finalizeReadTemp(void){
 	P1_3=1;
 	osal_pwrmgr_task_state(temperatureSensorTaskID, PWRMGR_CONSERVE);
 }
+
 
 uint8 reset() {
 	
@@ -319,5 +293,5 @@ uint8  read(void) {
 	return result;
 }
 
-
+#endif
 

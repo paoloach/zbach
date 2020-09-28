@@ -3786,6 +3786,7 @@
                 <option>
                     <name>CCDefines</name>
                     <state>HAL_LED=1</state>
+                    <state>DHT112=1</state>
                     <state>SECURE=1</state>
                     <state>OSC32K_CRYSTAL_INSTALLED=FALSE</state>
                     <state>HAL_KEY=FALSE</state>
@@ -3972,6 +3973,7 @@
                     <name>CCIncludePath2</name>
                     <state>$PROJ_DIR$\..\..\..\clusters</state>
                     <state>$PROJ_DIR$\..\Source</state>
+                    <state>$PROJ_DIR$\..\..\..\Components\external</state>
                     <state>$PROJ_DIR$\..\..\..\</state>
                     <state>$PROJ_DIR$\..\..\..\Components\ha</state>
                     <state>$PROJ_DIR$\..\..\..\Components\zmain</state>
@@ -4694,6 +4696,21 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\Source\TemperatureSensor_data.c</name>
+        </file>
+    </group>
+    <group>
+        <name>external</name>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\Components\external\dht112.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\Components\external\dht112_I2C.c</name>
+            <excluded>
+                <configuration>RouterPA</configuration>
+            </excluded>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\Components\external\dht112_SingleWire.c</name>
         </file>
     </group>
     <group>
