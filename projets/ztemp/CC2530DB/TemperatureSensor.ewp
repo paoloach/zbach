@@ -3786,7 +3786,7 @@
                 <option>
                     <name>CCDefines</name>
                     <state>HAL_LED=1</state>
-                    <state>DHT112=1</state>
+                    <state>DHT12=1</state>
                     <state>SECURE=1</state>
                     <state>OSC32K_CRYSTAL_INSTALLED=FALSE</state>
                     <state>HAL_KEY=FALSE</state>

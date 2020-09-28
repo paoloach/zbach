@@ -60,6 +60,8 @@ uint8 countMinutes=0;
 
 int16 tempTemperatureValue;
 int16 decTemperatureValue;
+int16 temp=0;
+
 
 static void write(unsigned char byte);
 static uint8  read(void);
@@ -68,7 +70,7 @@ static uint8 reset(void);
 static void finalizeReadTemp(void);
 #endif
 
-int16 temperatureValue=0;
+
 int16 minTemperatureValue=-10;
 int16 maxTemperatureValue=80;
 uint16 toleranceTemperature=10;
@@ -107,7 +109,7 @@ void temperatureClusterReadAttribute(zclAttrRec_t * statusRec) {
 	switch(statusRec->attrId){
 		case ATTRID_TEMPERATURE_MEASURE_VALUE:
 			statusRec->dataType = ZCL_DATATYPE_INT16;
-			statusRec->dataPtr = (void *)&temperatureValue;
+			statusRec->dataPtr = (void *)&temp;
 		break;
 		case ATTRID_TEMPERATURE_MIN_MEASURE_VALUE:
 			statusRec->dataType = ZCL_DATATYPE_INT16;
@@ -199,10 +201,10 @@ void finalizeReadTemp(void){
 	heigh = read();
 	
 	tempTemperatureValue = BUILD_UINT16(low,heigh);
-	temperatureValue = (tempTemperatureValue >> 4)*100;
+	temp = (tempTemperatureValue >> 4)*100;
 	decTemperatureValue = (tempTemperatureValue & 0x0F)*100;
 	
-	temperatureValue += decTemperatureValue >> 4;
+	temp += decTemperatureValue >> 4;
 	P1_5=0;  
 	P1_3=1;
 	osal_pwrmgr_task_state(temperatureSensorTaskID, PWRMGR_CONSERVE);

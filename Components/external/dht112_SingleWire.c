@@ -9,8 +9,8 @@
 #include "ClusterOSALEvents.h"
 #include "dht112.h"
 
-#define TIME_READ_ms 2000
-#define DEFAULT_READ_PERIOD_MINUTES 0
+#define TIME_READ_ms 30*1000
+#define DEFAULT_READ_PERIOD_MINUTES 5
 
 #ifndef READ_PERIOD_MINUTES
 #define READ_PERIOD_MINUTES DEFAULT_READ_PERIOD_MINUTES
@@ -23,7 +23,7 @@
 #define SDA_OFF  DIR1_5=0
 #define SDA_ON   DIR1_5=1
 
-uint16 temp;
+int16 temp;
 uint16 humidity;
 
 
