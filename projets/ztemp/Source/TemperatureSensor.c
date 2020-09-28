@@ -37,6 +37,7 @@
 #include "clusters/ClusterBasic.h"
 #include "clusters/ClusterTemperatureMeasurement.h"
 #include "clusters/ClusterPower.h"
+#include "clusters/ClusterHumidityRelativeMeasurement.h"
 #include "ledBlink.h"
 #include "dht112.h"
 	  
@@ -71,11 +72,13 @@ void temperatureSensorInit( byte task_id ){
 	addWriteAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterWriteAttribute);
 	addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_GEN_POWER_CFG,powerClusterReadAttribute);
 	addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_MS_TEMPERATURE_MEASUREMENT,temperatureClusterReadAttribute);
+        addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_MS_RELATIVE_HUMIDITY,humidityRelativeClusterReadAttribute);
 
   	zcl_registerForMsg( temperatureSensorTaskID );
   
   	EA=1;
   	clusterTemperatureMeasurementeInit();
+        clusterHumidityMeasurementeInit();
 	powerClusterInit(temperatureSensorTaskID);
  	identifyInit(temperatureSensorTaskID);
 	ZMacSetTransmitPower(TX_PWR_PLUS_19);
@@ -308,34 +311,33 @@ static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg ){
 	ZStatus_t stat = ZFailure;
 
 	if (zcl_ServerCmd( pInMsg->hdr.fc.direction ) ) {
-		switch ( pInMsg->msg->clusterId ){
-		    case ZCL_CLUSTER_ID_GEN_BASIC:
+	   switch ( pInMsg->msg->clusterId ){
+	    case ZCL_CLUSTER_ID_GEN_BASIC:
     		return processBasicClusterCommands(pInMsg);
 	    case ZCL_CLUSTER_ID_GEN_IDENTIFY:
-			return processIdentifyClusterServerCommands( pInMsg );
+		return processIdentifyClusterServerCommands( pInMsg );
 	    case ZCL_CLUSTER_ID_GEN_GROUPS:
-    	case ZCL_CLUSTER_ID_GEN_SCENES:
+    	    case ZCL_CLUSTER_ID_GEN_SCENES:
 	    case ZCL_CLUSTER_ID_GEN_ON_OFF:
-    	case ZCL_CLUSTER_ID_GEN_LEVEL_CONTROL:
+    	    case ZCL_CLUSTER_ID_GEN_LEVEL_CONTROL:
 	    case ZCL_CLUSTER_ID_GEN_ALARMS:
-    	case ZCL_CLUSTER_ID_GEN_LOCATION:
+    	    case ZCL_CLUSTER_ID_GEN_LOCATION:
 	    case ZCL_CLUSTER_ID_GEN_POWER_CFG:
-    	case ZCL_CLUSTER_ID_GEN_DEVICE_TEMP_CONFIG:
+    	    case ZCL_CLUSTER_ID_GEN_DEVICE_TEMP_CONFIG:
 	    case ZCL_CLUSTER_ID_GEN_ON_OFF_SWITCH_CONFIG:
-    	case ZCL_CLUSTER_ID_GEN_TIME:
+    	    case ZCL_CLUSTER_ID_GEN_TIME:
 	    default:
-    	  stat = ZFailure;
-	      break;
-  		}
+    	       stat = ZFailure;
+	       break;
+           }
 	} else {
-		switch ( pInMsg->msg->clusterId ){
-	
-  	    case ZCL_CLUSTER_ID_GEN_IDENTIFY:
+	     switch ( pInMsg->msg->clusterId ){
+	  	 case ZCL_CLUSTER_ID_GEN_IDENTIFY:
 			return processIdentifyClusterClientCommands( pInMsg );
-	    default:
-    	  stat = ZFailure;
-	      break;
-  		}
+	        default:
+    	             stat = ZFailure;
+	              break;
+  	     }
 	}
 
   return ( stat );

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
     <fileVersion>2</fileVersion>
-    <fileChecksum>3226636424</fileChecksum>
+    <fileChecksum>4046999240</fileChecksum>
     <configuration>
         <name>EndDeviceEB</name>
         <outputs>
@@ -8117,14 +8117,20 @@
             <file>$PROJ_DIR$\..\..\..\lib\EndDevice-Pro.lib</file>
             <file>$PROJ_DIR$\..\..\..\lib\TIMAC-CC2530.lib</file>
             <file>$PROJ_DIR$\..\..\..\lib\Security.lib</file>
+            <file>$PROJ_DIR$\RouterPA\Obj\ClusterHumidityRelativeMeasurement.r51</file>
+            <file>$PROJ_DIR$\RouterPA\Obj\ClusterHumidityRelativeMeasurement.pbi</file>
+            <file>$PROJ_DIR$\RouterPA\List\ClusterHumidityRelativeMeasurement.lst</file>
+            <file>$PROJ_DIR$\RouterPA\List\ClusterHumidityRelativeMeasurement.s51</file>
             <file>$PROJ_DIR$\RouterPA\List\dht112_SingleWire.lst</file>
             <file>$PROJ_DIR$\..\..\..\Components\external\dht112_I2C.c</file>
+            <file>$PROJ_DIR$\..\..\..\clusters\ClusterHumidityRelativeMeasurement.c</file>
             <file>$PROJ_DIR$\RouterPA\List\dht112_SingleWire.s51</file>
             <file>$PROJ_DIR$\RouterPA\Obj\dht112_I2C.r51</file>
             <file>$PROJ_DIR$\RouterPA\Obj\dht112_I2C.pbi</file>
             <file>$PROJ_DIR$\..\..\..\Components\external\dht112_SingleWire.c</file>
             <file>$PROJ_DIR$\RouterPA\Obj\dht112_SingleWire.r51</file>
             <file>$PROJ_DIR$\RouterPA\Obj\dht112_SingleWire.pbi</file>
+            <file>$PROJ_DIR$\..\..\..\clusters\ClusterHumidityRelativeMeasurement.h</file>
         </outputs>
         <file>
             <name>$PROJ_DIR$\..\Source\TemperatureSensor.c</name>
@@ -8135,7 +8141,7 @@
                 </tool>
                 <tool>
                     <name>ICC8051</name>
-                    <file> 307 308 106</file>
+                    <file> 308</file>
                 </tool>
                 <tool>
                     <name>__cstat</name>
@@ -8143,10 +8149,6 @@
                 </tool>
             </outputs>
             <inputs>
-                <tool>
-                    <name>BICOMP</name>
-                    <file> 489 7 505 1 472 479 454 556 506 471 519 491 553 378 460 531 462 450 464 400 385 499 379 4 369 375 368 543 422 455 474 459 529 525 458 503 399 3 517 493 501 534 380 5 9 357 509 487 457 481 382 374 485 452 384 547</file>
-                </tool>
                 <tool>
                     <name>ICC8051</name>
                     <file> 514 511 515 489 472 400 375 509 474 368 543 479 487 491 459 529 531 422 556 460 458 455 506 454 462 457 471 517 450 464 525 519 553 493 503 481 485 452 499 501 1 534 399 547 384 374 385 382 379 380 378 5 505 4 9 3 7 357 369</file>
@@ -8172,7 +8174,7 @@
             <inputs>
                 <tool>
                     <name>BICOMP</name>
-                    <file> 400 368 481 543 529 489 455 501 503 491 479 472 459 509 460 457 1 474 485 452 487 375 454 458 493 506 531 422 556 462 471</file>
+                    <file> 452 454 474 487 529 489 455 501 485 472 375 509 460 457 491 1 503 481 400 368 479 543 459 458 493 506 531 422 556 462 471</file>
                 </tool>
                 <tool>
                     <name>ICC8051</name>
@@ -8229,6 +8231,10 @@
                 </tool>
             </outputs>
             <inputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 474 455 400 485 368 506 460 499 505 452 543 489 422 459 493 503 481 491 479 472 509 531 556 462 471 4 487 375 454 529 458 457</file>
+                </tool>
                 <tool>
                     <name>ICC8051</name>
                     <file> 514 511 515 4 503 400 505 493 474 368 543 472 375 479 487 481 485 491 489 509 459 529 531 422 556 460 458 455 506 454 462 457 471 452 499</file>
@@ -8335,7 +8341,7 @@
             <inputs>
                 <tool>
                     <name>BICOMP</name>
-                    <file> 460 491 499 489 487 455 485 400 9 474 464 459 493 517 348 375 547 458 509 472 529 454 462 506 471 374 399 380 483 369 450 525 531 422 556 368 479 543 457 519 3 452 385 503 481</file>
+                    <file> 499 458 489 375 509 472 529 462 491 485 400 9 547 454 506 471 493 517 348 455 474 487 464 460 459 374 399 380 483 369 450 525 531 422 556 368 479 543 457 519 3 452 385 503 481</file>
                 </tool>
                 <tool>
                     <name>ICC8051</name>
@@ -8427,7 +8433,7 @@
             <inputs>
                 <tool>
                     <name>XLINK</name>
-                    <file> 510 125 135 129 111 81 110 109 108 566 102 104 101 103 100 99 98 97 96 95 94 93 360 90 89 92 82 88 124 117 91 87 112 116 86 85 84 83 114 128 115 113 30 18 40 20 107 26 27 134 106 105 31 17 33 123 38 35 136 131 130 119 24 19 21 22 118 121 37 133 364 557 559 558</file>
+                    <file> 510 125 135 129 111 81 110 109 108 571 102 104 101 103 100 99 98 97 96 95 94 93 360 90 89 92 82 88 124 117 91 87 112 116 86 85 84 83 114 128 115 113 30 18 40 20 107 26 27 134 106 105 31 17 33 123 38 35 136 131 130 119 24 19 21 22 118 121 37 133 364 557 559 558</file>
                 </tool>
             </inputs>
         </file>
@@ -10010,11 +10016,11 @@
             <outputs>
                 <tool>
                     <name>BICOMP</name>
-                    <file> 564</file>
+                    <file> 569</file>
                 </tool>
                 <tool>
                     <name>ICC8051</name>
-                    <file> 563</file>
+                    <file> 568</file>
                 </tool>
             </outputs>
             <inputs>
@@ -10025,15 +10031,38 @@
             </inputs>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\..\..\clusters\ClusterHumidityRelativeMeasurement.c</name>
+            <outputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 561</file>
+                </tool>
+                <tool>
+                    <name>ICC8051</name>
+                    <file> 563 562 560</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 479 455 400 460 519 491 450 531 529 489 493 369 375 556 457 474 517 525 472 422 368 543 458 459 503 399 573 547 509 487 454 464 462 506 471 481 499 3 485 452</file>
+                </tool>
+                <tool>
+                    <name>ICC8051</name>
+                    <file> 514 511 515 547 399 375 400 517 489 472 509 529 531 422 556 458 455 474 368 543 479 487 460 450 454 462 457 459 506 471 464 491 525 519 573 499 493 503 481 485 452 3 369</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\..\..\Components\external\dht112_SingleWire.c</name>
             <outputs>
                 <tool>
                     <name>BICOMP</name>
-                    <file> 567</file>
+                    <file> 572</file>
                 </tool>
                 <tool>
                     <name>ICC8051</name>
-                    <file> 562 560 566</file>
+                    <file> 567 564 571</file>
                 </tool>
             </outputs>
             <inputs>
@@ -10047,90 +10076,6 @@
                 </tool>
             </inputs>
         </file>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\Source\TemperatureSensor.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\Source\TemperatureSensor_data.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\clusters\ClusterBasic.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\Source\clusters\ClusterData.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\clusters\ClusterIdentify.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\clusters\ClusterPower.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\clusters\ClusterTemperatureMeasurement.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\Source\ledBlink.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\Source\OSAL_TemperatureSensor.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\hal\common\hal_assert.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\hal\common\hal_drivers.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\hal\target\CC2530EB\hal_adc.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\hal\target\CC2530EB\hal_dma.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\hal\target\CC2530EB\hal_flash.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\hal\target\CC2530EB\hal_key.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\hal\target\CC2530EB\hal_lcd.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\hal\target\CC2530EB\hal_led.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\hal\target\CC2530EB\hal_sleep.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\hal\target\CC2530EB\hal_startup.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\hal\target\CC2530EB\hal_timer.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\hal\target\CC2530EB\hal_uart.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
         <forcedrebuild>
             <name>$PROJ_DIR$\..\..\..\..\..\Components\hal\target\CC2530PMP4712\hal_adc.c</name>
             <tool>ICC8051</tool>
@@ -10172,187 +10117,7 @@
             <tool>ICC8051</tool>
         </forcedrebuild>
         <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\mac\high_level\mac_cfg.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\mac\high_level\mac_pib.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\mac\low_level\srf04\mac_autopend.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\mac\low_level\srf04\mac_backoff_timer.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\mac\low_level\srf04\mac_low_level.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\mac\low_level\srf04\mac_radio.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\mac\low_level\srf04\mac_rx.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\mac\low_level\srf04\mac_rx_onoff.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\mac\low_level\srf04\mac_sleep.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\mac\low_level\srf04\mac_tx.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\mac\low_level\srf04\single_chip\mac_csp_tx.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\mac\low_level\srf04\single_chip\mac_mcu.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\mac\low_level\srf04\single_chip\mac_mem.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\mac\low_level\srf04\single_chip\mac_radio_defs.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\mac\low_level\srf04\single_chip\mac_rffrontend.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\stack\nwk\BindingTable.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\stack\nwk\nwk_globals.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\stack\nwk\stub_aps.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\stack\sys\ZDiags.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\stack\sys\ZGlobals.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\osal\common\OSAL.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\osal\common\OSAL_Clock.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\osal\common\OSAL_Memory.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\osal\mcu\cc2530\OSAL_Nv.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\osal\common\OSAL_PwrMgr.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
             <name>$PROJ_DIR$\..\..\..\Components\osal\common\OSAL_Timers.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\osal\common\OSAL_Timers2.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\stack\af\AF.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\stack\zcl\zcl.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\stack\zcl\zcl_diagnostic.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\stack\zcl\zcl_ezmode.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\stack\zcl\zcl_general.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\ha\zcl_ha.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\stack\zcl\zclReadAttributeFn.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\stack\zcl\zclWriteAttributeFn.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\services\saddr\saddr.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\stack\zdo\ZDApp.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\stack\zdo\ZDConfig.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\stack\zdo\ZDNwkMgr.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\stack\zdo\ZDObject.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\stack\zdo\ZDProfile.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\stack\zdo\ZDSecMgr.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\zmac\f8w\zmac.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\zmac\f8w\zmac_cb.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\zmain\OnBoard.c</name>
-            <tool>ICC8051</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\zmain\ZMain.c</name>
             <tool>ICC8051</tool>
         </forcedrebuild>
         <forcedrebuild>
@@ -10360,8 +10125,8 @@
             <tool>ICC8051</tool>
         </forcedrebuild>
         <forcedrebuild>
-            <name>$PROJ_DIR$\..\..\..\Components\external\dht112_SingleWire.c</name>
-            <tool>ICC8051</tool>
+            <name>[MULTI_TOOL]</name>
+            <tool>XLINK</tool>
         </forcedrebuild>
         <forcedrebuild>
             <name>$PROJ_DIR$\..\..\..\Components\external\dht112_I2C.c</name>

@@ -4654,6 +4654,9 @@
                     <name>$PROJ_DIR$\..\..\..\clusters\ClusterBasic.h</name>
                 </file>
                 <file>
+                    <name>$PROJ_DIR$\..\..\..\clusters\ClusterHumidityRelativeMeasurement.h</name>
+                </file>
+                <file>
                     <name>$PROJ_DIR$\..\..\..\clusters\ClusterIdentify.h</name>
                 </file>
                 <file>
@@ -4671,6 +4674,9 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Source\clusters\ClusterData.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\clusters\ClusterHumidityRelativeMeasurement.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\clusters\ClusterIdentify.c</name>
