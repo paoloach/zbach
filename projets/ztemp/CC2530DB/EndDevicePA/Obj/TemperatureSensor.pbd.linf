@@ -3,9 +3,11 @@ C:\Users\paolo\Documents\GitHub\zbach\projets\ztemp\CC2530DB\EndDevicePA\Obj\AF.
 C:\Users\paolo\Documents\GitHub\zbach\projets\ztemp\CC2530DB\EndDevicePA\Obj\BindingTable.pbi
 C:\Users\paolo\Documents\GitHub\zbach\projets\ztemp\CC2530DB\EndDevicePA\Obj\ClusterBasic.pbi
 C:\Users\paolo\Documents\GitHub\zbach\projets\ztemp\CC2530DB\EndDevicePA\Obj\ClusterData.pbi
+C:\Users\paolo\Documents\GitHub\zbach\projets\ztemp\CC2530DB\EndDevicePA\Obj\ClusterHumidityRelativeMeasurement.pbi
 C:\Users\paolo\Documents\GitHub\zbach\projets\ztemp\CC2530DB\EndDevicePA\Obj\ClusterIdentify.pbi
 C:\Users\paolo\Documents\GitHub\zbach\projets\ztemp\CC2530DB\EndDevicePA\Obj\ClusterPower.pbi
 C:\Users\paolo\Documents\GitHub\zbach\projets\ztemp\CC2530DB\EndDevicePA\Obj\ClusterTemperatureMeasurement.pbi
+C:\Users\paolo\Documents\GitHub\zbach\projets\ztemp\CC2530DB\EndDevicePA\Obj\dht112_SingleWire.pbi
 C:\Users\paolo\Documents\GitHub\zbach\projets\ztemp\CC2530DB\EndDevicePA\Obj\hal_adc.pbi
 C:\Users\paolo\Documents\GitHub\zbach\projets\ztemp\CC2530DB\EndDevicePA\Obj\hal_assert.pbi
 C:\Users\paolo\Documents\GitHub\zbach\projets\ztemp\CC2530DB\EndDevicePA\Obj\hal_dma.pbi
@@ -18,6 +20,7 @@ C:\Users\paolo\Documents\GitHub\zbach\projets\ztemp\CC2530DB\EndDevicePA\Obj\hal
 C:\Users\paolo\Documents\GitHub\zbach\projets\ztemp\CC2530DB\EndDevicePA\Obj\hal_startup.pbi
 C:\Users\paolo\Documents\GitHub\zbach\projets\ztemp\CC2530DB\EndDevicePA\Obj\hal_timer.pbi
 C:\Users\paolo\Documents\GitHub\zbach\projets\ztemp\CC2530DB\EndDevicePA\Obj\hal_uart.pbi
+C:\Users\paolo\Documents\GitHub\zbach\projets\ztemp\CC2530DB\EndDevicePA\Obj\ledBlink.pbi
 C:\Users\paolo\Documents\GitHub\zbach\projets\ztemp\CC2530DB\EndDevicePA\Obj\mac_autopend.pbi
 C:\Users\paolo\Documents\GitHub\zbach\projets\ztemp\CC2530DB\EndDevicePA\Obj\mac_backoff_timer.pbi
 C:\Users\paolo\Documents\GitHub\zbach\projets\ztemp\CC2530DB\EndDevicePA\Obj\mac_cfg.pbi

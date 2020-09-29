@@ -106,19 +106,44 @@ uint16 temperatureSensorEventLoop( uint8 task_id, uint16 events ){
 		while ( (MSGpkt = (afIncomingMSGPacket_t *)osal_msg_receive( temperatureSensorTaskID )) )  {
 			switch ( MSGpkt->hdr.event ) {
 				case ZCL_INCOMING_MSG:
-          			// Incoming ZCL Foundation command/response messages
-          			processIncomingMsh( (zclIncomingMsg_t *)MSGpkt );
-          			break;
+                                  // Incoming ZCL Foundation command/response messages
+                                  processIncomingMsh( (zclIncomingMsg_t *)MSGpkt );
+                                  break;
 				case ZDO_STATE_CHANGE:
-          			zclSampleSw_NwkState = (devStates_t)(MSGpkt->hdr.status);
-					if (zclSampleSw_NwkState == DEV_NWK_DISC)
-						break;
-					if (zclSampleSw_NwkState == DEV_END_DEVICE || zclSampleSw_NwkState == DEV_ROUTER){
-						blinkLedEnd(temperatureSensorTaskID);
-					}
-					break;
-		       default:
-        		  break;
+                                  zclSampleSw_NwkState = (devStates_t)(MSGpkt->hdr.status);
+                                    
+                                  switch(zclSampleSw_NwkState){
+                                  case DEV_NWK_DISC:
+                                    setBlinkCounter(0);
+                                    break;
+                                  case DEV_NWK_JOINING:
+                                    setBlinkCounter(1);
+                                    break;
+                                  case DEV_NWK_REJOIN:
+                                    setBlinkCounter(2);
+                                    break;
+                                  case DEV_END_DEVICE_UNAUTH:
+                                    setBlinkCounter(3);
+                                    break;
+                                  case DEV_END_DEVICE:
+                                    blinkLedEnd(task_id);
+                                    break;
+                                  case DEV_ROUTER:
+                                    setBlinkCounter(5);
+                                    break;
+                                  case DEV_COORD_STARTING:
+                                    setBlinkCounter(6);
+                                    break;
+                                  case DEV_ZB_COORD:
+                                    setBlinkCounter(7);
+                                    break;
+                                  case DEV_NWK_ORPHAN:
+                                    setBlinkCounter(8);
+                                    break;
+                                  }
+                                  break;
+                                default:
+                                  break;
       		}
 
         osal_msg_deallocate( (uint8 *)MSGpkt );

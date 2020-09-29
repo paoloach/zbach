@@ -10,7 +10,7 @@
 #include "dht112.h"
 
 #define TIME_READ_ms 30*1000
-#define DEFAULT_READ_PERIOD_MINUTES 5
+#define DEFAULT_READ_PERIOD_MINUTES 0
 
 #ifndef READ_PERIOD_MINUTES
 #define READ_PERIOD_MINUTES DEFAULT_READ_PERIOD_MINUTES
@@ -18,8 +18,11 @@
 
 #define READ_PERIOD_MAX_COUNTER 2*READ_PERIOD_MINUTES
 #define START_READ_PERIOD_ms 200
+#define STARTING_DELAY_ms 5000
+#define STABILING_DELAY_ms 3000
 
 #define SDA P1_5
+#define POWER P1_4
 #define SDA_OFF  DIR1_5=0
 #define SDA_ON   DIR1_5=1
 
@@ -28,19 +31,21 @@ uint16 humidity;
 
 
 enum Status {
+        START,
 	WAIT,
 	READ_START,
         READ,
 	ERROR
 };
 
-static enum Status status=WAIT; 
+static enum Status status=START; 
 static uint8 readPeriodCounter;
 
 static enum Status waitAction(uint8 taskid);
 static enum Status readStartAction(uint8 taskid);
 static enum Status readAction(uint8 taskid);
 static enum Status resetAction(uint8 taskid);
+static enum Status startAction(uint8 taskid);
 static bool read8Bit(uint8 * data);
 static enum Status internalReadAction(void);
 
@@ -49,43 +54,55 @@ void dht112_init(uint8 taskid){
     P1SEL &=0xCF; // 11001111
     P1INP &= 0xCF;
     P2INP &= 0xBF;
+    DIR1_4=1;
+    POWER=0;
+    P0_1 = 0;
     SDA_OFF;
     SDA = 0;
     
-    osal_start_timerEx(taskid, READ_TEMP_EVT, TIME_READ_ms );
+    osal_start_timerEx(taskid, READ_TEMP_EVT, STARTING_DELAY_ms );
 }
 
 void dht112_loop(uint8 taskid) {
-	do {
-		switch(status){
-		   case WAIT:
-			  status = waitAction(taskid);
-
-			  break;
-                   case READ_START:
-                          status = readStartAction(taskid);
-                          break;
-		   case READ:
-			  status = readAction(taskid);
-			  break;
-		  case ERROR:
-			  status = resetAction(taskid);
-			  break;
-		}
-	} while (status == READ_START || status == ERROR);
-	
-	
+  do {
+    switch(status){
+      case START:
+        status = startAction(taskid);
+        break;
+      case WAIT:
+        status = waitAction(taskid);
+        break;
+      case READ_START:
+        status = readStartAction(taskid);
+        break;
+      case READ:
+        status = readAction(taskid);
+        break;
+      case ERROR:
+        status = resetAction(taskid);
+        break;
+      }
+  } while (status == READ_START || status == ERROR);
 }
 
+static enum Status startAction(uint8 taskid) {
+  POWER=1;
+  P0_1 = 1;
+  readPeriodCounter=0;  
+  osal_start_timerEx(taskid, READ_TEMP_EVT, 10 ); 
+  return READ_START;
+}
 
 static enum Status waitAction(uint8 taskid) {
-	readPeriodCounter++;
-	if (readPeriodCounter >= READ_PERIOD_MAX_COUNTER){
-		return READ_START;
-	} else {
-                osal_start_timerEx(taskid, READ_TEMP_EVT, TIME_READ_ms );
-		return WAIT;
-	}
+  readPeriodCounter++;
+  if (readPeriodCounter >= READ_PERIOD_MAX_COUNTER){
+    readPeriodCounter=0;
+     osal_start_timerEx(taskid, READ_TEMP_EVT, STARTING_DELAY_ms );
+    return START;
+  } else {
+    osal_start_timerEx(taskid, READ_TEMP_EVT, TIME_READ_ms );
+    return WAIT;
+  }
 	
 }
 
@@ -157,9 +174,8 @@ static enum Status internalReadAction(void){
   
   humidity = (uint16)data[0]*100 + data[1];
   temp = (uint16)data[2]*100 + data[3];
- 
-  
-  
+  POWER=0;
+  P0_1 = 0;
   return WAIT;
 }
 
@@ -187,8 +203,12 @@ static bool read8Bit(uint8 * data) {
 }
 
 static enum Status resetAction(uint8 taskid) {
-        SDA_OFF; 
-	osal_start_timerEx(taskid, READ_TEMP_EVT, TIME_READ_ms );
-	return WAIT;
+  SDA_OFF; 
+  osal_start_timerEx(taskid, READ_TEMP_EVT, TIME_READ_ms );
+  temp=0xFFFF;
+  humidity=0xFFFF;
+  POWER=0;
+    P0_1 = 0;
+  return WAIT;
 }
 

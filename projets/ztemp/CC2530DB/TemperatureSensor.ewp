@@ -2625,6 +2625,7 @@
                 <option>
                     <name>CCDefines</name>
                     <state>HAL_LED=1</state>
+                    <state>DHT12=1</state>
                     <state>SECURE=1</state>
                     <state>OSC32K_CRYSTAL_INSTALLED=FALSE</state>
                     <state>HAL_KEY=FALSE</state>
@@ -2812,6 +2813,7 @@
                     <state>$PROJ_DIR$\..\..\..\clusters</state>
                     <state>$PROJ_DIR$\..\Source</state>
                     <state>$PROJ_DIR$\..\..\..\</state>
+                    <state>$PROJ_DIR$\..\..\..\Components\external</state>
                     <state>$PROJ_DIR$\..\..\..\Components\ha</state>
                     <state>$PROJ_DIR$\..\..\..\Components\zmain</state>
                     <state>$PROJ_DIR$\..\..\..\Components\hal\include</state>
@@ -4712,6 +4714,7 @@
         <file>
             <name>$PROJ_DIR$\..\..\..\Components\external\dht112_I2C.c</name>
             <excluded>
+                <configuration>EndDevicePA</configuration>
                 <configuration>RouterPA</configuration>
             </excluded>
         </file>

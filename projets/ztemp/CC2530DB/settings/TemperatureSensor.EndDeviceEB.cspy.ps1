@@ -23,9 +23,9 @@ param([String]$debugfile = "");
 
 if ($debugfile -eq "")
 {
-& "C:\Program Files\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\paolo\Documents\GitHub\ZTemp\CC2530DB\settings\TemperatureSensor.EndDeviceEB.general.xcl" --backend -f "C:\Users\paolo\Documents\GitHub\ZTemp\CC2530DB\settings\TemperatureSensor.EndDeviceEB.driver.xcl" 
+& "C:\Program Files\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\paolo\Documents\GitHub\zbach\projets\ztemp\CC2530DB\settings\TemperatureSensor.EndDeviceEB.general.xcl" --backend -f "C:\Users\paolo\Documents\GitHub\zbach\projets\ztemp\CC2530DB\settings\TemperatureSensor.EndDeviceEB.driver.xcl" 
 }
 else
 {
-& "C:\Program Files\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\paolo\Documents\GitHub\ZTemp\CC2530DB\settings\TemperatureSensor.EndDeviceEB.general.xcl" --debug_file=$debugfile --backend -f "C:\Users\paolo\Documents\GitHub\ZTemp\CC2530DB\settings\TemperatureSensor.EndDeviceEB.driver.xcl" 
+& "C:\Program Files\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\paolo\Documents\GitHub\zbach\projets\ztemp\CC2530DB\settings\TemperatureSensor.EndDeviceEB.general.xcl" --debug_file=$debugfile --backend -f "C:\Users\paolo\Documents\GitHub\zbach\projets\ztemp\CC2530DB\settings\TemperatureSensor.EndDeviceEB.driver.xcl" 
 }
