@@ -75,6 +75,7 @@ int16 minTemperatureValue=-10;
 int16 maxTemperatureValue=80;
 uint16 toleranceTemperature=10;
 
+
 extern byte temperatureSensorTaskID;
 extern devStates_t devState;
 
@@ -82,21 +83,18 @@ extern devStates_t devState;
 
 void clusterTemperatureMeasurementeInit(void) {
 #ifdef DHT12
-	dht112_init(temperatureSensorTaskID);
+  dht112_init(temperatureSensorTaskID);
 #else
-	P1SEL &=0xC6;
-	DIR1_0 = 0;
-	DIR1_5 = 1;
-	DIR1_3 = 1;
-	P1_5=0;
-	P1_3=1;
-	P1_0 = 0;
-
-	
-	
-	countMinutes = 2*MINUTES_BETWEEN;
-	readTemperature();
-	osal_start_timerEx( temperatureSensorTaskID, READ_TEMP_EVT, TIME_READ_ms );
+  P1SEL &=0xC6;
+  DIR1_0 = 0;
+  DIR1_5 = 1;
+  DIR1_3 = 1;
+  P1_5=0;
+  P1_3=1;
+  P1_0 = 0;
+  countMinutes = 2*MINUTES_BETWEEN;
+  readTemperature();
+  osal_start_timerEx( temperatureSensorTaskID, READ_TEMP_EVT, TIME_READ_ms );
 #endif
 }
 
@@ -296,4 +294,25 @@ uint8  read(void) {
 }
 
 #endif
+
+void temperatureClusterSendReport(uint8 endpoint, afAddrType_t * dstAddr, uint8 * segNum){
+  zclReportCmd_t *pReportCmd;
+
+  if (temp == 0xFFFF)
+    return;
+  
+  pReportCmd = osal_mem_alloc( sizeof(zclReportCmd_t) + sizeof(zclReport_t) );
+  if ( pReportCmd != NULL ) {
+    pReportCmd->numAttr = 1;
+    pReportCmd->attrList[0].attrID = ATTRID_TEMPERATURE_MEASURE_VALUE;
+    pReportCmd->attrList[0].dataType = ZCL_DATATYPE_INT16;
+    pReportCmd->attrList[0].attrData = (void *)(&temp);
+
+    zcl_SendReportCmd( endpoint, dstAddr,
+                       ZCL_CLUSTER_ID_MS_TEMPERATURE_MEASUREMENT,
+                       pReportCmd, ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, (*segNum)++ );
+  }
+
+  osal_mem_free( pReportCmd );
+}
 

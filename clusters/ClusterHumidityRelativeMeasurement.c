@@ -61,3 +61,22 @@ uint16 readHumidityLoop(uint16 events) {
   return events;
 }
 
+
+void humidityRelativeClusterSendReport(uint8 endpoint, afAddrType_t * dstAddr, uint8 * segNum){
+  zclReportCmd_t *pReportCmd;
+  if (humidity == 0xFFFF)
+    return;
+  pReportCmd = osal_mem_alloc( sizeof(zclReportCmd_t) + sizeof(zclReport_t) );
+  if ( pReportCmd != NULL ) {
+    pReportCmd->numAttr = 1;
+    pReportCmd->attrList[0].attrID = ATTRID_HUMIDITY_RELATIVE_MEASURE_VALUE;
+    pReportCmd->attrList[0].dataType = ZCL_DATATYPE_UINT16;
+    pReportCmd->attrList[0].attrData = (void *)(&humidity);
+
+    zcl_SendReportCmd( endpoint, dstAddr,
+                       ZCL_CLUSTER_ID_MS_RELATIVE_HUMIDITY,
+                       pReportCmd, ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, (*segNum)++ );
+  }
+
+  osal_mem_free( pReportCmd );
+}

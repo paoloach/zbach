@@ -58,6 +58,15 @@ static uint8 processInDiscRspCmd( zclIncomingMsg_t *pInMsg );
 #endif
 static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg );
 
+static void nextReportEvent(void);
+#define DEFAULT_REPORT_SEC      30
+uint16 reportSecond = DEFAULT_REPORT_SEC;
+uint16 reportSecondCounter;
+uint8 reportSeqNum;
+afAddrType_t reportDstAddr;
+
+
+
 
 
 void temperatureSensorInit( byte task_id ){
@@ -83,9 +92,22 @@ void temperatureSensorInit( byte task_id ){
  	identifyInit(temperatureSensorTaskID);
 	ZMacSetTransmitPower(TX_PWR_PLUS_19);
 	//ZMacSetTransmitPower(POWER);
-    blinkLedInit();
-    blinkLedstart(temperatureSensorTaskID);
-	
+  blinkLedInit();
+  blinkLedstart(temperatureSensorTaskID);
+  reportSecondCounter = reportSecond;
+  reportDstAddr.addrMode = (afAddrMode_t)AddrNotPresent;
+  reportDstAddr.endPoint = 0;
+  reportDstAddr.addr.shortAddr = 0;
+  nextReportEvent();
+}
+
+void nextReportEvent(void) {
+  uint16 nextReportEventSec = 30;
+  if (reportSecondCounter < 30)
+    nextReportEventSec = reportSecondCounter;
+  
+  reportSecondCounter -= nextReportEventSec;
+  osal_start_timerEx( temperatureSensorTaskID, REPORT_EVT, nextReportEventSec );	
 }
 
 /*********************************************************************
@@ -156,23 +178,28 @@ uint16 temperatureSensorEventLoop( uint8 task_id, uint16 events ){
 		return identifyLoop(events);
 	}
 	
-	if ( events & FAST_BLINK ) {
-		blinkLedAction(temperatureSensorTaskID);
-		return events ^ FAST_BLINK;
-	}
+  if ( events & FAST_BLINK ) {
+          blinkLedAction(temperatureSensorTaskID);
+          return events ^ FAST_BLINK;
+  }
 
-#if !defined RTR_NWK
-	if ( events & READ_BATTERY_LEVEL ) {
-		powerClusterCheckBattery(task_id);
-		events = events ^ READ_BATTERY_LEVEL;
-	}
-#endif	
-	
-	if ( events & READ_TEMP_MASK ) {
-		return readTemperatureLoop(events);
-	}
+  #if !defined RTR_NWK
+  if ( events & READ_BATTERY_LEVEL ) {
+    powerClusterCheckBattery(task_id);
+    events = events ^ READ_BATTERY_LEVEL;
+  }
+  #endif	
 
- 	return 0;
+  if ( events & READ_TEMP_MASK ) {
+    return readTemperatureLoop(events);
+  }
+  if (events & REPORT_EVT){
+    temperatureClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
+    humidityRelativeClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
+    events = events ^ REPORT_EVT;
+  }
+
+  return 0;
 }
 
 /*********************************************************************

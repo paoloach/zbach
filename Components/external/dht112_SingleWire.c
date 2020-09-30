@@ -10,7 +10,7 @@
 #include "dht112.h"
 
 #define TIME_READ_ms 30*1000
-#define DEFAULT_READ_PERIOD_MINUTES 0
+#define DEFAULT_READ_PERIOD_MINUTES 5
 
 #ifndef READ_PERIOD_MINUTES
 #define READ_PERIOD_MINUTES DEFAULT_READ_PERIOD_MINUTES
@@ -56,7 +56,6 @@ void dht112_init(uint8 taskid){
     P2INP &= 0xBF;
     DIR1_4=1;
     POWER=0;
-    P0_1 = 0;
     SDA_OFF;
     SDA = 0;
     
@@ -87,8 +86,7 @@ void dht112_loop(uint8 taskid) {
 
 static enum Status startAction(uint8 taskid) {
   POWER=1;
-  P0_1 = 1;
-  readPeriodCounter=0;  
+   readPeriodCounter=0;  
   osal_start_timerEx(taskid, READ_TEMP_EVT, 10 ); 
   return READ_START;
 }
@@ -175,7 +173,6 @@ static enum Status internalReadAction(void){
   humidity = (uint16)data[0]*100 + data[1];
   temp = (uint16)data[2]*100 + data[3];
   POWER=0;
-  P0_1 = 0;
   return WAIT;
 }
 
@@ -208,7 +205,6 @@ static enum Status resetAction(uint8 taskid) {
   temp=0xFFFF;
   humidity=0xFFFF;
   POWER=0;
-    P0_1 = 0;
-  return WAIT;
+   return WAIT;
 }
 

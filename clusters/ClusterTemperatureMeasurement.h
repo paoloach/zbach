@@ -16,7 +16,6 @@
 #include "zcl.h"
 #include "ClusterOSALEvents.h"
 
-extern int16 temperatureValue;
 extern int16 minTemperatureValue;
 extern int16 maxTemperatureValue;
 extern uint16 toleranceTemperature;
@@ -30,6 +29,7 @@ uint16 readTemperatureLoop(uint16 events);
 void readTemperature(void);
 void clusterTemperatureMeasurementeInit(void);
 void temperatureClusterReadAttribute(zclAttrRec_t *);
+void temperatureClusterSendReport(uint8 endpoint, afAddrType_t * dstAddr, uint8 * segNum); 
 
 
 #endif
