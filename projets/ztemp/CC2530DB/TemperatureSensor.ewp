@@ -1651,6 +1651,9 @@
                     <name>CCIncludePath2</name>
                     <state>$PROJ_DIR$</state>
                     <state>$PROJ_DIR$\..\Source</state>
+                    <state>$PROJ_DIR$\..\..\..</state>
+                    <state>$PROJ_DIR$\..\..\..\clusters</state>
+                    <state>$PROJ_DIR$\..\..\..\Components\external</state>
                     <state>$PROJ_DIR$\..\..\..\Components\ha</state>
                     <state>$PROJ_DIR$\..\..\..\Components\zmain</state>
                     <state>$PROJ_DIR$\..\..\..\Components\hal\include</state>
@@ -2241,9 +2244,9 @@
                 </option>
                 <option>
                     <name>Linker Extra Options Edit</name>
-                    <state>-C $PROJ_DIR$\..\..\..\Libraries\EndDevice-Pro.lib</state>
-                    <state>-C $PROJ_DIR$\..\..\..\Libraries\Security.lib</state>
-                    <state>-C $PROJ_DIR$\..\..\..\Libraries\TIMAC-CC2530.lib</state>
+                    <state>-C $PROJ_DIR$\..\..\..\lib\EndDevice-Pro.lib</state>
+                    <state>-C $PROJ_DIR$\..\..\..\lib\Security.lib</state>
+                    <state>-C $PROJ_DIR$\..\..\..\lib\TIMAC-CC2530.lib</state>
                 </option>
                 <option>
                     <name>CrcAlign</name>
@@ -4679,6 +4682,9 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\clusters\ClusterHumidityRelativeMeasurement.c</name>
+                <excluded>
+                    <configuration>EndDeviceEB</configuration>
+                </excluded>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\clusters\ClusterIdentify.c</name>
@@ -4714,12 +4720,16 @@
         <file>
             <name>$PROJ_DIR$\..\..\..\Components\external\dht112_I2C.c</name>
             <excluded>
+                <configuration>EndDeviceEB</configuration>
                 <configuration>EndDevicePA</configuration>
                 <configuration>RouterPA</configuration>
             </excluded>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\Components\external\dht112_SingleWire.c</name>
+            <excluded>
+                <configuration>EndDeviceEB</configuration>
+            </excluded>
         </file>
     </group>
     <group>

@@ -19,8 +19,9 @@ RESOURCES:
 #include "ClusterTemperatureMeasurement.h"
 #include "OSAL_PwrMgr.h"
 #include "regs.h"
+#ifdef DHT12
 #include "dht112.h"
-
+#endif
 
 #ifndef DHT12
 #define WAIT_FOR_480us 	T3_start=0;		T3CC0=240;T3_clear=1; T3_start=1;
@@ -298,8 +299,8 @@ uint8  read(void) {
 void temperatureClusterSendReport(uint8 endpoint, afAddrType_t * dstAddr, uint8 * segNum){
   zclReportCmd_t *pReportCmd;
 
-  if (temp == 0xFFFF)
-    return;
+//  if (temp == 0xFFFF)
+//    return;
   
   pReportCmd = osal_mem_alloc( sizeof(zclReportCmd_t) + sizeof(zclReport_t) );
   if ( pReportCmd != NULL ) {

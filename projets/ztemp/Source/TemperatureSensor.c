@@ -17,6 +17,7 @@
 #include "ZComDef.h"
 #include "OSAL.h"
 #include "AF.h"
+#include "nwk.h"
 #include "ZDApp.h"
 #include "DebugTrace.h"
 
@@ -28,16 +29,13 @@
 
 #include "onboard.h"
 
-/* HAL */
-#include "hal_lcd.h"
-#include "hal_led.h"
-#include "hal_key.h"
-
 #include "clusters/ClusterIdentify.h"
 #include "clusters/ClusterBasic.h"
 #include "clusters/ClusterTemperatureMeasurement.h"
 #include "clusters/ClusterPower.h"
+#ifdef DHT12
 #include "clusters/ClusterHumidityRelativeMeasurement.h"
+#endif
 #include "ledBlink.h"
 #include "dht112.h"
 	  
@@ -58,7 +56,9 @@ static uint8 processInDiscRspCmd( zclIncomingMsg_t *pInMsg );
 #endif
 static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg );
 
+static void initReport(void);
 static void nextReportEvent(void);
+static void eventReport(void);
 #define DEFAULT_REPORT_SEC      30
 uint16 reportSecond = DEFAULT_REPORT_SEC;
 uint16 reportSecondCounter;
@@ -81,19 +81,26 @@ void temperatureSensorInit( byte task_id ){
 	addWriteAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterWriteAttribute);
 	addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_GEN_POWER_CFG,powerClusterReadAttribute);
 	addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_MS_TEMPERATURE_MEASUREMENT,temperatureClusterReadAttribute);
+#ifdef DHT12        
         addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_MS_RELATIVE_HUMIDITY,humidityRelativeClusterReadAttribute);
-
+#endif
   	zcl_registerForMsg( temperatureSensorTaskID );
   
   	EA=1;
   	clusterTemperatureMeasurementeInit();
+#ifdef DHT12        
         clusterHumidityMeasurementeInit();
+#endif        
 	powerClusterInit(temperatureSensorTaskID);
  	identifyInit(temperatureSensorTaskID);
 	ZMacSetTransmitPower(TX_PWR_PLUS_19);
 	//ZMacSetTransmitPower(POWER);
   blinkLedInit();
   blinkLedstart(temperatureSensorTaskID);
+
+}
+
+static void initReport(void){
   reportSecondCounter = reportSecond;
   reportDstAddr.addrMode = (afAddrMode_t)AddrNotPresent;
   reportDstAddr.endPoint = 0;
@@ -107,8 +114,21 @@ void nextReportEvent(void) {
     nextReportEventSec = reportSecondCounter;
   
   reportSecondCounter -= nextReportEventSec;
-  osal_start_timerEx( temperatureSensorTaskID, REPORT_EVT, nextReportEventSec );	
+  osal_start_timerEx( temperatureSensorTaskID, REPORT_EVT, nextReportEventSec*1000 );	
 }
+
+static void eventReport(void) {
+  if (reportSecondCounter <= 0){
+    reportDstAddr.endPoint=ENDPOINT;
+    reportDstAddr.panId=_NIB.nwkPanId;
+    temperatureClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
+#ifdef DHT12
+    humidityRelativeClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
+#endif
+    reportSecondCounter=reportSecond;
+  }
+  nextReportEvent();
+  }
 
 /*********************************************************************
  * @fn          zclSample_event_loop
@@ -149,6 +169,7 @@ uint16 temperatureSensorEventLoop( uint8 task_id, uint16 events ){
                                     break;
                                   case DEV_END_DEVICE:
                                     blinkLedEnd(task_id);
+                                    initReport();
                                     break;
                                   case DEV_ROUTER:
                                     setBlinkCounter(5);
@@ -194,8 +215,7 @@ uint16 temperatureSensorEventLoop( uint8 task_id, uint16 events ){
     return readTemperatureLoop(events);
   }
   if (events & REPORT_EVT){
-    temperatureClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
-    humidityRelativeClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
+    eventReport();
     events = events ^ REPORT_EVT;
   }
 
