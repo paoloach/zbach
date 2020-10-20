@@ -55,9 +55,7 @@ RESOURCES:
 #define RESET_P1_5_INT st(P1IF=0; P1IFG =0;);
 
 
-#define TIME_READ_ms 30*1000
 #define MINUTES_BETWEEN 5
-uint8 countMinutes=0;
 
 int16 tempTemperatureValue;
 int16 decTemperatureValue;
@@ -77,6 +75,11 @@ int16 maxTemperatureValue=80;
 uint16 toleranceTemperature=10;
 
 
+static uint8 reportEndpoint;
+static afAddrType_t * reportDstAddr;
+static uint8 * reportSegNum;
+
+
 extern byte temperatureSensorTaskID;
 extern devStates_t devState;
 
@@ -92,9 +95,7 @@ void clusterTemperatureMeasurementeInit(void) {
   DIR1_3 = 1;
   P1_5=0;
   P1_0 = 0;
-  countMinutes = 2*MINUTES_BETWEEN;
   readTemperature();
- // osal_start_timerEx( temperatureSensorTaskID, READ_TEMP_EVT, TIME_READ_ms );
 #endif
 }
 
@@ -133,104 +134,112 @@ uint16 readTemperatureLoop(uint16 events) {
 		return ( events ^ READ_TEMP_EVT );
 	}
 #else
-	if (events & READ_TEMP_EVT){
-		readTemperature();
-		return ( events ^ READ_TEMP_EVT );
-	};
-	if (events & START_READ_TEMP){
-		startReadSyncronus();
-		return ( events ^ START_READ_TEMP );
-	};
-	if (events & END_READ_TEMP_EVT){
-		finalizeReadTemp();
-		return ( events ^ END_READ_TEMP_EVT );
-	}
+  if (events & START_READ_TEMP){
+    startReadSyncronus();
+    return ( events ^ START_READ_TEMP );
+  };
+  if (events & END_READ_TEMP_EVT){
+    finalizeReadTemp();
+    return ( events ^ END_READ_TEMP_EVT );
+  }
 #endif
-	return events;
+  return events;
 }
 
 #ifndef DHT12
 void readTemperature(void) {
-	countMinutes++;
-	if (countMinutes >= 2*MINUTES_BETWEEN  || 1){
-		P1_5=1;
-		P1_4=1;
-		osal_pwrmgr_task_state(temperatureSensorTaskID, PWRMGR_HOLD);
-//		osal_start_timerEx( temperatureSensorTaskID, START_READ_TEMP, 100 );
-		countMinutes=0;
-	}
-//	osal_start_timerEx( temperatureSensorTaskID, READ_TEMP_EVT, TIME_READ_ms );
+  P1_5=1;
+  P1_4=1;
+  osal_pwrmgr_task_state(temperatureSensorTaskID, PWRMGR_HOLD);
+  osal_start_timerEx( temperatureSensorTaskID, START_READ_TEMP, 100 );
 }
 
 
 void startReadSyncronus(void) {
-	P1_5 = 1;
-	T3CTL = 0x04 | 0xA0; //Clear counter. interrupt disable. Compare mode. 4us at cycle
-	T3CCTL0 = 0x4; // compare mode
-	T3CCTL1 = 0;
-	P0DIR=0xFF;
-		
-	DISABLE_P1_5_INT;
-	T3IF=0;
-	T3CH0IF=0;
-	st(T3IE=0;);
-		
-	if (reset()==0){
-		P1_5=0; 
-		osal_pwrmgr_task_state(temperatureSensorTaskID, PWRMGR_CONSERVE);
-		return;
-	}
-	
-	write(0xCC);
-	write(0x44);
-	
-	osal_start_timerEx( temperatureSensorTaskID, END_READ_TEMP_EVT, 1000 );
+  P1_5 = 1;
+  T3CTL = 0x04 | 0xA0; //Clear counter. interrupt disable. Compare mode. 4us at cycle
+  T3CCTL0 = 0x4; // compare mode
+  T3CCTL1 = 0;
+  P0DIR=0xFF;
+          
+  DISABLE_P1_5_INT;
+  T3IF=0;
+  T3CH0IF=0;
+  st(T3IE=0;);
+          
+  if (reset()==0){
+    P1_5=0; 
+    osal_pwrmgr_task_state(temperatureSensorTaskID, PWRMGR_CONSERVE);
+    return;
+  }
+
+  write(0xCC);
+  write(0x44);
+
+  osal_start_timerEx( temperatureSensorTaskID, END_READ_TEMP_EVT, 1000 );
 }
 
 void finalizeReadTemp(void){
-	uint8 low;
-	uint8 heigh;
-	reset();
-	write(0xCC);
-	write(0xBE);
-	low = read();
-	heigh = read();
-	
-	tempTemperatureValue = BUILD_UINT16(low,heigh);
-	temp = (tempTemperatureValue >> 4)*100;
-	decTemperatureValue = (tempTemperatureValue & 0x0F)*100;
-	
-	temp += decTemperatureValue >> 4;
-	P1_5=0;  
-	osal_pwrmgr_task_state(temperatureSensorTaskID, PWRMGR_CONSERVE);
+  uint8 low;
+  uint8 heigh;
+  reset();
+  write(0xCC);
+  write(0xBE);
+  low = read();
+  heigh = read();
+
+  tempTemperatureValue = BUILD_UINT16(low,heigh);
+  temp = (tempTemperatureValue >> 4)*100;
+  decTemperatureValue = (tempTemperatureValue & 0x0F)*100;
+
+  temp += decTemperatureValue >> 4;
+  P1_5=0;  
+  
+  
+  zclReportCmd_t *pReportCmd;
+
+  pReportCmd = osal_mem_alloc( sizeof(zclReportCmd_t) + sizeof(zclReport_t) );
+  if ( pReportCmd != NULL ) {
+    pReportCmd->numAttr = 1;
+    pReportCmd->attrList[0].attrID = ATTRID_TEMPERATURE_MEASURE_VALUE;
+    pReportCmd->attrList[0].dataType = ZCL_DATATYPE_INT16;
+    pReportCmd->attrList[0].attrData = (void *)(&temp);
+
+    zcl_SendReportCmd( reportEndpoint, reportDstAddr,
+                       ZCL_CLUSTER_ID_MS_TEMPERATURE_MEASUREMENT,
+                       pReportCmd, ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, (*reportSegNum)++ );
+    osal_mem_free( pReportCmd );
+  }
+  
+  osal_pwrmgr_task_state(temperatureSensorTaskID, PWRMGR_CONSERVE);
 }
 
 
 uint8 reset() {
-	
-	P1_LOW;
-	T3_div=6;
-	T3_clear=1;
-	T3CNT=0;
-	T3_start=1;
-	while(T3CNT <250 );
-	T3_start=0;
-	P1_HIGH;
-	T3_clear=1;
-	T3_start=1;
-	while(T3CNT < 30);
-	T3_clear=1;
-	while(T3CNT < 240  && P1_0 == 1);
-	
-	if (P1_0 == 1){
-		return 0;
-	}
-        T3_clear=1;
-	while(T3CNT < 240){
-          if (P1_0 == 1)
-            return 1;
-	}
-	return 0;
+
+  P1_LOW;
+  T3_div=6;
+  T3_clear=1;
+  T3CNT=0;
+  T3_start=1;
+  while(T3CNT <250 );
+  T3_start=0;
+  P1_HIGH;
+  T3_clear=1;
+  T3_start=1;
+  while(T3CNT < 30);
+  T3_clear=1;
+  while(T3CNT < 240  && P1_0 == 1);
+
+  if (P1_0 == 1){
+          return 0;
+  }
+  T3_clear=1;
+  while(T3CNT < 240){
+    if (P1_0 == 1)
+      return 1;
+  }
+  return 0;
 }
 
 void write(unsigned char byte){
@@ -289,23 +298,11 @@ uint8  read(void) {
 #endif
 
 void temperatureClusterSendReport(uint8 endpoint, afAddrType_t * dstAddr, uint8 * segNum){
-  zclReportCmd_t *pReportCmd;
-
-  if (temp == 0xFFFF)
-    return;
+  reportEndpoint  = endpoint;
+  reportDstAddr = dstAddr;
+  reportSegNum = segNum;
+  readTemperature();
   
-  pReportCmd = osal_mem_alloc( sizeof(zclReportCmd_t) + sizeof(zclReport_t) );
-  if ( pReportCmd != NULL ) {
-    pReportCmd->numAttr = 1;
-    pReportCmd->attrList[0].attrID = ATTRID_TEMPERATURE_MEASURE_VALUE;
-    pReportCmd->attrList[0].dataType = ZCL_DATATYPE_INT16;
-    pReportCmd->attrList[0].attrData = (void *)(&temp);
-
-    zcl_SendReportCmd( endpoint, dstAddr,
-                       ZCL_CLUSTER_ID_MS_TEMPERATURE_MEASUREMENT,
-                       pReportCmd, ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, (*segNum)++ );
-  }
-
-  osal_mem_free( pReportCmd );
+  
 }
 

@@ -4919,6 +4919,9 @@
         <name>libSource</name>
         <file>
             <name>$PROJ_DIR$\..\..\..\libSources\network.c</name>
+            <excluded>
+                <configuration>EndDeviceEB</configuration>
+            </excluded>
         </file>
     </group>
     <group>

@@ -12,7 +12,7 @@
         <ByteLimit>50</ByteLimit>
     </Stack>
     <DebugChecksum>
-        <Checksum>3341910767</Checksum>
+        <Checksum>1837782448</Checksum>
     </DebugChecksum>
     <CallStack>
         <ShowArgs>0</ShowArgs>
@@ -23,14 +23,19 @@
     <CodeCoverage>
         <Enabled>_ 0</Enabled>
     </CodeCoverage>
-    <Breakpoints>
-        <Bp0>_ "STD_CODE" "LogicalCode:0x184E9" 0 0 0 0 "" 0 ""</Bp0>
-        <Count>1</Count>
-    </Breakpoints>
-    <ChipconEmu>
-        <StopTimersOnHalt>0</StopTimersOnHalt>
-        <LeaveTargetRunning>1</LeaveTargetRunning>
-    </ChipconEmu>
+    <DriverProfiling>
+        <Enabled>0</Enabled>
+        <Mode>1</Mode>
+        <Graph>0</Graph>
+        <Symbiont>0</Symbiont>
+        <Exclusions />
+    </DriverProfiling>
+    <CallStackLog>
+        <Enabled>0</Enabled>
+    </CallStackLog>
+    <CallStackStripe>
+        <ShowTiming>1</ShowTiming>
+    </CallStackStripe>
     <InterruptLog>
         <LogEnabled>0</LogEnabled>
         <GraphEnabled>0</GraphEnabled>
@@ -60,23 +65,22 @@
         <UnspecRange>1</UnspecRange>
         <ActionState>1</ActionState>
     </MemoryMap>
-    <DriverProfiling>
-        <Enabled>0</Enabled>
-        <Mode>1</Mode>
-        <Graph>0</Graph>
-        <Symbiont>0</Symbiont>
-        <Exclusions />
-    </DriverProfiling>
     <Trace1>
         <Enabled>0</Enabled>
         <ShowSource>1</ShowSource>
     </Trace1>
-    <CallStackLog>
-        <Enabled>0</Enabled>
-    </CallStackLog>
-    <CallStackStripe>
-        <ShowTiming>1</ShowTiming>
-    </CallStackStripe>
+    <Simulator>
+        <Freq>50000000</Freq>
+        <FreqHi>0</FreqHi>
+    </Simulator>
+    <Breakpoints>
+        <Bp0>_ "STD_CODE" "LogicalCode:0x184E9" 0 0 0 0 "" 0 ""</Bp0>
+        <Count>1</Count>
+    </Breakpoints>
+    <ChipconEmu>
+        <StopTimersOnHalt>1</StopTimersOnHalt>
+        <LeaveTargetRunning>1</LeaveTargetRunning>
+    </ChipconEmu>
     <LogFile>
         <LoggingEnabled>_ 0</LoggingEnabled>
         <LogFile>_ ""</LogFile>
@@ -90,8 +94,4 @@
         <Count>0</Count>
         <SuppressDialog>0</SuppressDialog>
     </Aliases>
-    <Simulator>
-        <Freq>50000000</Freq>
-        <FreqHi>0</FreqHi>
-    </Simulator>
 </settings>

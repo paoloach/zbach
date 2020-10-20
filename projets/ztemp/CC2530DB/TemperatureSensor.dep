@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
     <fileVersion>2</fileVersion>
-    <fileChecksum>322383581</fileChecksum>
+    <fileChecksum>2522283396</fileChecksum>
     <configuration>
         <name>EndDeviceEB</name>
         <outputs>
@@ -950,7 +950,7 @@
             <inputs>
                 <tool>
                     <name>BICOMP</name>
-                    <file> 90 121 87 131 106 96 86 117 48 8 123 119 92 47 125 149 443 25 659 141 104 161 94 138 103 30 115 82 157 163 54 302 571 111 337 89 91 151 34 7 84 24 135 113</file>
+                    <file> 123 131 87 119 92 117 48 8 121 106 96 90 86 47 125 149 443 25 659 141 104 161 94 138 103 30 115 82 157 163 54 302 571 111 337 89 91 151 34 7 84 24 135 113</file>
                 </tool>
                 <tool>
                     <name>ICC8051</name>
@@ -3343,8 +3343,8 @@
             <tool>ICC8051</tool>
         </forcedrebuild>
         <forcedrebuild>
-            <name>[MULTI_TOOL]</name>
-            <tool>XLINK</tool>
+            <name>$PROJ_DIR$\..\..\..\libSources\network.c</name>
+            <tool>C-STAT</tool>
         </forcedrebuild>
     </configuration>
     <configuration>
