@@ -59,7 +59,7 @@ static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg );
 static void initReport(void);
 static void nextReportEvent(void);
 static void eventReport(void);
-#define DEFAULT_REPORT_SEC      30
+#define DEFAULT_REPORT_SEC      300
 uint16 reportSecond = DEFAULT_REPORT_SEC;
 uint16 reportSecondCounter;
 uint8 reportSeqNum;
@@ -102,15 +102,15 @@ void temperatureSensorInit( byte task_id ){
 
 static void initReport(void){
   reportSecondCounter = reportSecond;
-  reportDstAddr.addrMode = (afAddrMode_t)AddrNotPresent;
+  reportDstAddr.addrMode = afAddr16Bit;
   reportDstAddr.endPoint = 0;
   reportDstAddr.addr.shortAddr = 0;
   nextReportEvent();
 }
 
 void nextReportEvent(void) {
-  uint16 nextReportEventSec = 30;
-  if (reportSecondCounter < 30)
+  uint16 nextReportEventSec = 10;
+  if (reportSecondCounter < 10)
     nextReportEventSec = reportSecondCounter;
   
   reportSecondCounter -= nextReportEventSec;
@@ -119,9 +119,12 @@ void nextReportEvent(void) {
 
 static void eventReport(void) {
   if (reportSecondCounter <= 0){
+    reportDstAddr.panId=_NIB.nodeDepth;
     reportDstAddr.endPoint=ENDPOINT;
-    reportDstAddr.panId=_NIB.nwkPanId;
     temperatureClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
+#if !defined RTR_NWK   
+    powerClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
+#endif    
 #ifdef DHT12
     humidityRelativeClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
 #endif
@@ -204,12 +207,6 @@ uint16 temperatureSensorEventLoop( uint8 task_id, uint16 events ){
           return events ^ FAST_BLINK;
   }
 
-  #if !defined RTR_NWK
-  if ( events & READ_BATTERY_LEVEL ) {
-    powerClusterCheckBattery(task_id);
-    events = events ^ READ_BATTERY_LEVEL;
-  }
-  #endif	
 
   if ( events & READ_TEMP_MASK ) {
     return readTemperatureLoop(events);

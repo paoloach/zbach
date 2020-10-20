@@ -91,11 +91,10 @@ void clusterTemperatureMeasurementeInit(void) {
   DIR1_5 = 1;
   DIR1_3 = 1;
   P1_5=0;
-  P1_3=1;
   P1_0 = 0;
   countMinutes = 2*MINUTES_BETWEEN;
   readTemperature();
-  osal_start_timerEx( temperatureSensorTaskID, READ_TEMP_EVT, TIME_READ_ms );
+ // osal_start_timerEx( temperatureSensorTaskID, READ_TEMP_EVT, TIME_READ_ms );
 #endif
 }
 
@@ -157,16 +156,15 @@ void readTemperature(void) {
 		P1_5=1;
 		P1_4=1;
 		osal_pwrmgr_task_state(temperatureSensorTaskID, PWRMGR_HOLD);
-		osal_start_timerEx( temperatureSensorTaskID, START_READ_TEMP, 100 );
+//		osal_start_timerEx( temperatureSensorTaskID, START_READ_TEMP, 100 );
 		countMinutes=0;
 	}
-	osal_start_timerEx( temperatureSensorTaskID, READ_TEMP_EVT, TIME_READ_ms );
+//	osal_start_timerEx( temperatureSensorTaskID, READ_TEMP_EVT, TIME_READ_ms );
 }
 
 
 void startReadSyncronus(void) {
 	P1_5 = 1;
-	P1_3=0;
 	T3CTL = 0x04 | 0xA0; //Clear counter. interrupt disable. Compare mode. 4us at cycle
 	T3CCTL0 = 0x4; // compare mode
 	T3CCTL1 = 0;
@@ -179,7 +177,6 @@ void startReadSyncronus(void) {
 		
 	if (reset()==0){
 		P1_5=0; 
-		P1_3=1;
 		osal_pwrmgr_task_state(temperatureSensorTaskID, PWRMGR_CONSERVE);
 		return;
 	}
@@ -205,7 +202,6 @@ void finalizeReadTemp(void){
 	
 	temp += decTemperatureValue >> 4;
 	P1_5=0;  
-	P1_3=1;
 	osal_pwrmgr_task_state(temperatureSensorTaskID, PWRMGR_CONSERVE);
 }
 
@@ -213,32 +209,28 @@ void finalizeReadTemp(void){
 uint8 reset() {
 	
 	P1_LOW;
-	P1_3=1;
 	T3_div=6;
 	T3_clear=1;
 	T3CNT=0;
 	T3_start=1;
 	while(T3CNT <250 );
 	T3_start=0;
-	P1_3=0;
 	P1_HIGH;
 	T3_clear=1;
 	T3_start=1;
 	while(T3CNT < 30);
-	P1_3=1;
 	T3_clear=1;
 	while(T3CNT < 240  && P1_0 == 1);
 	
 	if (P1_0 == 1){
 		return 0;
 	}
-	if (P1_0 == 0){
-		P1_3=0;
+        T3_clear=1;
+	while(T3CNT < 240){
+          if (P1_0 == 1)
+            return 1;
 	}
-	while(P1_0==0){
-		P1_3=0;
-	}
-	return 1;
+	return 0;
 }
 
 void write(unsigned char byte){
@@ -299,8 +291,8 @@ uint8  read(void) {
 void temperatureClusterSendReport(uint8 endpoint, afAddrType_t * dstAddr, uint8 * segNum){
   zclReportCmd_t *pReportCmd;
 
-//  if (temp == 0xFFFF)
-//    return;
+  if (temp == 0xFFFF)
+    return;
   
   pReportCmd = osal_mem_alloc( sizeof(zclReportCmd_t) + sizeof(zclReport_t) );
   if ( pReportCmd != NULL ) {

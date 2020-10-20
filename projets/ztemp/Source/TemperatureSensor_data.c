@@ -26,7 +26,9 @@ const cId_t temperatureInClusterList[] ={
 	ZCL_CLUSTER_ID_GEN_IDENTIFY,
 	ZCL_CLUSTER_ID_GEN_POWER_CFG,
 	ZCL_CLUSTER_ID_MS_TEMPERATURE_MEASUREMENT,
+#ifdef DHT12         
         ZCL_CLUSTER_ID_MS_RELATIVE_HUMIDITY
+#endif          
 };
 
 const cId_t temperatureOutClusterList[] ={

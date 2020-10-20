@@ -219,7 +219,7 @@ extern uint8 aExtendedAddress[8];
 #endif
 #endif
 #if defined RTR_NWK
-#define MAXMEMHEAP 3500
+#define MAXMEMHEAP 3400
 #else
 #define MAXMEMHEAP 3900
 #endif

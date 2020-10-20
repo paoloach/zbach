@@ -1465,7 +1465,7 @@
                 <option>
                     <name>CCDefines</name>
                     <state>POWER=TX_PWR_PLUS_2</state>
-                    <state>HAL_LED=1</state>
+                    <state>HAL_LED=FALSE</state>
                     <state>SECURE=1</state>
                     <state>OSC32K_CRYSTAL_INSTALLED=FALSE</state>
                     <state>HAL_KEY=FALSE</state>
@@ -4570,7 +4570,7 @@
                 </option>
                 <option>
                     <name>Linker Extra Options Edit</name>
-                    <state>-C $PROJ_DIR$\..\..\..\lib\EndDevice-Pro.lib</state>
+                    <state>-C $PROJ_DIR$\..\..\..\lib\Router-Pro.lib</state>
                     <state>-C $PROJ_DIR$\..\..\..\lib\Security.lib</state>
                     <state>-C $PROJ_DIR$\..\..\..\lib\TIMAC-CC2530.lib</state>
                 </option>
@@ -4914,6 +4914,12 @@
                 </group>
             </group>
         </group>
+    </group>
+    <group>
+        <name>libSource</name>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\libSources\network.c</name>
+        </file>
     </group>
     <group>
         <name>MAC</name>

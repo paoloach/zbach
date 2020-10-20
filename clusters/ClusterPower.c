@@ -22,6 +22,7 @@
 
 static uint16 mainVoltage=0;
 static uint16 batteryVoltage=0xFF;
+static uint16 batteryPercRemaining=100;
 static uint8  batteryAlarmMask=0x0;
 extern NodePowerDescriptorFormat_t ZDO_Config_Power_Descriptor;
 
@@ -29,13 +30,10 @@ extern NodePowerDescriptorFormat_t ZDO_Config_Power_Descriptor;
 
 
 void powerClusterInit(byte appId) {
-	#if !defined RTR_NWK
-	osal_start_timerEx( appId, READ_BATTERY_LEVEL, BATTERY_POLL_TIME_MS );
-#endif
 }
 
 #if !defined RTR_NWK
-void powerClusterCheckBattery(byte appId) {
+void powerClusterCheckBattery(void) {
 	readBatteryVolt();
 	if (batteryVoltage > 0x30){
 		ZDO_Config_Power_Descriptor.CurrentPowerSourceLevel = NODEPOWER_LEVEL_100;
@@ -46,7 +44,6 @@ void powerClusterCheckBattery(byte appId) {
 	} else {
 		ZDO_Config_Power_Descriptor.CurrentPowerSourceLevel = NODEPOWER_LEVEL_CRITICAL;
 	}
-	osal_start_timerEx( appId, READ_BATTERY_LEVEL, BATTERY_POLL_TIME_MS );
 }
 #endif
 
@@ -63,15 +60,27 @@ void powerClusterReadAttribute(zclAttrRec_t * attribute) {
 		break;
 	case ATTRID_POWER_CFG_BATTERY_VOLTAGE:
 	#if !defined RTR_NWK		
-		readBatteryVolt();
+		powerClusterCheckBattery();
     #endif
 		attribute->dataType = ZCL_DATATYPE_UINT8;
 		attribute->dataPtr = (void *)&batteryVoltage;
 		break;
+        case ATTRID_POWER_CFG_BATTERY_PERCENTAGE_REMAINING:
+		attribute->dataType = ZCL_DATATYPE_UINT8;
+		attribute->dataPtr = (void *)&batteryPercRemaining;
+                break;
 	case ATTRID_POWER_CFG_BAT_ALARM_MASK:
 		attribute->dataType = ZCL_DATATYPE_BITMAP8;
 		attribute->dataPtr = (void *)&batteryAlarmMask;
 		break;	
+        case ATTRID_POWER_CFG_BAT_SIZE:
+          	attribute->dataType = ZCL_DATATYPE_ENUM8;
+		attribute->dataPtr = (void *)&batterySize;
+		break;
+        case ATTRID_POWER_CFG_BAT_QUANTITY:
+          	attribute->dataType = ZCL_DATATYPE_UINT8;
+		attribute->dataPtr = (void *)&batteryQuantity;
+		break;        
 	default:
 		attribute->status = ZCL_STATUS_UNSUPPORTED_ATTRIBUTE;
 	}
@@ -79,12 +88,43 @@ void powerClusterReadAttribute(zclAttrRec_t * attribute) {
 
 #if !defined RTR_NWK
 static void readBatteryVolt(void) {
-	ADCCON3 = 0x2F;
+	ADCCON3 = 0x0F;
 	while (!(ADCCON1 & 0x80));
 	uint32 adch = (uint32)ADCH ;
 	uint32 adcl = (uint32)ADCL;
 	uint32 v = (adch<< 6) + (adcl>> 2);
-	v = (3*115*v)/256;
-	batteryVoltage = v / 10;
+	v = (3*115*v)/0x2000;
+	batteryVoltage = v / 10; 
+        if (batteryVoltage >= 33){
+          batteryPercRemaining=200; 
+        } else if (batteryVoltage <23){
+          batteryPercRemaining=0;
+        } else {
+          batteryPercRemaining = (batteryVoltage-23)*20;
+        }
+
 }
+
+void powerClusterSendReport(uint8 endpoint, afAddrType_t * dstAddr, uint8 * segNum){
+  powerClusterCheckBattery();
+  zclReportCmd_t *pReportCmd;
+  
+  pReportCmd = osal_mem_alloc( sizeof(zclReportCmd_t) + 2*sizeof(zclReport_t) );
+  if ( pReportCmd != NULL ) {
+    pReportCmd->numAttr = 2;
+    pReportCmd->attrList[0].attrID = ATTRID_POWER_CFG_BATTERY_VOLTAGE;
+    pReportCmd->attrList[0].dataType = ZCL_DATATYPE_UINT8;
+    pReportCmd->attrList[0].attrData = (void *)(&batteryVoltage);
+    pReportCmd->attrList[1].attrID = ATTRID_POWER_CFG_BATTERY_PERCENTAGE_REMAINING;
+    pReportCmd->attrList[1].dataType = ZCL_DATATYPE_UINT8;
+    pReportCmd->attrList[1].attrData = (void *)(&batteryPercRemaining);    
+
+    zcl_SendReportCmd( endpoint, dstAddr,
+                       ZCL_CLUSTER_ID_GEN_POWER_CFG,
+                       pReportCmd, ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, (*segNum)++ );
+  }
+
+  osal_mem_free( pReportCmd );
+}
+
 #endif

@@ -200,16 +200,16 @@ extern "C" {
  */
 typedef enum
 {
-  NWK_INIT,
-  NWK_JOINING_ORPHAN,
-  NWK_DISC,
-  NWK_JOINING,
-  NWK_ENDDEVICE,
-  PAN_CHNL_SELECTION,
-  PAN_CHNL_VERIFY,
-  PAN_STARTING,
-  NWK_ROUTER,
-  NWK_REJOINING
+  /* 0 */NWK_INIT,
+  /* 1 */NWK_JOINING_ORPHAN,
+  /* 2 */NWK_DISC,
+  /* 3 */NWK_JOINING,
+  /* 4 */NWK_ENDDEVICE,
+  /* 5 */PAN_CHNL_SELECTION,
+  /* 6 */PAN_CHNL_VERIFY,
+  /* 7 */PAN_STARTING,
+  /* 8 */NWK_ROUTER,
+  /* 9 */NWK_REJOINING
 } nwk_states_t;
 
 // MAC Command Buffer types
@@ -222,91 +222,91 @@ typedef enum
 
 typedef struct
 {
-  byte  SequenceNum;
-  byte  PassiveAckTimeout;
-  byte  MaxBroadcastRetries;
-  byte  MaxChildren;
-  byte  MaxDepth;
-  byte  MaxRouters;
+ /* 00 */  byte  SequenceNum;
+ /* 01 */  byte  PassiveAckTimeout;
+ /* 02 */   byte  MaxBroadcastRetries;
+ /* 03 */  byte  MaxChildren;
+ /* 04 */  byte  MaxDepth;
+ /* 05 */  byte  MaxRouters;
 
-  byte  dummyNeighborTable;     // to make everything a byte!!
+ /* 06 */  byte  dummyNeighborTable;     // to make everything a byte!!
 
-  byte  BroadcastDeliveryTime;
-  byte  ReportConstantCost;
-  byte  RouteDiscRetries;
+ /* 07 */  byte  BroadcastDeliveryTime;
+ /* 08 */  byte  ReportConstantCost;
+ /* 09 */  byte  RouteDiscRetries;
 
-  byte  dummyRoutingTable;      // to make everything a byte!!
+ /* 0A */  byte  dummyRoutingTable;      // to make everything a byte!!
 
-  byte  SecureAllFrames;
-  byte  SecurityLevel;
+ /* 0B */   byte  SecureAllFrames;
+ /* 0C */   byte  SecurityLevel;
 #if defined ( COMPATIBILITY_221 )   // Obsolete - do not use
-  byte  nwkAllFresh;
+  byte  nwkAllFresh
 #endif
-  byte  SymLink;
-  byte  CapabilityFlags;
+ /* 0D */  byte  SymLink;
+ /* 0E */   byte  CapabilityFlags;
 
-  uint16 TransactionPersistenceTime;
+ /* 0F */  uint16 TransactionPersistenceTime;
 
-  byte   nwkProtocolVersion;
+ /* 11 */  byte   nwkProtocolVersion;
 
   // non-standard attributes
-  byte  RouteDiscoveryTime;
-  byte  RouteExpiryTime;        // set to 0 to turn off expiration of routes
+ /* 12 */   byte  RouteDiscoveryTime;
+ /* 13 */  byte  RouteExpiryTime;        // set to 0 to turn off expiration of routes
 
   // non-settable
-  uint16  nwkDevAddress;
-  byte    nwkLogicalChannel;
-  uint16  nwkCoordAddress;
-  byte    nwkCoordExtAddress[Z_EXTADDR_LEN];
-  uint16  nwkPanId;
+/* 14 */   uint16  nwkDevAddress;
+/* 16 */   byte    nwkLogicalChannel;
+/* 17 */   uint16  nwkCoordAddress;
+/* 19 */   byte    nwkCoordExtAddress[Z_EXTADDR_LEN];
+/* 21 */   uint16  nwkPanId;
 
   // Other global items - non-settable
-  nwk_states_t  nwkState;
-  uint32        channelList;
-  byte          beaconOrder;
-  byte          superFrameOrder;
-  byte          scanDuration;
-  byte          battLifeExt;
-  uint32        allocatedRouterAddresses;
-  uint32        allocatedEndDeviceAddresses;
-  byte          nodeDepth;
+/* 23 */   nwk_states_t  nwkState;
+/* 24 */   uint32        channelList;
+/* 28 */   byte          beaconOrder;
+/* 29 */   byte          superFrameOrder;
+/* 2A */   byte          scanDuration;
+/* 2B */   byte          battLifeExt;
+/* 2C */   uint32        allocatedRouterAddresses;
+/* 30 */   uint32        allocatedEndDeviceAddresses;
+/* 34 */   byte          nodeDepth;
 
   // Version 1.1 - extended PAN ID
-  uint8         extendedPANID[Z_EXTADDR_LEN];
+/* 35 */   uint8         extendedPANID[Z_EXTADDR_LEN];
 
   // Network key flag
-  uint8      nwkKeyLoaded;
+/* 3D */   uint8      nwkKeyLoaded;
   // Key information - Moved out of the NIB structure after ZStack 2.3.0
   // If these elements are going to be reused make sure to consider the size
   // of the structures and padding specific to the target where the stack is
   // going to be running.
-  nwkKeyDesc spare1;    // Not used
-  nwkKeyDesc spare2;    // Not used
+ /* 3E */  nwkKeyDesc spare1;    // Not used
+ /* 4F */  nwkKeyDesc spare2;    // Not used
 
   // Zigbee Pro extensions
-  uint8      nwkAddrAlloc;
-  uint8      nwkUniqueAddr;
-  uint8      nwkLinkStatusPeriod;   // The time in seconds betwee link status
+ /* 60 */  uint8      nwkAddrAlloc;
+ /* 61 */  uint8      nwkUniqueAddr;
+ /* 62 */  uint8      nwkLinkStatusPeriod;   // The time in seconds betwee link status
                                     // command frames
-  uint8      nwkRouterAgeLimit;     // The number of missed link status
+ /* 63 */  uint8      nwkRouterAgeLimit;     // The number of missed link status
                                     // command frames before resetting the
                                     // link cost to zero
-  uint8      nwkUseMultiCast;
+ /* 64 */  uint8      nwkUseMultiCast;
   // ZigBee Pro extentions: MTO routing
-  uint8      nwkIsConcentrator;             // If set, then the device is concentrator
-  uint8      nwkConcentratorDiscoveryTime;  // Time period between two consecutive MTO route discovery
-  uint8      nwkConcentratorRadius;         // Broadcast radius of the MTO route discovery
+ /* 65 */  uint8      nwkIsConcentrator;             // If set, then the device is concentrator
+ /* 66 */  uint8      nwkConcentratorDiscoveryTime;  // Time period between two consecutive MTO route discovery
+ /* 67 */  uint8      nwkConcentratorRadius;         // Broadcast radius of the MTO route discovery
 
 #if defined ( COMPATIBILITY_221 )   // Obsolete - do not use
   uint8      nwkMaxSourceRoute;
   uint8      nwkSrcRtgExpiryTime;
 #else
-  uint8      nwkAllFresh;
+  /* 68 */ uint8      nwkAllFresh;
 #endif
 
-  uint16     nwkManagerAddr;        // Network Manager Address
-  uint16     nwkTotalTransmissions;
-  uint8      nwkUpdateId;
+ /* 69 */  uint16     nwkManagerAddr;        // Network Manager Address
+ /* 6B*/  uint16     nwkTotalTransmissions;
+ /* 6D */  uint8      nwkUpdateId;
 } nwkIB_t;
 
 // Scanned PAN IDs to be used for Network Report command
