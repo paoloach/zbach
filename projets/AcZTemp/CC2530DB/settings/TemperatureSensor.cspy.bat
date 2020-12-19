@@ -19,22 +19,6 @@
 @REM 
 
 
-@echo off 
+"C:\Program Files\IAR Systems\Embedded Workbench 6.5\common\bin\cspybat" "C:\Program Files\IAR Systems\Embedded Workbench 6.5\8051\bin\8051proc.dll" "C:\Program Files\IAR Systems\Embedded Workbench 6.5\8051\bin\8051emu_cc.dll"  %1 --plugin "C:\Program Files\IAR Systems\Embedded Workbench 6.5\8051\bin\8051bat.dll" --backend -B "--proc_core" "plain" "--proc_code_model" "banked" "--proc_nr_virtual_regs" "16" "--proc_pdata_bank_reg_addr" "0x93" "--proc_dptr_nr_of" "1" "--proc_codebank_reg" "0x9F" "--proc_codebank_start" "0x8000" "--proc_codebank_end" "0xFFFF" "--proc_codebank_mask" "0xFF" "--proc_data_model" "large" "-p" "C:\Program Files\IAR Systems\Embedded Workbench 6.5\8051\config\devices\Texas Instruments\ioCC2530F256.ddf" "--proc_exclude_exit_breakpoint" "--proc_driver" "chipcon" "--erase_flash" "--verify_download" "use_crc16" "--stack_overflow" "--number_of_banks" "4" 
 
-if not "%~1" == "" goto debugFile 
 
-@echo on 
-
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\pachd\OneDrive\Documents\projects\zbach\projets\ztemp\CC2530DB\settings\TemperatureSensor.EndDeviceEB.general.xcl" --backend -f "C:\Users\pachd\OneDrive\Documents\projects\zbach\projets\ztemp\CC2530DB\settings\TemperatureSensor.EndDeviceEB.driver.xcl" 
-
-@echo off 
-goto end 
-
-:debugFile 
-
-@echo on 
-
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\pachd\OneDrive\Documents\projects\zbach\projets\ztemp\CC2530DB\settings\TemperatureSensor.EndDeviceEB.general.xcl" "--debug_file=%~1" --backend -f "C:\Users\pachd\OneDrive\Documents\projects\zbach\projets\ztemp\CC2530DB\settings\TemperatureSensor.EndDeviceEB.driver.xcl" 
-
-@echo off 
-:end

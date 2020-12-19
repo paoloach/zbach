@@ -1,0 +1,512 @@
+typedef struct
+{
+  uint8  event;
+  uint8  status;
+} osal_event_hdr_t;
+
+
+
+typedef struct
+{
+  uint8     LinkQuality;      /* The link quality of the received data frame */
+  uint8     correlation;      /* The raw correlation value of the received data frame */
+  int8      rssi;             /* The received RF power in units dBm */
+} NLDE_Signal_t;
+
+typedef struct
+{
+(0x1A)  byte FrmCtrl;
+(0x1B)  byte XtndFrmCtrl;
+(0x1C)  byte DstEndPoint;
+(0x1A)  byte SrcEndPoint;
+(0x1D)   uint16 GroupID;
+(0x1F)   uint16 ClusterID;
+(0x21)   uint16 ProfileID;
+(0x23)   uint16 macDestAddr;
+(0x25)   byte wasBroadcast;
+(0x26)   byte apsHdrLen;
+(0x27)   byte *asdu;
+(0x29)   byte asduLength;
+(0x2A)   byte ApsCounter;
+(0x2B)   uint8 transID;
+(0x2C)   uint8 BlkCount;
+(0x2D)   uint8 AckBits;
+(0x2E)   uint16 macSrcAddr;
+} aps_FrameFormat_t;
+
+
+
+#define Z_EXTADDR_LEN   8
+
+typedef byte ZLongAddr_t[Z_EXTADDR_LEN];
+
+typedef struct
+{
+  union
+  {
+ (0x02)   uint16      shortAddr;
+ (0x02)   ZLongAddr_t extAddr;
+  } addr;
+ (0x0A) byte addrMode;
+} zAddrType_t;
+
+
+typedef struct
+{
+  uint16             nwkSrcAddr;
+  uint8              nwkSecure;
+  aps_FrameFormat_t* aff;
+} APS_CmdInd_t;
+
+typedef struct
+{
+(0)    osal_event_hdr_t hdr;      // 0
+(0x02)  zAddrType_t SrcAddress;    // +0x02
+(0x0C)  uint16 SrcPanId;           // +0x0C 
+(0x0E)  uint16 macDestAddr;        // +0x0E
+(0x10)  NLDE_Signal_t sig;         // +0x  
+(0x13)  byte SecurityUse;
+(0x14)  uint32 timestamp;
+(0x18)  uint8 nwkSeqNum;
+(0x19)  uint8 radius;
+(0x1A)  aps_FrameFormat_t aff;
+} apsInMsg_t;
+
+
+
+APS_event_loop( uint8 task_id, uint16 events )
+
+//  Relative segment, address: XDATA 00000D15 - 00000D16 (0x2 bytes), align: 0
+//  Segment part 22.            Intra module refs:   APS_AddDupRej
+//                                                   APS_MaintainDupRejTable
+//													 APS_event_loop
+static uint8 *  tmp1DupRej;                                                
+
+
+
+APS_event_loop:
+ 0026B1  74 F4           MOV   A,#0xF4
+ 0026B3  12 03 92        LCALL ?BANKED_ENTER_XDATA
+ 0026B6  8A 08           MOV   V0,R2
+ 0026B8  8B 09           MOV   V1,R3
+ 0026BA  EB              MOV   A,R3
+ 0026BB  54 80           ANL   A,#0x80
+ 0026BD  70 03           JNZ   0x26C2
+ 0026BF  02 27 84        LJMP  0x2784
+ 
+ 0026C2  90 0C FA        MOV   DPTR,#0x0CFA //APS_TaskID
+ 0026C5  E0              MOVX  A,@DPTR
+ 0026C6  F9              MOV   R1,A
+ 
+ //    uint8 *msgPtr;
+ // msgPtr =  osal_msg_receive(task_id)
+ 0026C7  12 0F 63        LCALL osal_msg_receive::?relay(R1=task_id)->uint8(R3:R2) * 
+ 
+ 0026CA  8A 0A           MOV   V2,R2
+ 0026CC  8B 0B           MOV   V3,R3
+ 0026CE  AE 0A           MOV   R6,V2
+ 0026D0  AF 0B           MOV   R7,V3
+ 0026D2  EE              MOV   A,R6
+ 0026D3  4F              ORL   A,R7
+ 0026D4  70 03           JNZ   0x26D9   
+ 0026D6  02 27 7B        LJMP  0x277B // if (msgPtr == null)->0x277B
+ 
+ 0026D9  12 56 71        LCALL 0x5671 //DPTR = msgPtr+0x2A
+ 0026DC  E0              MOVX  A,@DPTR // A=*(msgPtr+0x2A) // msgPtr->ApsCounter
+ 0026D9  12 56 71        LCALL 0x5671
+ 0026DC  E0              MOVX  A,@DPTR
+ 0026DD  F9              MOV   R1,A    // R1=*(msgPtr+0x2A) //R1= msgPtr->ApsCounter
+ 
+ 0026DE  12 4A D9        LCALL 0x4AD9   // R7:R6 = msgPtr+2 // msgPtr->SrcAddress
+ 0026E1  90 0D 15        MOV   DPTR,#0x0D15  // tmp1DupRej
+ 0026E4  12 52 71        LCALL 0x5271  // R4:R5 = *tmp1DupRej; dptr = msgPtr 
+ 0026E7  A3              INC   DPTR
+ 0026E8  A3              INC   DPTR
+ 0026E9  A3              INC   DPTR
+ 0026EA  A3              INC   DPTR
+ 0026EB  A3              INC   DPTR
+ 0026EC  A3              INC   DPTR
+ 0026ED  A3              INC   DPTR
+ 0026EE  A3              INC   DPTR
+ 0026EF  E0              MOVX  A,@DPTR  // A <- *(msgPtr+8)
+ 0026F0  64 02           XRL   A,#0x02
+ 0026F2  70 37           JNZ   0x272B   // return if ( ((msgPtr+8) xor 0x02) != 0)
+ 0026F4  8A 82           MOV   DPL,R2 
+ 0026F6  8B 83           MOV   DPH,R3  // DPTR <- msgPtr
+ 0026F8  12 4B 9F        LCALL 0x4B9F  // R3:R2 = *((uint16*)msgPtr)
+ 0026FB  80 07           SJMP  0x2704 
+ 
+ 0026FD  8C 82           MOV   DPL,R4
+ 0026FF  8D 83           MOV   DPH,R5
+ 002701  12 4B 1D        LCALL 0x4B1D
+ 
+ 002704  EC              MOV   A,R4
+ 002705  4D              ORL   A,R5
+ 002706  60 20           JZ    0x2728 // jump if (*tmp1DupRej==0)
+ 
+ 002708  8C 82           MOV   DPL,R4
+ 00270A  8D 83           MOV   DPH,R5
+ 00270C  E0              MOVX  A,@DPTR
+ 00270D  6A              XRL   A,R2
+ 00270E  70 03           JNZ   0x2713
+ 002710  A3              INC   DPTR
+ 002711  E0              MOVX  A,@DPTR
+ 002712  6B              XRL   A,R3
+ 002711  E0              MOVX  A,@DPTR
+ 002712  6B              XRL   A,R3
+ 002713  70 E8           JNZ   0x26FD
+ 002715  8C 82           MOV   DPL,R4
+ 002717  8D 83           MOV   DPH,R5
+ 002719  A3              INC   DPTR
+ 00271A  A3              INC   DPTR
+ 00271B  E0              MOVX  A,@DPTR
+ 00271C  69              XRL   A,R1
+ 00271D  70 DE           JNZ   0x26FD
+ 00271F  90 0F 3F        MOV   DPTR,#0x0F3F
+ 002722  12 62 99        LCALL 0x6299
+ 002725  F0              MOVX  @DPTR,A
+ 002726  80 4C           SJMP  0x2774
+ 002728  12 16 A1        LCALL APS_AddDupRej::?relay
+ 00272B  8E 82           MOV   DPL,R6
+ 00272D  8F 83           MOV   DPH,R7
+ 00272F  E0              MOVX  A,@DPTR
+ 002730  64 01           XRL   A,#0x01
+ 002732  70 34           JNZ   0x2768
+ 002734  EE              MOV   A,R6
+ 002735  24 18           ADD   A,#0x18
+ 002737  12 27 D8        LCALL 0x27D8
+ 00273A  12 08 5B        LCALL ?PUSH_XSTACK_I_ONE
+ 00273D  12 4D 5C        LCALL 0x4D5C
+ 002740  12 06 88        LCALL ?PUSH_XSTACK8_X_FOUR
+ 002743  EE              MOV   A,R6
+ 002744  24 12           ADD   A,#0x12
+ 002746  12 27 D8        LCALL 0x27D8
+ 002749  12 08 5B        LCALL ?PUSH_XSTACK_I_ONE
+ 00274C  12 5C D1        LCALL 0x5CD1
+ 00274F  12 08 57        LCALL ?PUSH_XSTACK_I_TWO
+ 002752  12 33 55        LCALL 0x3355
+ 002755  12 06 8C        LCALL ?PUSH_XSTACK8_X_TWO
+ 002758  EE              MOV   A,R6
+ 002755  12 06 8C        LCALL ?PUSH_XSTACK8_X_TWO
+ 002758  EE              MOV   A,R6
+ 002759  24 17           ADD   A,#0x17
+ 00275B  12 5C DD        LCALL 0x5CDD
+ 00275E  12 20 B5        LCALL afIncomingData::?relay
+ 002761  74 0A           MOV   A,#0x0A
+ 002763  12 08 19        LCALL ?DEALLOC_XSTACK8
+ 002766  80 0C           SJMP  0x2774
+ 002768  E0              MOVX  A,@DPTR
+ 002769  64 02           XRL   A,#0x02
+ 00276B  70 07           JNZ   0x2774
+ 00276D  EE              MOV   A,R6
+ 00276E  FA              MOV   R2,A
+ 00276F  EF              MOV   A,R7
+ 002770  FB              MOV   R3,A
+ 002771  12 17 79        LCALL APSME_CmdPkt::?relay
+ 002774  EE              MOV   A,R6
+ 002775  FA              MOV   R2,A
+ 002776  EF              MOV   A,R7
+ 002777  FB              MOV   R3,A
+ 002778  12 0F 51        LCALL osal_msg_deallocate::?relay
+ 00277B  AA 08           MOV   R2,V0
+ 00277D  E5 09           MOV   A,V1
+ 00277F  64 80           XRL   A,#0x80
+ 002781  FB              MOV   R3,A
+ 002782  80 51           SJMP  0x27D5
+ 002784  EA              MOV   A,R2
+ 002785  54 02           ANL   A,#0x02
+ 002787  60 0C           JZ    0x2795
+ 002789  90 0F 4B        MOV   DPTR,#0x0F4B
+ 00278C  74 01           MOV   A,#0x01
+ 00278E  F0              MOVX  @DPTR,A
+ 00278F  EA              MOV   A,R2
+ 002790  64 02           XRL   A,#0x02
+ 002792  FA              MOV   R2,A
+ 002790  64 02           XRL   A,#0x02
+ 002792  FA              MOV   R2,A
+ 002793  80 40           SJMP  0x27D5
+ 002795  EA              MOV   A,R2
+ 002796  54 04           ANL   A,#0x04
+ 002798  60 09           JZ    0x27A3
+ 00279A  12 16 8F        LCALL APS_EndDeviceBroadcastTimer::?relay
+ 00279D  E5 08           MOV   A,V0
+ 00279F  64 04           XRL   A,#0x04
+ 0027A1  80 29           SJMP  0x27CC
+ 0027A3  EA              MOV   A,R2
+ 0027A4  54 08           ANL   A,#0x08
+ 0027A6  60 29           JZ    0x27D1
+ 0027A8  12 16 9B        LCALL APS_MaintainDupRejTable::?relay
+ 0027AB  8B 0B           MOV   V3,R3
+ 0027AD  EA              MOV   A,R2
+ 0027AE  45 0B           ORL   A,V3
+ 0027B0  70 16           JNZ   0x27C8
+ 0027B1  16              DEC   @R0
+ 0027B2  90 0D 17        MOV   DPTR,#0x0D17
+ 0027B5  E4              CLR   A
+ 0027B6  F0              MOVX  @DPTR,A
+ 0027B7  A3              INC   DPTR
+ 0027B8  F0              MOVX  @DPTR,A
+ 0027B9  A3              INC   DPTR
+ 0027BA  F0              MOVX  @DPTR,A
+ 0027BB  A3              INC   DPTR
+ 0027BC  F0              MOVX  @DPTR,A
+ 0027BD  7A 08           MOV   R2,#0x08
+ 0027BF  FB              MOV   R3,A
+ 0027C0  90 0C FA        MOV   DPTR,#0x0CFA
+ 0027C3  E0              MOVX  A,@DPTR
+ 0027C4  F9              MOV   R1,A
+ 0027C5  12 10 C5        LCALL osal_stop_timerEx::?relay
+ 0027C8  E5 08           MOV   A,V0
+ 
+ 
+ 
+  004AC3  EF              MOV   A,R7
+ 004AC4  FB              MOV   R3,A
+ 004AC5  90 0D 21        MOV   DPTR,#0x0D21
+ 004AC8  12 48 B0        LCALL 0x48B0
+ 004ACB  12 05 1D        LCALL ?CALL_IND
+ 004ACE  02 3F F7        LJMP  0x3FF7
+ 004AD1  24 2B           ADD   A,#0x2B
+ 004AD3  F5 82           MOV   DPL,A
+ 004AD5  E4              CLR   A
+ 004AD6  22              RET
+ 004AD7  7D 00           MOV   R5,#0x00
+
+
+// R7:R6 = R2:R3+2
+ 004AD9  EE              MOV   A,R6
+ 004ADA  24 02           ADD   A,#0x02
+ 004ADC  FA              MOV   R2,A
+ 004ADD  E4              CLR   A
+ 004ADE  3F              ADDC  A,R7
+ 004ADF  FB              MOV   R3,A
+ 004AE0  22              RET
+
+ 004AE1  A3              INC   DPTR
+ 004AE2  E0              MOVX  A,@DPTR
+ 004AE3  8E 82           MOV   DPL,R6
+ 004AE5  8F 83           MOV   DPH,R7
+ 004AE7  22              RET
+ 004AE8  12 4B 25        LCALL 0x4B25
+ 004AEB  EE              MOV   A,R6
+ 004AEC  FA              MOV   R2,A
+ 004AED  EF              MOV   A,R7
+ 004AEE  FB              MOV   R3,A
+ 004AEF  22              RET
+ 004AF0  12 4E 27        LCALL 0x4E27
+ 004AF3  12 4A F7        LCALL 0x4AF7
+ 004AF6  22              RET
+ 004AF7  E0              MOVX  A,@DPTR
+ 004AF8  8E 82           MOV   DPL,R6
+ 004AFA  8F 83           MOV   DPH,R7
+ 004AFC  A3              INC   DPTR
+ 004AFD  22              RET
+ 004AFE  E0              MOVX  A,@DPTR
+ 004AFF  85 08 82        MOV   DPL,V0
+ 004B02  85 09 83        MOV   DPH,V1
+ 004B05  A3              INC   DPTR
+ 004B06  A3              INC   DPTR
+ 004B07  A3              INC   DPTR
+ 004B08  22              RET
+ 004B09  74 01           MOV   A,#0x01
+ 004B0B  F0              MOVX  @DPTR,A
+ 004B0C  AA 18           MOV   R2,XSP(L)
+ 004B0E  AB 19           MOV   R3,XSP(H)
+ 004B10  22              RET
+ 004B11  12 38 C2        LCALL 0x38C2
+ 004B14  74 04           MOV   A,#0x04
+ 004B16  22              RET
+ 004B17  A3              INC   DPTR
+ 004B18  A3              INC   DPTR
+ 004B19  A3              INC   DPTR
+ 004B18  A3              INC   DPTR
+ 004B19  A3              INC   DPTR
+ 004B1A  A3              INC   DPTR
+ 004B1B  A3              INC   DPTR
+ 004B1C  A3              INC   DPTR
+ 004B1D  A3              INC   DPTR
+ 004B1E  A3              INC   DPTR
+ 004B1F  A3              INC   DPTR
+ 004B20  A3              INC   DPTR
+ 004B21  12 4B 25        LCALL 0x4B25
+ 004B24  22              RET
+
+// R5:R4<-@DPTR
+ 004B25  E0              MOVX  A,@DPTR
+ 004B26  FC              MOV   R4,A
+ 004B27  A3              INC   DPTR
+ 004B28  E0              MOVX  A,@DPTR
+ 004B29  FD              MOV   R5,A
+ 004B2A  22              RET
+
+
+ 004B2B  A3              INC   DPTR
+ 004B2C  12 2F 41        LCALL 0x2F41
+ 004B2F  FA              MOV   R2,A
+ 004B30  A3              INC   DPTR
+ 004B31  E0              MOVX  A,@DPTR
+ 004B32  FB              MOV   R3,A
+ 004B33  22              RET
+ 004B34  12 5F CA        LCALL 0x5FCA
+ 004B37  E0              MOVX  A,@DPTR
+ 004B38  22              RET
+ 004B39  F5 83           MOV   DPH,A
+ 004B3B  74 01           MOV   A,#0x01
+ 004B3D  12 64 56        LCALL 0x6456
+ 004B40  A3              INC   DPTR
+ 004B41  E0              MOVX  A,@DPTR
+ 004B42  22              RET
+APSME_SecurityNM:
+ 004B43  C0 82           PUSH  DPL
+ 004B45  C0 83           PUSH  DPH
+ 004B47  12 17 37        LCALL APSME_FrameSecNM::?relay
+ 004B4A  90 0D 23        MOV   DPTR,#0x0D23
+ 004B4D  74 73           MOV   A,#0x73
+ 004B4F  F0              MOVX  @DPTR,A
+ 004B50  A3              INC   DPTR
+ 004B51  74 17           MOV   A,#0x17
+ 004B53  F0              MOVX  @DPTR,A
+ 004B54  02 48 19        LJMP  0x4819
+APSME_SecurityRM_ED:
+ 004B57  C0 82           PUSH  DPL
+ 004B59  C0 83           PUSH  DPH
+ 004B5B  12 17 37        LCALL APSME_FrameSecNM::?relay
+ 004B5E  90 0D 23        MOV   DPTR,#0x0D23
+ 004B61  74 6D           MOV   A,#0x6D
+ 004B63  F0              MOVX  @DPTR,A
+ 004B64  A3              INC   DPTR
+ 004B65  74 17           MOV   A,#0x17
+ 004B67  F0              MOVX  @DPTR,A
+ 004B68  02 48 19        LJMP  0x4819
+APSME_SecurityCM_ED:
+ 004B6B  C0 82           PUSH  DPL
+ 004B6D  C0 83           PUSH  DPH
+ 004B6F  12 17 31        LCALL APSME_FrameSecCM::?relay
+ 004B72  90 0D 23        MOV   DPTR,#0x0D23
+ 004B75  74 67           MOV   A,#0x67
+ 004B77  F0              MOVX  @DPTR,A
+ 004B78  A3              INC   DPTR
+ 004B79  74 17           MOV   A,#0x17
+ 004B7B  F0              MOVX  @DPTR,A
+ 004B7C  02 48 19        LJMP  0x4819
+APSME_IsDistributedSecurity:
+ 004B7F  C0 82           PUSH  DPL
+ 004B81  C0 83           PUSH  DPH
+ 004B83  7C 08           MOV   R4,#0x08
+ 004B85  79 FF           MOV   R1,#0xFF
+ 004B87  90 0D 05        MOV   DPTR,#0x0D05
+ 004B8A  12 4B 9F        LCALL 0x4B9F
+ 004B8D  12 0F C3        LCALL osal_isbufset::?relay
+ 004B90  02 48 19        LJMP  0x4819
+ 004B93  8E 82           MOV   DPL,R6
+ 004B95  8F 83           MOV   DPH,R7
+ 004B97  A3              INC   DPTR
+ 004B98  A3              INC   DPTR
+ 004B99  A3              INC   DPTR
+ 004B9A  A3              INC   DPTR
+ 004B9B  A3              INC   DPTR
+ 004B9C  A3              INC   DPTR
+ 004B9D  A3              INC   DPTR
+ 004B9E  A3              INC   DPTR
+ 004B9F  12 4F 5A        LCALL 0x4F5A // R3:R2 <- *((uint16*)DPTR)
+ 004BA2  22              RET
+APSDE_DataConfirm:
+ 004BA3  74 F7           MOV   A,#0xF7
+ 004BA5  12 03 92        LCALL ?BANKED_ENTER_XDATA
+
+
+
+ 004F4B  02 4B D1        LJMP  0x4BD1
+ 004F4E  12 4F 5A        LCALL 0x4F5A
+ 004F51  EA              MOV   A,R2
+ 004F52  4B              ORL   A,R3
+ 004F53  22              RET
+ 004F54  A3              INC   DPTR
+ 004F55  A3              INC   DPTR
+ 004F56  A3              INC   DPTR
+ 004F57  A3              INC   DPTR
+ 004F58  A3              INC   DPTR
+ 004F59  A3              INC   DPTR
+
+// R3:R2 <- *((uint16*)DPTR)
+ 004F5A  E0              MOVX  A,@DPTR
+ 004F5B  FA              MOV   R2,A
+ 004F5C  A3              INC   DPTR
+ 004F5D  E0              MOVX  A,@DPTR
+ 004F5E  FB              MOV   R3,A
+ 004F5F  22              RET
+
+ 004F60  A3              INC   DPTR
+ 004F61  12 4F 65        LCALL 0x4F65
+ 004F64  22              RET
+ 004F65  12 4A 39        LCALL 0x4A39
+ 004F68  A3              INC   DPTR
+ 004F69  A3              INC   DPTR
+ 004F6A  22              RET
+
+
+
+ 
+ 
+  005264  E8              MOV   A,R0
+ 005265  FA              MOV   R2,A
+ 005266  E9              MOV   A,R1
+ 005267  FB              MOV   R3,A
+ 005268  EE              MOV   A,R6
+ 005269  22              RET
+ 00526A  12 4A F7        LCALL 0x4AF7
+ 00526D  A3              INC   DPTR
+ 00526E  A3              INC   DPTR
+ 00526F  A3              INC   DPTR
+ 005270  22              RET
+
+// R5:R4 <- @DPTR
+// DPTR <- R3:R2
+ 005271  12 4B 25        LCALL 0x4B25 // R5:R4 <- @DPTR
+ 005274  8A 82           MOV   DPL,R2
+ 005276  8B 83           MOV   DPH,R3
+ 005278  22              RET
+
+
+ 005279  8C 82           MOV   DPL,R4
+ 00527B  8D 83           MOV   DPH,R5
+ 00527D  12 42 07        LCALL 0x4207
+ 005280  E0              MOVX  A,@DPTR
+ 005281  FA              MOV   R2,A
+ 005282  7B 00           MOV   R3,#0x00
+ 005284  22              RET
+ 005285  12 52 89        LCALL 0x5289
+ 005288  22              RET
+
+ 
+ 
+ 00565A  12 56 9E        LCALL 0x569E
+ 00565D  7A 01           MOV   R2,#0x01
+ 00565F  FB              MOV   R3,A
+ 005660  90 0F 4C        MOV   DPTR,#0x0F4C
+ 005663  E0              MOVX  A,@DPTR
+ 005664  F9              MOV   R1,A
+ 005665  12 0F 8D        LCALL osal_set_event::?relay
+ 005668  02 3D E5        LJMP  0x3DE5
+ 00566B  24 13           ADD   A,#0x13
+ 00566D  12 58 F3        LCALL 0x58F3
+ 005670  22              RET
+ 
+ 
+ // DPTR = R7:R6+0x2A
+ 005671  EE              MOV   A,R6
+ 005672  24 2A           ADD   A,#0x2A
+ 005674  F5 82           MOV   DPL,A
+ 005676  E4              CLR   A
+ 005677  3F              ADDC  A,R7
+ 005678  F5 83           MOV   DPH,A
+ 00567A  22              RET
+ 
+ 
+ 00567B  E0              MOVX  A,@DPTR
+ 00567C  F8              MOV   R0,A
+ 00567D  EE              MOV   A,R6
+ 00567E  24 28           ADD   A,#0x28
+ 005680  12 5B DE        LCALL 0x5BDE
+ 005683  22              RET
+

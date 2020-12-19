@@ -25,7 +25,7 @@ if not "%~1" == "" goto debugFile
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\pachd\OneDrive\Documents\projects\zbach\projets\ztemp\CC2530DB\settings\TemperatureSensor.EndDeviceEB.general.xcl" --backend -f "C:\Users\pachd\OneDrive\Documents\projects\zbach\projets\ztemp\CC2530DB\settings\TemperatureSensor.EndDeviceEB.driver.xcl" 
+"C:\Program Files\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\paolo\Documents\GitHub\zbach\projets\ztemp\CC2530DB\settings\TemperatureSensor.EndDevicePA.general.xcl" --backend -f "C:\Users\paolo\Documents\GitHub\zbach\projets\ztemp\CC2530DB\settings\TemperatureSensor.EndDevicePA.driver.xcl" 
 
 @echo off 
 goto end 
@@ -34,7 +34,7 @@ goto end
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\pachd\OneDrive\Documents\projects\zbach\projets\ztemp\CC2530DB\settings\TemperatureSensor.EndDeviceEB.general.xcl" "--debug_file=%~1" --backend -f "C:\Users\pachd\OneDrive\Documents\projects\zbach\projets\ztemp\CC2530DB\settings\TemperatureSensor.EndDeviceEB.driver.xcl" 
+"C:\Program Files\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\paolo\Documents\GitHub\zbach\projets\ztemp\CC2530DB\settings\TemperatureSensor.EndDevicePA.general.xcl" "--debug_file=%~1" --backend -f "C:\Users\paolo\Documents\GitHub\zbach\projets\ztemp\CC2530DB\settings\TemperatureSensor.EndDevicePA.driver.xcl" 
 
 @echo off 
 :end

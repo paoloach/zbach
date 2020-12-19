@@ -23,9 +23,9 @@
 
 if ($debugfile -eq "")
 {
-& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\pachd\OneDrive\Documents\projects\zbach\projets\ztemp\CC2530DB\settings\TemperatureSensor.EndDeviceEB.general.xcl" --backend -f "C:\Users\pachd\OneDrive\Documents\projects\zbach\projets\ztemp\CC2530DB\settings\TemperatureSensor.EndDeviceEB.driver.xcl" 
+& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\pachd\OneDrive\Documents\projects\zbach\projets\AcZTemp\CC2530DB\settings\TemperatureSensor.EndDeviceEB.general.xcl" --backend -f "C:\Users\pachd\OneDrive\Documents\projects\zbach\projets\AcZTemp\CC2530DB\settings\TemperatureSensor.EndDeviceEB.driver.xcl" 
 }
 else
 {
-& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\pachd\OneDrive\Documents\projects\zbach\projets\ztemp\CC2530DB\settings\TemperatureSensor.EndDeviceEB.general.xcl" --debug_file=$debugfile --backend -f "C:\Users\pachd\OneDrive\Documents\projects\zbach\projets\ztemp\CC2530DB\settings\TemperatureSensor.EndDeviceEB.driver.xcl" 
+& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\pachd\OneDrive\Documents\projects\zbach\projets\AcZTemp\CC2530DB\settings\TemperatureSensor.EndDeviceEB.general.xcl" --debug_file=$debugfile --backend -f "C:\Users\pachd\OneDrive\Documents\projects\zbach\projets\AcZTemp\CC2530DB\settings\TemperatureSensor.EndDeviceEB.driver.xcl" 
 }
