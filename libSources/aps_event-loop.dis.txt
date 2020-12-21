@@ -133,7 +133,7 @@ APS_event_loop:
  0026F2  70 37           JNZ   0x272B   // return if ( ((msgPtr+8) xor 0x02) != 0)
  0026F4  8A 82           MOV   DPL,R2 
  0026F6  8B 83           MOV   DPH,R3  // DPTR <- msgPtr
- 0026F8  12 4B 9F        LCALL 0x4B9F  // R3:R2 = *((uint16*)msgPtr)
+ 0026F8  12 4B 9F        LCALL 0x4B9F  // R3<-msgPtr.status, R2<-msgPtr.event
  0026FB  80 07           SJMP  0x2704 
  
  0026FD  8C 82           MOV   DPL,R4
@@ -146,15 +146,17 @@ APS_event_loop:
  
  002708  8C 82           MOV   DPL,R4
  00270A  8D 83           MOV   DPH,R5
- 00270C  E0              MOVX  A,@DPTR
- 00270D  6A              XRL   A,R2
+ 00270C  E0              MOVX  A,@DPTR // A = *(*tmp1DupRej)
+ 00270D  6A              XRL   A,R2     // jump if msgPtr.event !=  *(*tmp1DupRej)
  00270E  70 03           JNZ   0x2713
  002710  A3              INC   DPTR
  002711  E0              MOVX  A,@DPTR
  002712  6B              XRL   A,R3
  002711  E0              MOVX  A,@DPTR
  002712  6B              XRL   A,R3
- 002713  70 E8           JNZ   0x26FD
+ 002713  70 E8           JNZ   0x26FD  // jump if msgPtr.status !=  *(*tmp1DupRej+1)
+ 
+ 
  002715  8C 82           MOV   DPL,R4
  002717  8D 83           MOV   DPH,R5
  002719  A3              INC   DPTR

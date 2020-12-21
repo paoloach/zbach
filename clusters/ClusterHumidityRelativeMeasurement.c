@@ -23,7 +23,7 @@ const int16 minHumidityValue=0;
 const int16 maxHumidityValue=80;
 const uint16 toleranceHumidity=10;
 
-extern byte temperatureSensorTaskID;
+extern byte zProxSensorTaskID;
 
 
 void clusterHumidityMeasurementeInit(void) {

@@ -80,14 +80,14 @@ static afAddrType_t * reportDstAddr;
 static uint8 * reportSegNum;
 
 
-extern byte temperatureSensorTaskID;
+extern byte zProxSensorTaskID;
 extern devStates_t devState;
 
 
 
 void clusterTemperatureMeasurementeInit(void) {
 #ifdef DHT12
-  dht112_init(temperatureSensorTaskID);
+  dht112_init(zProxSensorTaskID);
 #else
   P1SEL &=0xC6;
   DIR1_0 = 0;
@@ -130,7 +130,7 @@ void temperatureClusterReadAttribute(zclAttrRec_t * statusRec) {
 uint16 readTemperatureLoop(uint16 events) {
 #ifdef DHT12
 	if (events & READ_TEMP_EVT){
-		dht112_loop(temperatureSensorTaskID);
+		dht112_loop(zProxSensorTaskID);
 		return ( events ^ READ_TEMP_EVT );
 	}
 #else
@@ -150,8 +150,8 @@ uint16 readTemperatureLoop(uint16 events) {
 void readTemperature(void) {
   P1_5=1;
   P1_4=1;
-  osal_pwrmgr_task_state(temperatureSensorTaskID, PWRMGR_HOLD);
-  osal_start_timerEx( temperatureSensorTaskID, START_READ_TEMP, 100 );
+  osal_pwrmgr_task_state(zProxSensorTaskID, PWRMGR_HOLD);
+  osal_start_timerEx( zProxSensorTaskID, START_READ_TEMP, 100 );
 }
 
 
@@ -169,14 +169,14 @@ void startReadSyncronus(void) {
           
   if (reset()==0){
     P1_5=0; 
-    osal_pwrmgr_task_state(temperatureSensorTaskID, PWRMGR_CONSERVE);
+    osal_pwrmgr_task_state(zProxSensorTaskID, PWRMGR_CONSERVE);
     return;
   }
 
   write(0xCC);
   write(0x44);
 
-  osal_start_timerEx( temperatureSensorTaskID, END_READ_TEMP_EVT, 1000 );
+  osal_start_timerEx( zProxSensorTaskID, END_READ_TEMP_EVT, 1000 );
 }
 
 void finalizeReadTemp(void){
@@ -211,7 +211,7 @@ void finalizeReadTemp(void){
     osal_mem_free( pReportCmd );
   }
   
-  osal_pwrmgr_task_state(temperatureSensorTaskID, PWRMGR_CONSERVE);
+  osal_pwrmgr_task_state(zProxSensorTaskID, PWRMGR_CONSERVE);
 }
 
 
