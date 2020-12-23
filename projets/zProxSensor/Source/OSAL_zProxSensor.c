@@ -3,9 +3,7 @@
  DESCRIPTION:
   --
 
- CREATED: 23/08/2016, by Paolo Achdjian
-
- FILE: OSAL_TemperatureSensor.c
+  FILE: OSAL_zProxSensor.c
 
 ***************************************************************************************************/
 
@@ -14,11 +12,6 @@
 #include "hal_drivers.h"
 #include "OSAL.h"
 #include "OSAL_Tasks.h"
-
-#if defined ( MT_TASK )
-  #include "MT.h"
-  #include "MT_TASK.h"
-#endif
 
 #include "nwk.h"
 #include "APS.h"
@@ -50,7 +43,7 @@ const pTaskEventHandlerFn tasksArr[] = {
   ZDNwkMgr_event_loop,
 #endif
   zcl_event_loop,
-  temperatureSensorEventLoop
+  zProxySensingEventLoop
 };
 
 const uint8 tasksCnt = sizeof( tasksArr ) / sizeof( tasksArr[0] );
@@ -88,7 +81,7 @@ void osalInitTasks( void )
   ZDNwkMgr_Init( taskID++ );
 #endif
   zcl_Init( taskID++ );
-  temperatureSensorInit( taskID );
+  zProxySensingInit( taskID );
 }
 
 /*********************************************************************

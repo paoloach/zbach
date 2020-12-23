@@ -76,7 +76,8 @@ void humidityRelativeClusterSendReport(uint8 endpoint, afAddrType_t * dstAddr, u
     zcl_SendReportCmd( endpoint, dstAddr,
                        ZCL_CLUSTER_ID_MS_RELATIVE_HUMIDITY,
                        pReportCmd, ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, (*segNum)++ );
+    
+    osal_mem_free( pReportCmd );
   }
 
-  osal_mem_free( pReportCmd );
 }

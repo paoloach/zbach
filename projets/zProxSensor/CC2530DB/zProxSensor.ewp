@@ -279,7 +279,7 @@
                 </option>
                 <option>
                     <name>OGChipConfigPath</name>
-                    <state>$TOOLKIT_DIR$\config\devices\Texas Instruments\CC2530F256.i51</state>
+                    <state>C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\8051\bin\..\config\devices\Texas Instruments\CC25xx\3x\CC2530F256.i51</state>
                 </option>
             </data>
         </settings>
@@ -1473,21 +1473,11 @@
                     <state>TC_LINKKEY_JOIN</state>
                     <state>NV_INIT</state>
                     <state>NV_RESTORE</state>
-                    <state>POWER_SAVING</state>
                     <state>NWK_AUTO_POLL</state>
                     <state>MULTICAST_ENABLED=FALSE</state>
                     <state>ZCL_READ</state>
                     <state>ZCL_WRITE</state>
                     <state>ZCL_REPORT</state>
-                    <state>zZCL_EZMODE</state>
-                    <state>xZCL_BASIC</state>
-                    <state>xZCL_IDENTIFY</state>
-                    <state>xZCL_ON_OFF</state>
-                    <state>xZCL_SCENES</state>
-                    <state>xZCL_GROUPS</state>
-                    <state>xxZCL_LEVEL_CTRL</state>
-                    <state>xZCL_DIAGNOSTIC</state>
-                    <state>xFEATURE_SYSTEM_STATS</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -4659,19 +4649,16 @@
                     <name>$PROJ_DIR$\..\..\..\clusters\ClusterBasic.h</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\..\clusters\ClusterHumidityRelativeMeasurement.h</name>
+                    <name>$PROJ_DIR$\..\..\..\clusters\ClusterIdentify.h</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\..\clusters\ClusterIdentify.h</name>
+                    <name>$PROJ_DIR$\..\..\..\clusters\ClusterOccupancySensing.h</name>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\..\..\clusters\ClusterOSALEvents.h</name>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\..\..\clusters\ClusterPower.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\..\clusters\ClusterTemperatureMeasurement.h</name>
                 </file>
             </group>
             <file>
@@ -4681,21 +4668,18 @@
                 <name>$PROJ_DIR$\..\Source\clusters\ClusterData.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\..\..\clusters\ClusterHumidityRelativeMeasurement.c</name>
-                <excluded>
-                    <configuration>EndDeviceEB</configuration>
-                </excluded>
+                <name>$PROJ_DIR$\..\..\..\clusters\ClusterIdentify.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\..\..\clusters\ClusterIdentify.c</name>
+                <name>$PROJ_DIR$\..\..\..\clusters\ClusterOccupancySensing.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\clusters\ClusterPower.c</name>
             </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\..\clusters\ClusterTemperatureMeasurement.c</name>
-            </file>
         </group>
+        <file>
+            <name>$PROJ_DIR$\..\Source\Events.h</name>
+        </file>
         <file>
             <name>$PROJ_DIR$\..\Source\ledBlink.c</name>
         </file>

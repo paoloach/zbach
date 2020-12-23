@@ -3,10 +3,7 @@
 
  DESCRIPTION:
   --
-
- CREATED: 23/08/2016, by Paolo Achdjian
-
- FILE: TemperatureSensor.c
+ FILE: zProxSensor.c
 
 ***************************************************************************************************/
 
@@ -31,16 +28,12 @@
 
 #include "clusters/ClusterIdentify.h"
 #include "clusters/ClusterBasic.h"
-#include "clusters/ClusterTemperatureMeasurement.h"
+#include "clusters/ClusterOccupancySensing.h"
 #include "clusters/ClusterPower.h"
-#ifdef DHT12
-#include "clusters/ClusterHumidityRelativeMeasurement.h"
-#endif
 #include "ledBlink.h"
-#include "dht112.h"
-	  
+#include "Events.h"	  
 
-
+void User_Process_Pool(void);
 	 
 byte zProxSensorTaskID;
 extern SimpleDescriptionFormat_t temperatureSimpleDesc;
@@ -64,37 +57,30 @@ uint16 reportSecond = DEFAULT_REPORT_SEC;
 uint16 reportSecondCounter;
 uint8 reportSeqNum;
 afAddrType_t reportDstAddr;
+uint8 connected=false;
 
 
 
 
+void zProxySensingInit( byte task_id ){
+  zProxSensorTaskID = task_id;
 
-void temperatureSensorInit( byte task_id ){
- 	zProxSensorTaskID = task_id;
+  zcl_registerPlugin( ZCL_CLUSTER_ID_GEN_BASIC,  ZCL_CLUSTER_ID_GEN_MULTISTATE_VALUE_BASIC,    handleClusterCommands );
 
-   	zcl_registerPlugin( ZCL_CLUSTER_ID_GEN_BASIC,  ZCL_CLUSTER_ID_GEN_MULTISTATE_VALUE_BASIC,    handleClusterCommands );
+  zclHA_Init( &temperatureSimpleDesc );
+  addReadAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterReadAttribute);
+  addWriteAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterWriteAttribute);
+  addReadAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterReadAttribute);
+  addWriteAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterWriteAttribute);
+  addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_GEN_POWER_CFG,powerClusterReadAttribute);
+  addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_MS_OCCUPANCY_SENSING,occupancySensingReadAttribute);
+  zcl_registerForMsg( zProxSensorTaskID );
   
-	zclHA_Init( &temperatureSimpleDesc );
-	addReadAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterReadAttribute);
-	addWriteAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterWriteAttribute);
-	addReadAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterReadAttribute);
-	addWriteAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterWriteAttribute);
-	addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_GEN_POWER_CFG,powerClusterReadAttribute);
-	addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_MS_TEMPERATURE_MEASUREMENT,temperatureClusterReadAttribute);
-#ifdef DHT12        
-        addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_MS_RELATIVE_HUMIDITY,humidityRelativeClusterReadAttribute);
-#endif
-  	zcl_registerForMsg( zProxSensorTaskID );
-  
-  	EA=1;
-  	clusterTemperatureMeasurementeInit();
-#ifdef DHT12        
-        clusterHumidityMeasurementeInit();
-#endif        
-	powerClusterInit(zProxSensorTaskID);
- 	identifyInit(zProxSensorTaskID);
-	ZMacSetTransmitPower(TX_PWR_PLUS_19);
-	//ZMacSetTransmitPower(POWER);
+  EA=1;
+  clusterOccupancyInit();     
+  powerClusterInit(zProxSensorTaskID);
+  identifyInit(zProxSensorTaskID);
+  ZMacSetTransmitPower(TX_PWR_PLUS_1);
   blinkLedInit();
   blinkLedstart(zProxSensorTaskID);
 
@@ -119,19 +105,18 @@ void nextReportEvent(void) {
 
 static void eventReport(void) {
   if (reportSecondCounter <= 0){
-    reportDstAddr.panId=_NIB.nodeDepth;
-    reportDstAddr.endPoint=ENDPOINT;
-    temperatureClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
-#if !defined RTR_NWK   
-    powerClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
-#endif    
-#ifdef DHT12
-    humidityRelativeClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
-#endif
+    if (connected){
+      reportDstAddr.panId=_NIB.nodeDepth;
+      reportDstAddr.endPoint=ENDPOINT;
+  #if !defined RTR_NWK   
+      powerClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
+  #endif    
+      occupancySensingClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
+    }
     reportSecondCounter=reportSecond;
   }
   nextReportEvent();
-  }
+}
 
 /*********************************************************************
  * @fn          zclSample_event_loop
@@ -142,7 +127,7 @@ static void eventReport(void) {
  *
  * @return      none
  */
-uint16 temperatureSensorEventLoop( uint8 task_id, uint16 events ){
+uint16 zProxySensingEventLoop( uint8 task_id, uint16 events ){
 	afIncomingMSGPacket_t *MSGpkt;
 	devStates_t zclSampleSw_NwkState;
   
@@ -160,22 +145,28 @@ uint16 temperatureSensorEventLoop( uint8 task_id, uint16 events ){
                                   switch(zclSampleSw_NwkState){
                                   case DEV_NWK_DISC:
                                     setBlinkCounter(0);
+                                    connected=false;
                                     break;
                                   case DEV_NWK_JOINING:
                                     setBlinkCounter(1);
+                                    connected=false;
                                     break;
                                   case DEV_NWK_REJOIN:
                                     setBlinkCounter(2);
+                                    connected=false;
                                     break;
                                   case DEV_END_DEVICE_UNAUTH:
                                     setBlinkCounter(3);
+                                    connected=false;
                                     break;
                                   case DEV_END_DEVICE:
                                     blinkLedEnd(task_id);
                                     initReport();
+                                    connected=true;
                                     break;
                                   case DEV_ROUTER:
                                     setBlinkCounter(5);
+                                    connected=true;
                                     break;
                                   case DEV_COORD_STARTING:
                                     setBlinkCounter(6);
@@ -185,6 +176,7 @@ uint16 temperatureSensorEventLoop( uint8 task_id, uint16 events ){
                                     break;
                                   case DEV_NWK_ORPHAN:
                                     setBlinkCounter(8);
+                                    connected=false;
                                     break;
                                   }
                                   break;
@@ -208,9 +200,6 @@ uint16 temperatureSensorEventLoop( uint8 task_id, uint16 events ){
   }
 
 
-  if ( events & READ_TEMP_MASK ) {
-    return readTemperatureLoop(events);
-  }
   if (events & REPORT_EVT){
     eventReport();
     events = events ^ REPORT_EVT;
@@ -412,6 +401,11 @@ static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg ){
   return ( stat );
 }
 
+
+
+void User_Process_Pool(void) {
+  clusterOccupancySensingLoop(ENDPOINT, &reportDstAddr, &reportSeqNum);
+}
 
 
 /****************************************************************************

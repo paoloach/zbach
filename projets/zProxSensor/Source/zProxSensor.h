@@ -3,9 +3,8 @@
  DESCRIPTION:
   --
 
- CREATED: 23/08/2016, by Paolo Achdjian
-
- FILE: TemperatureSensor.h
+ 
+ FILE: zProxSensor.h
 
 ***************************************************************************************************/
 
@@ -32,8 +31,8 @@ extern SimpleDescriptionFormat_t zclSampleLight_SimpleDesc;
 extern CONST zclAttrRec_t lightAchdjianAttrs[];
 extern uint16 zclSampleLight_IdentifyTime;
 
-extern void temperatureSensorInit( byte task_id );
-extern UINT16 temperatureSensorEventLoop( byte task_id, UINT16 events );
+extern void zProxySensingInit( byte task_id );
+extern UINT16 zProxySensingEventLoop( byte task_id, UINT16 events );
 
 
 
