@@ -4,8 +4,7 @@
 #include "ClusterOSALEvents.h"
 
 #include "ledBlink.h"
-
-
+#include "regs.h"
 
 __sfr __no_init volatile struct  {
 	unsigned char DIR0_0: 1;
@@ -30,6 +29,7 @@ __sfr __no_init volatile struct  {
 } @ 0xF3;
 
 
+
 #define FAST_BLINK_TIME_ON 100	 
 #define FAST_BLINK_TIME_OFF_LONG 2000	 
 #define FAST_BLINK_TIME_OFF_SHORT 500	
@@ -44,9 +44,10 @@ void setBlinkCounter(byte blinkCount) {
 }
 
 void blinkLedInit(void) {
-	DIR0_1 = 1;
- 	P0SEL_1 = 0;
- 	P0_1 = 0;
+	DIR1_0 = 1;
+        
+        P1SEL &=0xFE;
+ 	P1_0 = 0;
         stop=0;
 }
 
@@ -67,8 +68,8 @@ void blinkLedEnd(byte taskid){
 void blinkLedAction(byte taskid){
   if (stop)
     return;
-  if (P0_1){
-          P0_1 = 0;
+  if (P1_0){
+          P1_0 = 0;
           if (counter > 0){
                   osal_start_timerEx( taskid, FAST_BLINK, FAST_BLINK_TIME_OFF_SHORT );
                   counter--;
@@ -77,7 +78,7 @@ void blinkLedAction(byte taskid){
                   counter=blink;
           }
   }else{
-          P0_1 = 1;
+          P1_0 = 1;
           osal_start_timerEx( taskid, FAST_BLINK, FAST_BLINK_TIME_ON );
   }
 }
