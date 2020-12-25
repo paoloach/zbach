@@ -1,12 +1,15 @@
 
-
+#include "BindingTable.h"
+#include "AddrMgr.h"
 #include "ClusterOccupancySensing.h"
+
 #include "regs.h"
 
 static uint8 occupancy=0;
 static uint8 type=OCCUPANCY_TYPE_PIR;
 extern uint8 connected;
 
+static void sendBindMessage(uint8 endpoint);
 
 void occupancySensingReadAttribute(zclAttrRec_t * statusRec) {
   if (statusRec == NULL){
@@ -49,6 +52,35 @@ void occupancySensingClusterSendReport(uint8 endpoint, afAddrType_t * dstAddr, u
 
 }
 
+void static sendBindMessage(uint8 endpoint){
+  BindingEntry_t * bindEntry;
+  uint8 index=0;
+  while(index < 10) {
+    bindEntry = bindFind(endpoint, ZCL_CLUSTER_ID_GEN_ON_OFF,index);
+    if (bindEntry == NULL){
+      break;
+    }
+    AddrMgrEntry_t entry;
+    entry.user = ADDRMGR_USER_BINDING;
+    entry.index = bindEntry->dstIdx;
+    uint8 stat = AddrMgrEntryGet( &entry );
+    if (stat){
+      afAddrType_t onOffSendaddr;
+      onOffSendaddr.addrMode = afAddr16Bit;
+      onOffSendaddr.addr.shortAddr = entry.nwkAddr;
+      onOffSendaddr.endPoint=bindEntry->dstEP;
+      uint8 cmd;
+      if (occupancy){
+        cmd = COMMAND_ON;
+      } else {
+        cmd = COMMAND_OFF;
+      }
+      zcl_SendCommand(endpoint, &onOffSendaddr, ZCL_CLUSTER_ID_GEN_ON_OFF,cmd, TRUE, ZCL_FRAME_CLIENT_SERVER_DIR, TRUE, 0, 0, 0,NULL);
+    }
+    index++;
+  }
+}
+
 void clusterOccupancyInit(void) {
   P1SEL &=0xFB;
   DIR1_2 = 0;
@@ -63,5 +95,6 @@ void clusterOccupancySensingLoop(uint8 endpoint, afAddrType_t * dstAddr, uint8 *
   }
   if (oldOccupancy != occupancy){
     occupancySensingClusterSendReport(endpoint, dstAddr, segNum);
+    sendBindMessage(endpoint);
   }
 }

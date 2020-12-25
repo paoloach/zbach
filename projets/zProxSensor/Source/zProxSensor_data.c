@@ -30,7 +30,8 @@ const cId_t zProxSensorInClusterList[] ={
 
 const cId_t zProxSensorOutClusterList[] ={
 	ZCL_CLUSTER_ID_GEN_BASIC,
-    ZCL_CLUSTER_ID_GEN_IDENTIFY
+    ZCL_CLUSTER_ID_GEN_IDENTIFY,
+    ZCL_CLUSTER_ID_GEN_ON_OFF
 };
 
 

@@ -45,8 +45,9 @@ void setBlinkCounter(byte blinkCount) {
 
 void blinkLedInit(void) {
 	DIR1_0 = 1;
+        DIR1_1 = 1;
         
-        P1SEL &=0xFE;
+        P1SEL &=0xFC;
  	P1_0 = 0;
         stop=0;
 }
@@ -55,12 +56,14 @@ void blinkLedInit(void) {
 void blinkLedstart(byte taskid){
 	osal_start_timerEx( taskid, FAST_BLINK, FAST_BLINK_TIME_ON );
 	P0_1 = 1;
+        P1_1 = 1;
         stop=0;
 }
 
 void blinkLedEnd(byte taskid){
 	osal_stop_timerEx( taskid, FAST_BLINK );
 	P0_1 = 0;
+        P1_1 = 0;
         stop=1;
 }
 

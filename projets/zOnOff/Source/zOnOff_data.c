@@ -22,6 +22,7 @@
 const cId_t zOnOffInClusterList[] ={
 	ZCL_CLUSTER_ID_GEN_BASIC,
 	ZCL_CLUSTER_ID_GEN_IDENTIFY,
+        ZCL_CLUSTER_ID_GEN_ON_OFF,
 	ZCL_CLUSTER_ID_GEN_POWER_CFG
         
        
@@ -29,7 +30,8 @@ const cId_t zOnOffInClusterList[] ={
 
 const cId_t zOnOffOutClusterList[] ={
 	ZCL_CLUSTER_ID_GEN_BASIC,
-    ZCL_CLUSTER_ID_GEN_IDENTIFY
+    ZCL_CLUSTER_ID_GEN_IDENTIFY,
+    ZCL_CLUSTER_ID_GEN_ON_OFF
 };
 
 
@@ -37,7 +39,7 @@ const cId_t zOnOffOutClusterList[] ={
 SimpleDescriptionFormat_t temperatureSimpleDesc = {
 	ENDPOINT,                  			//  int Endpoint;
 	ZCL_HA_PROFILE_ID,                	//  uint16 AppProfId[2];
-	ZCL_HA_DEVICEID_OCCUPANCY_SENSOR,     	//  uint16 AppDeviceId[2];
+	ZCL_HA_DEVICEID_ON_OFF_LIGHT,     	//  uint16 AppDeviceId[2];
 	DEVICE_VERSION,           			//  int   AppDevVer:4;
 	FLAGS,                    			//  int   AppFlags:4;
 	sizeof(zOnOffInClusterList)/2,              //  byte  AppNumInClusters;

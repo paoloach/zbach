@@ -28,7 +28,7 @@
 
 #include "clusters/ClusterIdentify.h"
 #include "clusters/ClusterBasic.h"
-#include "clusters/ClusterOccupancySensing.h"
+#include "clusters/ClusterOnOff.h"
 #include "clusters/ClusterPower.h"
 #include "ledBlink.h"
 #include "Events.h"	  
@@ -73,6 +73,10 @@ void zOnOffInit( byte task_id ){
   addReadAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterReadAttribute);
   addWriteAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterWriteAttribute);
   addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_GEN_POWER_CFG,powerClusterReadAttribute);
+  addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_GEN_ON_OFF,onOffClusterReadAttribute);
+  addWriteAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_ON_OFF,onOffClusterWriteAttribute);
+  
+
   zcl_registerForMsg( zProxSensorTaskID );
   
   EA=1;
@@ -81,6 +85,7 @@ void zOnOffInit( byte task_id ){
   ZMacSetTransmitPower(TX_PWR_PLUS_1);
   blinkLedInit();
   blinkLedstart(zProxSensorTaskID);
+  onOffInit();
 
 }
 
@@ -371,9 +376,10 @@ static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg ){
     		return processBasicClusterCommands(pInMsg);
 	    case ZCL_CLUSTER_ID_GEN_IDENTIFY:
 		return processIdentifyClusterServerCommands( pInMsg );
+	    case ZCL_CLUSTER_ID_GEN_ON_OFF:
+                return processOnOffClusterServerCommands(pInMsg);
 	    case ZCL_CLUSTER_ID_GEN_GROUPS:
     	    case ZCL_CLUSTER_ID_GEN_SCENES:
-	    case ZCL_CLUSTER_ID_GEN_ON_OFF:
     	    case ZCL_CLUSTER_ID_GEN_LEVEL_CONTROL:
 	    case ZCL_CLUSTER_ID_GEN_ALARMS:
     	    case ZCL_CLUSTER_ID_GEN_LOCATION:
