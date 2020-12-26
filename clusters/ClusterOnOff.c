@@ -33,6 +33,8 @@ void onOffClusterReadAttribute(zclAttrRec_t * attribute) {
 		attribute->dataType = ZCL_DATATYPE_BOOLEAN;
 		attribute->dataPtr = (void *)&onOffValue;
 		break;
+        case ATTRID_ON_OFF_ON_TIME:
+          
 	default:
 		attribute->status = ZCL_STATUS_UNSUPPORTED_ATTRIBUTE;
 	}

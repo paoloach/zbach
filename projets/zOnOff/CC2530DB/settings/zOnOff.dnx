@@ -12,7 +12,7 @@
         <ByteLimit>50</ByteLimit>
     </Stack>
     <DebugChecksum>
-        <Checksum>3829760673</Checksum>
+        <Checksum>2314777863</Checksum>
     </DebugChecksum>
     <CallStack>
         <ShowArgs>0</ShowArgs>
@@ -84,9 +84,11 @@
     </TermIOLog>
     <Breakpoints>
         <Bp0>_ "STD_CODE" "LogicalCode:0x184E9" 0 0 0 0 "" 0 ""</Bp0>
-        <Bp1>_ "STD_CODE" "{$PROJ_DIR$\..\Source\zOnOff.c}.109.7" 0 0 0 0 "" 0 ""</Bp1>
-        <Bp2>_ "STD_CODE" "{$PROJ_DIR$\..\Source\ledBlink.c}.71.3" 1 0 0 0 "" 0 ""</Bp2>
-        <Count>3</Count>
+        <Bp1>_ "STD_CODE" "{$PROJ_DIR$\..\Source\zOnOff.c}.112.7" 0 0 0 0 "" 0 ""</Bp1>
+        <Bp2>_ "STD_CODE" "{C:\Users\pachd\OneDrive\Documents\projects\zbach\clusters\ClusterOnOff.c}.50.4" 0 0 0 0 "" 0 ""</Bp2>
+        <Bp3>_ "STD_CODE" "{C:\Users\pachd\OneDrive\Documents\projects\zbach\clusters\ClusterOnOff.c}.33.3" 0 0 0 0 "" 0 ""</Bp3>
+        <Bp4>_ "STD_CODE" "{C:\Users\pachd\OneDrive\Documents\projects\zbach\clusters\ClusterOnOff.c}.74.2" 0 0 0 0 "" 0 ""</Bp4>
+        <Count>5</Count>
     </Breakpoints>
     <ChipconEmu>
         <StopTimersOnHalt>0</StopTimersOnHalt>

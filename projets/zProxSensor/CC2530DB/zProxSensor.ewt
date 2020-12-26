@@ -4364,15 +4364,6 @@
     </group>
     <group>
         <name>external</name>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Components\external\dht112.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Components\external\dht112_I2C.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Components\external\dht112_SingleWire.c</name>
-        </file>
     </group>
     <group>
         <name>HAL</name>
