@@ -12,8 +12,10 @@
 #include "onboard.h"
 #include "regs.h"    
 
+extern uint8 connected;
 
 uint8  onOffValue = LIGHT_ON;
+
 static void setIOStatus(void);
 
 void onOffInit(void) {
@@ -89,4 +91,23 @@ ZStatus_t processOnOffClusterServerCommands(zclIncoming_t *pInMsg) {
 	}
 	setIOStatus();
 	return ZSuccess;
+}
+
+void onOffClusterSendReport(uint8 endpoint, afAddrType_t * dstAddr, uint8 * segNum) {
+  if (connected){
+    zclReportCmd_t * pReportCmd = osal_mem_alloc( sizeof(zclReportCmd_t) + sizeof(zclReport_t) );
+    if ( pReportCmd != NULL ) {
+      pReportCmd->numAttr = 1;
+      pReportCmd->attrList[0].attrID = ATTRID_ON_OFF;
+      pReportCmd->attrList[0].dataType = ZCL_DATATYPE_BOOLEAN;
+      pReportCmd->attrList[0].attrData = (void *)&onOffValue;
+
+      zcl_SendReportCmd( endpoint, dstAddr,
+                         ZCL_CLUSTER_ID_GEN_ON_OFF,
+                         pReportCmd, ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, (*segNum)++ );
+      
+      osal_mem_free( pReportCmd );
+    }
+  }
+
 }

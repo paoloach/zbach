@@ -114,6 +114,7 @@ static void eventReport(void) {
   #if !defined RTR_NWK   
       powerClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
   #endif    
+      onOffClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
     }
     reportSecondCounter=reportSecond;
   }

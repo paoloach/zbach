@@ -1654,27 +1654,6 @@
         </file>
     </group>
     <group>
-        <name>Tools</name>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8w2530.xcl</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wConfig.cfg</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wCoord.cfg</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wEndev.cfg</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wRouter.cfg</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wZCL.cfg</name>
-        </file>
-    </group>
-    <group>
         <name>ZDO</name>
         <file>
             <name>$PROJ_DIR$\..\..\..\Components\stack\zdo\ZDApp.c</name>
