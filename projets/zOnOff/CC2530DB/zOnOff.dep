@@ -2304,7 +2304,7 @@
             <outputs>
                 <tool>
                     <name>ICC8051</name>
-                    <file> 338</file>
+                    <file> 505 338 604</file>
                 </tool>
                 <tool>
                     <name>BICOMP</name>
@@ -2372,7 +2372,7 @@
                 </tool>
                 <tool>
                     <name>BICOMP</name>
-                    <file> 620 683 623 230 612 236 626 199 633 240 166 700 687 195 242 617 637 649 170 638 153 672 645 660 165 238 155 345 247 463 158 200 709 112 627 636 697 2 169 651</file>
+                    <file> 649 153 637 626 617 170 230 638 242 199 683 672 687 195 236 240 623 620 612 633 166 700 645 660 165 238 155 345 247 463 158 200 709 112 627 636 697 2 169 651</file>
                 </tool>
             </inputs>
         </file>
@@ -3046,10 +3046,6 @@
         <forcedrebuild>
             <name>$PROJ_DIR$\..\..\..\libSources\network.c</name>
             <tool>C-STAT</tool>
-        </forcedrebuild>
-        <forcedrebuild>
-            <name>[MULTI_TOOL]</name>
-            <tool>XLINK</tool>
         </forcedrebuild>
         <forcedrebuild>
             <name>$PROJ_DIR$\..\..\..\Components\mt\DebugTrace.c</name>
