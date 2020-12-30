@@ -31,7 +31,8 @@ const cId_t zSmartSocketInClusterList[] ={
 const cId_t zSmartSocketOutClusterList[] ={
 	ZCL_CLUSTER_ID_GEN_BASIC,
     ZCL_CLUSTER_ID_GEN_IDENTIFY,
-    ZCL_CLUSTER_ID_GEN_ON_OFF
+    ZCL_CLUSTER_ID_GEN_ON_OFF,
+    ZCL_CLUSTER_ID_SE_SIMPLE_METERING
 };
 
 
@@ -39,7 +40,7 @@ const cId_t zSmartSocketOutClusterList[] ={
 SimpleDescriptionFormat_t temperatureSimpleDesc = {
 	ENDPOINT,                  			//  int Endpoint;
 	ZCL_HA_PROFILE_ID,                	//  uint16 AppProfId[2];
-	ZCL_HA_DEVICEID_ON_OFF_LIGHT,     	//  uint16 AppDeviceId[2];
+	ZCL_HA_DEVICEID_SMART_PLUG,     	//  uint16 AppDeviceId[2];
 	DEVICE_VERSION,           			//  int   AppDevVer:4;
 	FLAGS,                    			//  int   AppFlags:4;
 	sizeof(zSmartSocketInClusterList)/2,              //  byte  AppNumInClusters;

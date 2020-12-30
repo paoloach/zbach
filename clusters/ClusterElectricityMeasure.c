@@ -119,7 +119,7 @@ void electricityMeasureClusterReadAttribute(zclAttrRec_t * attribute){
 		break;
 		
 	case ATTRID_ELECTRICITY_MEASURE_LINE_CURRENT:
-		tmp = getCS5463RegisterValue(IstantaneoCurrent) >> 8;
+		tmp = getCS5463RegisterValue(IstantaneusCurrent) >> 8;
 		attribute->dataType = ZCL_DATATYPE_UINT16;
 		attribute->dataPtr = (void *)&tmp;
 		break;

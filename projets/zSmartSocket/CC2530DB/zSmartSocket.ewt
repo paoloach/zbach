@@ -1087,7 +1087,16 @@
                     <name>$PROJ_DIR$\..\..\..\clusters\ClusterBasic.h</name>
                 </file>
                 <file>
+                    <name>$PROJ_DIR$\..\..\..\clusters\ClusterElectricityMeasure.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\clusters\ClusterElectricityMeasure_constant.h</name>
+                </file>
+                <file>
                     <name>$PROJ_DIR$\..\..\..\clusters\ClusterIdentify.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\clusters\ClusterMetering.h</name>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\..\..\clusters\ClusterOccupancySensing.h</name>
@@ -1109,7 +1118,13 @@
                 <name>$PROJ_DIR$\..\Source\clusters\ClusterData.c</name>
             </file>
             <file>
+                <name>$PROJ_DIR$\..\..\..\clusters\ClusterElectricityMeasure.c</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\..\..\clusters\ClusterIdentify.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\clusters\ClusterMetering.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\clusters\ClusterOnOff.c</name>

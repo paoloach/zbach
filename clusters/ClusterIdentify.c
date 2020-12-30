@@ -13,12 +13,10 @@
 #include "ClusterIdentify.h"
 #include "zcl_general.h"
 #include "ClusterOSALEvents.h"
-
+#include "regs.h"
 
 #define ON_TIME 600
 #define OFF_TIME 400
-
-
 
 static uint16 identifyTime=0;
 
@@ -28,29 +26,6 @@ static byte mainAppTaskId;
 #define  ON 1
 
 static uint8  onOff=OFF;
-
-
-__sfr __no_init volatile struct  {
-	unsigned char DIR0_0: 1;
-	unsigned char DIR0_1: 1;
-	unsigned char DIR0_2: 1;
-	unsigned char DIR0_3: 1;
-	unsigned char DIR0_4: 1;
-	unsigned char DIR0_5: 1;
-	unsigned char DIR0_6: 1;
-	unsigned char DIR0_7: 1;
-} @ 0xFD;
-
-__sfr __no_init volatile struct  {
-	unsigned char P0SEL_0: 1;
-	unsigned char P0SEL_1: 1;
-	unsigned char P0SEL_2: 1;
-	unsigned char P0SEL_3: 1;
-	unsigned char P0SEL_4: 1;
-	unsigned char P0SEL_5: 1;
-	unsigned char P0SEL_6: 1;
-	unsigned char P0SEL_7: 1;
-} @ 0xF3;
 
 
 void identifyClusterReadAttribute(zclAttrRec_t * attribute){
@@ -80,17 +55,17 @@ void identifyClusterWriteAttribute(ZclWriteAttribute_t * writeAttribute){
 }
 
 void identifyInit(byte taskId){
-	DIR0_0 = 1;
- 	P0SEL_0 = 0;
- 	P0_0 = 0;
-	mainAppTaskId = taskId;
+  DIR(IDENTIFY_PORT, IDENTIFY_PIN)=1;
+  FUNCTION_SEL(IDENTIFY_PORT,   IDENTIFY_PIN)=0;
+  PORT(IDENTIFY_PORT, IDENTIFY_PIN)=0;
+  mainAppTaskId = taskId;
 }
 
 uint16 identifyLoop(uint16 events){
 	if (onOff==ON){
 		osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, OFF_TIME );
 		onOff=OFF;
-		P0_0 = 1;
+		PORT(IDENTIFY_PORT, IDENTIFY_PIN) = 1;
 	} else if (onOff==OFF ){
 		onOff=ON;
 		if ( identifyTime > 0 ){
@@ -99,10 +74,10 @@ uint16 identifyLoop(uint16 events){
     	if (identifyTime>0){
 			osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, ON_TIME );
 			osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_HOLD);
-			P0_0 = 0;
+			PORT(IDENTIFY_PORT, IDENTIFY_PIN) = 0;
 		} else{
 			osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_CONSERVE);
-			P0_0 = 0;
+			PORT(IDENTIFY_PORT, IDENTIFY_PIN) = 0;
 		}
 	} 
     return ( events ^ IDENTIFY_TIMEOUT_EVT );
@@ -115,7 +90,7 @@ void processIdentifyTimeChange( void ){
 	if ( identifyTime > 0 ) {
 		osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, ON_TIME );
 		onOff=ON;
-		P0_0 = 1;
+		PORT(IDENTIFY_PORT, IDENTIFY_PIN) = 1;
 		osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_HOLD);
 	}  else {
 		osal_stop_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT );
