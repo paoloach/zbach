@@ -477,6 +477,7 @@
                     <state>-f $PROJ_DIR$\..\Configuration\f8wEndev.cfg</state>
                     <state>-f $PROJ_DIR$\..\Configuration\f8wConfig.cfg</state>
                     <state>-f $PROJ_DIR$\..\Configuration\f8wZCL.cfg</state>
+                    <state>-f $PROJ_DIR$\..\Configuration\pins.cfg</state>
                 </option>
                 <option>
                     <name>CCIncludePath2</name>

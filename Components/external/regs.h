@@ -92,4 +92,16 @@ __sfr __no_init volatile struct  {
 	unsigned char U0_MODE: 1;
 } @ 0x86;
 
+#define DIR_PORT_IMPL(A,B) DIR ## A ## _ ## B
+#define DIR(A,B) DIR_PORT_IMPL( A,B)
+
+
+#define FUNCTION_SEL_IMPL(A,B) P ## A ## SEL_ ## B
+#define FUNCTION_SEL(A,B) FUNCTION_SEL_IMPL( A,B)
+
+#define PORT_IMPL(A,B) P ## A ## _ ## B
+#define PORT(A,B) PORT_IMPL( A,B)
+
+
+
 #endif
