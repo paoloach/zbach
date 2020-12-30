@@ -24,9 +24,9 @@ static uint8 * lastSegNum=NULL;
 static void setIOStatus(void);
 
 void onOffInit(void) {
-	DIR0_0=1;
-	P0SEL_0=0;
-	P0_0=0;
+	DIR0_1=1;
+	P0SEL_1=0;
+	P0_1=0;
 }
 
 void onOffClusterReadAttribute(zclAttrRec_t * attribute) {
@@ -72,9 +72,9 @@ void onOffClusterWriteAttribute(ZclWriteAttribute_t * writeAttribute) {
 
 void setIOStatus(void){
   if ( onOffValue  == LIGHT_ON )
-    P0_0=0;
+    P0_1=0;
   else
-    P0_0=1;
+    P0_1=1;
   
   if (connected && lastSegNum != NULL){
     onOffClusterSendReport(lastEndpoint, lastDstAddr, lastSegNum);

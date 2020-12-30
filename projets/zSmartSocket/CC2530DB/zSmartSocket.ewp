@@ -787,7 +787,7 @@
                 </option>
                 <option>
                     <name>OutputFile</name>
-                    <state>zOnOff.d51</state>
+                    <state>zSmartSocket.d51</state>
                 </option>
                 <option>
                     <name>OutputFormat</name>
@@ -985,7 +985,7 @@
                 </option>
                 <option>
                     <name>ExtraOutputFile</name>
-                    <state>zOnOff.sim</state>
+                    <state>zSmartSocket.sim</state>
                 </option>
                 <option>
                     <name>ExtraOutputFormat</name>
@@ -1202,16 +1202,16 @@
             <name>$PROJ_DIR$\..\Source\ledBlink.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Source\OSAL_zOnOff.c</name>
+            <name>$PROJ_DIR$\..\Source\OSAL_zSmartSocket.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Source\zOnOff.c</name>
+            <name>$PROJ_DIR$\..\Source\zSmartSocket.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Source\zOnOff.h</name>
+            <name>$PROJ_DIR$\..\Source\zSmartSocket.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Source\zOnOff_data.c</name>
+            <name>$PROJ_DIR$\..\Source\zSmartSocket_data.c</name>
         </file>
     </group>
     <group>
@@ -2122,6 +2122,6 @@
         </file>
     </group>
     <file>
-        <name>$PROJ_DIR$\EndDeviceEB\Exe\zOnOff.d51</name>
+        <name>$PROJ_DIR$\EndDeviceEB\Exe\zSmartSocket.d51</name>
     </file>
 </project>

@@ -269,9 +269,9 @@
                         <Factory>Workspace</Factory>
                         <Session>
                             <NodeDict>
-                                <ExpandedNode>zOnOff</ExpandedNode>
-                                <ExpandedNode>zOnOff/App</ExpandedNode>
-                                <ExpandedNode>zOnOff/Output</ExpandedNode>
+                                <ExpandedNode>zSmartSocket</ExpandedNode>
+                                <ExpandedNode>zSmartSocket/App</ExpandedNode>
+                                <ExpandedNode>zSmartSocket/Output</ExpandedNode>
                             </NodeDict>
                         </Session>
                     </Tab>
@@ -352,7 +352,7 @@
                 </Tab>
                 <Tab>
                     <Factory>TextEditor</Factory>
-                    <Filename>$WS_DIR$\..\Source\zOnOff.c</Filename>
+                    <Filename>$WS_DIR$\..\Source\zSmartSocket.c</Filename>
                     <XPos>0</XPos>
                     <YPos>0</YPos>
                     <SelStart>0</SelStart>
@@ -437,7 +437,7 @@
                 </Tab>
                 <Tab>
                     <Factory>TextEditor</Factory>
-                    <Filename>$WS_DIR$\EndDeviceEB\List\zOnOff.map</Filename>
+                    <Filename>$WS_DIR$\EndDeviceEB\List\zSmartSocket.map</Filename>
                     <XPos>0</XPos>
                     <YPos>0</YPos>
                     <SelStart>0</SelStart>
