@@ -72,6 +72,19 @@ __sfr __no_init volatile struct  {
 } @ 0xF3;
 
 
+__sfr __no_init volatile struct  {
+	unsigned char P1SEL_0: 1;
+	unsigned char P1SEL_1: 1;
+	unsigned char P1SEL_2: 1;
+	unsigned char P1SEL_3: 1;
+	unsigned char P1SEL_4: 1;
+	unsigned char P1SEL_5: 1;
+	unsigned char P1SEL_6: 1;
+	unsigned char P1SEL_7: 1;
+} @ 0xF4;
+
+
+
 // U0GCR
 __sfr __no_init volatile struct  {
 	unsigned char U0_BAUD_E: 5;

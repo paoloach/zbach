@@ -30,6 +30,8 @@
 #include "clusters/ClusterBasic.h"
 #include "clusters/ClusterOnOff.h"
 #include "clusters/ClusterPower.h"
+#include "clusters/ClusterElectricityMeasure.h"
+
 #include "ledBlink.h"
 #include "Events.h"	  
 
@@ -52,15 +54,11 @@ static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg );
 static void initReport(void);
 static void nextReportEvent(void);
 static void eventReport(void);
-#define DEFAULT_REPORT_SEC      300
 uint16 reportSecond = DEFAULT_REPORT_SEC;
 uint16 reportSecondCounter;
 uint8 reportSeqNum;
 afAddrType_t reportDstAddr;
 uint8 connected=false;
-
-
-
 
 void zSmartSocketInit( byte task_id ){
   zProxSensorTaskID = task_id;
@@ -75,6 +73,7 @@ void zSmartSocketInit( byte task_id ){
   addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_GEN_POWER_CFG,powerClusterReadAttribute);
   addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_GEN_ON_OFF,onOffClusterReadAttribute);
   addWriteAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_ON_OFF,onOffClusterWriteAttribute);
+  addReadAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_HA_ELECTRICAL_MEASUREMENT,electricityMeasureClusterReadAttribute);
   
 
   zcl_registerForMsg( zProxSensorTaskID );
@@ -82,6 +81,7 @@ void zSmartSocketInit( byte task_id ){
   EA=1;
   powerClusterInit(zProxSensorTaskID);
   identifyInit(zProxSensorTaskID);
+  electricityMeasureClusterReadAttributeInit();
   ZMacSetTransmitPower(TX_PWR_PLUS_1);
   blinkLedInit();
   blinkLedstart(zProxSensorTaskID);
@@ -115,6 +115,7 @@ static void eventReport(void) {
       powerClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
   #endif    
       onOffClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
+      electricityMeasureClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
     }
     reportSecondCounter=reportSecond;
   }

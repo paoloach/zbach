@@ -478,6 +478,7 @@
                     <state>-f $PROJ_DIR$\..\Configuration\f8wConfig.cfg</state>
                     <state>-f $PROJ_DIR$\..\Configuration\f8wZCL.cfg</state>
                     <state>-f $PROJ_DIR$\..\Configuration\pins.cfg</state>
+                    <state>-f $PROJ_DIR$\..\Configuration\params.cfg</state>
                 </option>
                 <option>
                     <name>CCIncludePath2</name>
@@ -1240,6 +1241,9 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\Configuration\f8wZCL.cfg</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Configuration\pins.cfg</name>
         </file>
     </group>
     <group>

@@ -1163,6 +1163,9 @@
         <file>
             <name>$PROJ_DIR$\..\Configuration\f8wZCL.cfg</name>
         </file>
+        <file>
+            <name>$PROJ_DIR$\..\Configuration\pins.cfg</name>
+        </file>
     </group>
     <group>
         <name>external</name>

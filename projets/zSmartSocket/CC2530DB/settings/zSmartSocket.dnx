@@ -12,7 +12,7 @@
         <ByteLimit>50</ByteLimit>
     </Stack>
     <DebugChecksum>
-        <Checksum>3668385247</Checksum>
+        <Checksum>1250454788</Checksum>
     </DebugChecksum>
     <CallStack>
         <ShowArgs>0</ShowArgs>
@@ -73,6 +73,17 @@
         <Freq>50000000</Freq>
         <FreqHi>0</FreqHi>
     </Simulator>
+    <Breakpoints>
+        <Bp0>_ "STD_CODE" "LogicalCode:0x184E9" 0 0 0 0 "" 0 ""</Bp0>
+        <Bp1>_ "STD_CODE" "{C:\Users\pachd\OneDrive\Documents\projects\zbach\clusters\ClusterOnOff.c}.63.4" 0 0 0 0 "" 0 ""</Bp1>
+        <Bp2>_ "STD_CODE" "{C:\Users\pachd\OneDrive\Documents\projects\zbach\clusters\ClusterOnOff.c}.44.3" 0 0 0 0 "" 0 ""</Bp2>
+        <Bp3>_ "STD_CODE" "{C:\Users\pachd\OneDrive\Documents\projects\zbach\clusters\ClusterOnOff.c}.97.2" 0 0 0 0 "" 0 ""</Bp3>
+        <Count>4</Count>
+    </Breakpoints>
+    <ChipconEmu>
+        <StopTimersOnHalt>0</StopTimersOnHalt>
+        <LeaveTargetRunning>1</LeaveTargetRunning>
+    </ChipconEmu>
     <LogFile>
         <LoggingEnabled>_ 0</LoggingEnabled>
         <LogFile>_ ""</LogFile>
@@ -82,18 +93,6 @@
         <LoggingEnabled>_ 0</LoggingEnabled>
         <LogFile>_ ""</LogFile>
     </TermIOLog>
-    <Breakpoints>
-        <Bp0>_ "STD_CODE" "LogicalCode:0x184E9" 0 0 0 0 "" 0 ""</Bp0>
-        <Bp1>_ "STD_CODE" "{$PROJ_DIR$\..\Source\zSmartSocket.c}.112.7" 0 0 0 0 "" 0 ""</Bp1>
-        <Bp2>_ "STD_CODE" "{C:\Users\pachd\OneDrive\Documents\projects\zbach\clusters\ClusterOnOff.c}.59.4" 0 0 0 0 "" 0 ""</Bp2>
-        <Bp3>_ "STD_CODE" "{C:\Users\pachd\OneDrive\Documents\projects\zbach\clusters\ClusterOnOff.c}.40.3" 0 0 0 0 "" 0 ""</Bp3>
-        <Bp4>_ "STD_CODE" "{C:\Users\pachd\OneDrive\Documents\projects\zbach\clusters\ClusterOnOff.c}.92.2" 0 0 0 0 "" 0 ""</Bp4>
-        <Count>5</Count>
-    </Breakpoints>
-    <ChipconEmu>
-        <StopTimersOnHalt>0</StopTimersOnHalt>
-        <LeaveTargetRunning>1</LeaveTargetRunning>
-    </ChipconEmu>
     <Aliases>
         <Count>0</Count>
         <SuppressDialog>0</SuppressDialog>
