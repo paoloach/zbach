@@ -41,9 +41,9 @@ void CS5463_Init(void ){
   PORT(CS5463_RESET_PORT, CS5463_RESET_PIN)=0;
   
   
-  DIR(CS5463_RESET_PORT, CS5463_CS_PIN)=1;
-  FUNCTION_SEL(CS5463_RESET_PORT,   CS5463_CS_PIN)=0;
-  PORT(CS5463_RESET_PORT, CS5463_CS_PIN)=1;
+  DIR(CS5463_CS_PORT, CS5463_CS_PIN)=1;
+  FUNCTION_SEL(CS5463_CS_PORT,   CS5463_CS_PIN)=0;
+  PORT(CS5463_CS_PORT, CS5463_CS_PIN)=1;
   
   
   CS5463_reset();
@@ -52,7 +52,7 @@ void CS5463_Init(void ){
 }
 
 void CS5463_startConversion(void) {
-  PORT(CS5463_RESET_PORT, CS5463_CS_PIN)=0;
+  PORT(CS5463_CS_PORT, CS5463_CS_PIN)=0;
   asm("NOP");
   asm("NOP");
   U0_TX_BYTE=0;
@@ -61,19 +61,19 @@ void CS5463_startConversion(void) {
   while(U0_TX_BYTE==0);
   asm("NOP");
   asm("NOP");
-  PORT(CS5463_RESET_PORT, CS5463_CS_PIN)=1;
+  PORT(CS5463_CS_PORT, CS5463_CS_PIN)=1;
 }
 
 void CS5463_reset(void) {
-  PORT(CS5463_RESET_PORT, CS5463_CS_PIN)=0;
+  PORT(CS5463_CS_PORT, CS5463_CS_PIN)=0;
   PORT(CS5463_RESET_PORT, CS5463_RESET_PIN)=0;
   for(uint8 i=0; i < 200; i++);
   PORT(CS5463_RESET_PORT, CS5463_RESET_PIN)=1;
-  PORT(CS5463_RESET_PORT, CS5463_CS_PIN)=1;
+  PORT(CS5463_CS_PORT, CS5463_CS_PIN)=1;
 }
 
 int32 getCS5463RegisterValue(enum CS5463Register regIndex) {
-  PORT(CS5463_RESET_PORT, CS5463_CS_PIN)=0;
+  PORT(CS5463_CS_PORT, CS5463_CS_PIN)=0;
   union CS5463Reg result;
 
   asm("NOP");
@@ -111,13 +111,13 @@ int32 getCS5463RegisterValue(enum CS5463Register regIndex) {
   asm("NOP");
 
   U0_ACTIVE=0;
-  PORT(CS5463_RESET_PORT, CS5463_CS_PIN)=1;
+  PORT(CS5463_CS_PORT, CS5463_CS_PIN)=1;
   return result.value;
         
 }
 
 void setCS5463RegisterValue(enum CS5463Register regIndex,unsigned char  byte1,unsigned  char byte2,unsigned  char byte3){
-  PORT(CS5463_RESET_PORT, CS5463_CS_PIN)=0;
+  PORT(CS5463_CS_PORT, CS5463_CS_PIN)=0;
   asm("NOP");
   asm("NOP");
   uint8 index = (regIndex << 1);
@@ -149,6 +149,6 @@ void setCS5463RegisterValue(enum CS5463Register regIndex,unsigned char  byte1,un
   asm("NOP");
 
   U0_ACTIVE=0;
-  PORT(CS5463_RESET_PORT, CS5463_CS_PIN)=1;
+  PORT(CS5463_CS_PORT, CS5463_CS_PIN)=1;
 }
 
