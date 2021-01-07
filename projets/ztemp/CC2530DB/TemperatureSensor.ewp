@@ -1464,30 +1464,7 @@
                 </option>
                 <option>
                     <name>CCDefines</name>
-                    <state>POWER=TX_PWR_PLUS_2</state>
-                    <state>HAL_LED=FALSE</state>
-                    <state>SECURE=1</state>
-                    <state>OSC32K_CRYSTAL_INSTALLED=FALSE</state>
-                    <state>HAL_KEY=FALSE</state>
-                    <state>HAL_BOARD_CC2530EB_REV17</state>
-                    <state>TC_LINKKEY_JOIN</state>
-                    <state>NV_INIT</state>
-                    <state>NV_RESTORE</state>
-                    <state>POWER_SAVING</state>
-                    <state>NWK_AUTO_POLL</state>
-                    <state>MULTICAST_ENABLED=FALSE</state>
-                    <state>ZCL_READ</state>
-                    <state>ZCL_WRITE</state>
-                    <state>ZCL_REPORT</state>
-                    <state>zZCL_EZMODE</state>
-                    <state>xZCL_BASIC</state>
-                    <state>xZCL_IDENTIFY</state>
-                    <state>xZCL_ON_OFF</state>
-                    <state>xZCL_SCENES</state>
-                    <state>xZCL_GROUPS</state>
-                    <state>xxZCL_LEVEL_CTRL</state>
-                    <state>xZCL_DIAGNOSTIC</state>
-                    <state>xFEATURE_SYSTEM_STATS</state>
+                    <state></state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -1643,9 +1620,11 @@
                 </option>
                 <option>
                     <name>Compiler Extra Options Edit</name>
-                    <state>-f $PROJ_DIR$\..\..\..\Tools\f8wEndev.cfg</state>
-                    <state>-f $PROJ_DIR$\..\..\..\Tools\f8wConfig.cfg</state>
-                    <state>-f $PROJ_DIR$\..\..\..\Tools\f8wZCL.cfg</state>
+                    <state>-f $PROJ_DIR$\..\Configuration\f8wEndev.cfg</state>
+                    <state>-f $PROJ_DIR$\..\Configuration\f8wConfig.cfg</state>
+                    <state>-f $PROJ_DIR$\..\Configuration\f8wZCL.cfg</state>
+                    <state>-f $PROJ_DIR$\..\Configuration\pins.cfg</state>
+                    <state>-f $PROJ_DIR$\..\Configuration\params.cfg</state>
                 </option>
                 <option>
                     <name>CCIncludePath2</name>
@@ -6183,34 +6162,19 @@
     <group>
         <name>Tools</name>
         <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8w2530.xcl</name>
+            <name>$PROJ_DIR$\..\Configuration\f8wConfig.cfg</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wConfig.cfg</name>
+            <name>$PROJ_DIR$\..\Configuration\f8wEndev.cfg</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wCoord.cfg</name>
-            <excluded>
-                <configuration>EndDeviceEB</configuration>
-                <configuration>EndDevicePA</configuration>
-                <configuration>RouterPA</configuration>
-            </excluded>
+            <name>$PROJ_DIR$\..\Configuration\f8wZCL.cfg</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wEndev.cfg</name>
-            <excluded>
-                <configuration>RouterPA</configuration>
-            </excluded>
+            <name>$PROJ_DIR$\..\Configuration\params.cfg</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wRouter.cfg</name>
-            <excluded>
-                <configuration>EndDeviceEB</configuration>
-                <configuration>EndDevicePA</configuration>
-            </excluded>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wZCL.cfg</name>
+            <name>$PROJ_DIR$\..\Configuration\pins.cfg</name>
         </file>
     </group>
     <group>

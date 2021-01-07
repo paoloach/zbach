@@ -40,11 +40,12 @@
 #include "dht112.h"
 	  
 
+byte deviceTaskId;
 
-	 
-byte temperatureSensorTaskID;
 extern SimpleDescriptionFormat_t temperatureSimpleDesc;
-	
+
+void User_Process_Pool(void);
+
 // Functions to process ZCL Foundation incoming Command/Response messages 
 static void processIncomingMsh( zclIncomingMsg_t *msg );
 static uint8 processInReadRspCmd( zclIncomingMsg_t *pInMsg );
@@ -70,7 +71,7 @@ afAddrType_t reportDstAddr;
 
 
 void temperatureSensorInit( byte task_id ){
- 	temperatureSensorTaskID = task_id;
+ 	deviceTaskId = task_id;
 
    	zcl_registerPlugin( ZCL_CLUSTER_ID_GEN_BASIC,  ZCL_CLUSTER_ID_GEN_MULTISTATE_VALUE_BASIC,    handleClusterCommands );
   
@@ -84,19 +85,19 @@ void temperatureSensorInit( byte task_id ){
 #ifdef DHT12        
         addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_MS_RELATIVE_HUMIDITY,humidityRelativeClusterReadAttribute);
 #endif
-  	zcl_registerForMsg( temperatureSensorTaskID );
+  	zcl_registerForMsg( deviceTaskId );
   
   	EA=1;
   	clusterTemperatureMeasurementeInit();
 #ifdef DHT12        
         clusterHumidityMeasurementeInit();
 #endif        
-	powerClusterInit(temperatureSensorTaskID);
- 	identifyInit(temperatureSensorTaskID);
+	powerClusterInit(deviceTaskId);
+ 	identifyInit(deviceTaskId);
 	ZMacSetTransmitPower(TX_PWR_PLUS_19);
 	//ZMacSetTransmitPower(POWER);
   blinkLedInit();
-  blinkLedstart(temperatureSensorTaskID);
+  blinkLedstart(deviceTaskId);
 
 }
 
@@ -114,7 +115,7 @@ void nextReportEvent(void) {
     nextReportEventSec = reportSecondCounter;
   
   reportSecondCounter -= nextReportEventSec;
-  osal_start_timerEx( temperatureSensorTaskID, REPORT_EVT, nextReportEventSec*1000 );	
+  osal_start_timerEx( deviceTaskId, REPORT_EVT, nextReportEventSec*1000 );	
 }
 
 static void eventReport(void) {
@@ -148,7 +149,7 @@ uint16 temperatureSensorEventLoop( uint8 task_id, uint16 events ){
   
 	(void)task_id;  // Intentionally unreferenced parameter
 	if ( events & SYS_EVENT_MSG ){
-		while ( (MSGpkt = (afIncomingMSGPacket_t *)osal_msg_receive( temperatureSensorTaskID )) )  {
+		while ( (MSGpkt = (afIncomingMSGPacket_t *)osal_msg_receive( deviceTaskId )) )  {
 			switch ( MSGpkt->hdr.event ) {
 				case ZCL_INCOMING_MSG:
                                   // Incoming ZCL Foundation command/response messages
@@ -203,7 +204,7 @@ uint16 temperatureSensorEventLoop( uint8 task_id, uint16 events ){
 	}
 	
   if ( events & FAST_BLINK ) {
-          blinkLedAction(temperatureSensorTaskID);
+          blinkLedAction(deviceTaskId);
           return events ^ FAST_BLINK;
   }
 
@@ -412,6 +413,9 @@ static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg ){
   return ( stat );
 }
 
+
+void User_Process_Pool(void){
+}
 
 
 /****************************************************************************

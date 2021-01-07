@@ -4892,22 +4892,19 @@
     <group>
         <name>Tools</name>
         <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8w2530.xcl</name>
+            <name>$PROJ_DIR$\..\Configuration\f8wConfig.cfg</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wConfig.cfg</name>
+            <name>$PROJ_DIR$\..\Configuration\f8wEndev.cfg</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wCoord.cfg</name>
+            <name>$PROJ_DIR$\..\Configuration\f8wZCL.cfg</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wEndev.cfg</name>
+            <name>$PROJ_DIR$\..\Configuration\params.cfg</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wRouter.cfg</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wZCL.cfg</name>
+            <name>$PROJ_DIR$\..\Configuration\pins.cfg</name>
         </file>
     </group>
     <group>
