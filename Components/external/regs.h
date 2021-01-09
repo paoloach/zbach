@@ -84,6 +84,42 @@ __sfr __no_init volatile struct  {
 } @ 0xF4;
 
 
+__sfr __no_init volatile struct  {
+	unsigned char MDP0_0: 1;
+	unsigned char MDP0_1: 1;
+	unsigned char MDP0_2: 1;
+	unsigned char MDP0_3: 1;
+	unsigned char MDP0_4: 1;
+	unsigned char MDP0_5: 1;
+	unsigned char MDP0_6: 1;
+	unsigned char MDP0_7: 1;
+} @ 0x8F;
+
+__sfr __no_init volatile struct  {
+	unsigned char NOVALID__MDP1_0: 1;
+	unsigned char NOVALID__MDP1_1: 1;
+	unsigned char MDP1_2: 1;
+	unsigned char MDP1_3: 1;
+	unsigned char MDP1_4: 1;
+	unsigned char MDP1_5: 1;
+	unsigned char MDP1_6: 1;
+	unsigned char MDP1_7: 1;
+} @ 0xF6;
+
+
+
+__sfr __no_init volatile struct  {
+	unsigned char MDP2_0: 1;
+	unsigned char MDP2_1: 1;
+	unsigned char MDP2_2: 1;
+	unsigned char MDP2_3: 1;
+	unsigned char MDP2_4: 1;
+	unsigned char PDUP0: 1;
+	unsigned char PDUP1: 1;
+	unsigned char PDUP2: 1;
+} @ 0x8F;
+
+
 
 // U0GCR
 __sfr __no_init volatile struct  {
@@ -115,6 +151,11 @@ __sfr __no_init volatile struct  {
 #define PORT_IMPL(A,B) P ## A ## _ ## B
 #define PORT(A,B) PORT_IMPL( A,B)
 
+#define PULLUP_DOWN_IMPL(A,B) MDP ## A ## _ ## B
+#define PULLUP_DOWN(A,B) PULLUP_DOWN_IMPL( A,B)
 
+#define PULL_UP_IMPL(A) PDUP ## A
+#define PULL_UP(A) PULL_UP_IMPL(A) = 0
+#define PULL_DOWN(A) PULL_UP_IMPL(A) = 1
 
 #endif

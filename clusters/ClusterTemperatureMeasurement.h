@@ -20,11 +20,6 @@ extern int16 minTemperatureValue;
 extern int16 maxTemperatureValue;
 extern uint16 toleranceTemperature;
 
-#define ATTRID_TEMPERATURE_MEASURE_VALUE		0
-#define ATTRID_TEMPERATURE_MIN_MEASURE_VALUE	1
-#define ATTRID_TEMPERATURE_MAX_MEASURE_VALUE	2
-#define ATTRID_TEMPERATURE_TOLERANCE			3
-
 uint16 readTemperatureLoop(uint16 events);
 void readTemperature(void);
 void clusterTemperatureMeasurementeInit(void);

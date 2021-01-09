@@ -708,6 +708,30 @@ extern "C"
 //   Types 0x01 to 0xFE are reserved, Type = 0xFF indicates other.
 #define APP_TYPE_MV_DOMAIN_HVAC                             0x00 // Application Domain HVAC
 
+  
+  
+ /**********************************************************/
+/*** Humidity Relative Measurement Cluster Attributes ***/
+/**********************************************************/ 
+  
+#define ATTRID_HUMIDITY_RELATIVE_MEASURE_VALUE		0
+#define ATTRID_HUMIDITY_RELATIVE_MIN_MEASURE_VALUE	1
+#define ATTRID_HUMIDITY_RELATIVE_MAX_MEASURE_VALUE	2
+#define ATTRID_HUMIDITY_RELATIVE_TOLERANCE		3  
+ 
+  
+ /**********************************************************/
+/*** Temperature Measurement Cluster Attributes ***/
+/**********************************************************/ 
+  
+#define ATTRID_TEMPERATURE_MEASURE_VALUE		0
+#define ATTRID_TEMPERATURE_MIN_MEASURE_VALUE	1
+#define ATTRID_TEMPERATURE_MAX_MEASURE_VALUE	2
+#define ATTRID_TEMPERATURE_TOLERANCE			3
+  
+  
+  
+  
 /*** Application Indexes ***/
 
 // Analog Input (AI) Indexes

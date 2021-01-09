@@ -21,10 +21,12 @@
 #define STARTING_DELAY_ms 5000
 #define STABILING_DELAY_ms 3000
 
-#define SDA P1_5
-#define POWER P1_4
-#define SDA_OFF  DIR1_5=0
-#define SDA_ON   DIR1_5=1
+#define SDA PORT(DHT112_SDA_PORT, DHT112_SDA_PIN)
+#define DHT112_POWER PORT(DHT112_POWER_PORT, DHT112_POWER_PIN)
+#define SDA_OFF  DIR(DHT112_SDA_PORT, DHT112_SDA_PIN)=0
+#define SDA_ON   DIR(DHT112_SDA_PORT, DHT112_SDA_PIN)=1
+
+
 
 int16 temp;
 uint16 humidity;
@@ -51,11 +53,14 @@ static enum Status internalReadAction(void);
 
 
 void dht112_init(uint8 taskid){
-    P1SEL &=0xCF; // 11001111
-    P1INP &= 0xCF;
-    P2INP &= 0xBF;
-    DIR1_4=1;
-    POWER=0;
+    FUNCTION_SEL(DHT112_POWER_PORT, DHT112_POWER_PIN)=0;
+    FUNCTION_SEL(DHT112_SDA_PORT, DHT112_SDA_PIN)=0;
+  
+    PULLUP_DOWN(DHT112_SDA_PORT, DHT112_SDA_PIN)=0;
+    PULL_UP(DHT112_SDA_PORT);
+      
+    DIR(DHT112_POWER_PORT, DHT112_POWER_PIN)=1;
+    DHT112_POWER=0;
     SDA_OFF;
     SDA = 0;
     
@@ -85,7 +90,7 @@ void dht112_loop(uint8 taskid) {
 }
 
 static enum Status startAction(uint8 taskid) {
-  POWER=1;
+  DHT112_POWER=1;
    readPeriodCounter=0;  
   osal_start_timerEx(taskid, READ_TEMP_EVT, 10 ); 
   return READ_START;
@@ -172,7 +177,7 @@ static enum Status internalReadAction(void){
   
   humidity = (uint16)data[0]*100 + data[1];
   temp = (uint16)data[2]*100 + data[3];
-  POWER=0;
+  DHT112_POWER=0;
   return WAIT;
 }
 
@@ -204,7 +209,7 @@ static enum Status resetAction(uint8 taskid) {
   osal_start_timerEx(taskid, READ_TEMP_EVT, TIME_READ_ms );
   temp=0xFFFF;
   humidity=0xFFFF;
-  POWER=0;
+  DHT112_POWER=0;
    return WAIT;
 }
 
