@@ -7011,6 +7011,9 @@
             </excluded>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\..\..\Components\external\EventManager.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\..\..\Components\external\regs.h</name>
         </file>
     </group>

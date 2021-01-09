@@ -33,6 +33,9 @@
 #include "clusters/ClusterBasic.h"
 #include "clusters/ClusterTemperatureMeasurement.h"
 #include "clusters/ClusterPower.h"
+#include "EventManager.h"
+
+
 #ifdef DHT12
 #include "clusters/ClusterHumidityRelativeMeasurement.h"
 #endif
@@ -60,7 +63,6 @@ static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg );
 static void initReport(void);
 static void nextReportEvent(void);
 static void eventReport(void);
-#define DEFAULT_REPORT_SEC      300
 uint16 reportSecond = DEFAULT_REPORT_SEC;
 uint16 reportSecondCounter;
 uint8 reportSeqNum;
@@ -98,7 +100,7 @@ void temperatureSensorInit( byte task_id ){
 	//ZMacSetTransmitPower(POWER);
   blinkLedInit();
   blinkLedstart(deviceTaskId);
-
+  eventManagerInit();
 }
 
 static void initReport(void){
@@ -144,7 +146,10 @@ static void eventReport(void) {
  * @return      none
  */
 uint16 temperatureSensorEventLoop( uint8 task_id, uint16 events ){
-	afIncomingMSGPacket_t *MSGpkt;
+  handleEvent(&events);
+  
+  
+      afIncomingMSGPacket_t *MSGpkt;
 	devStates_t zclSampleSw_NwkState;
   
 	(void)task_id;  // Intentionally unreferenced parameter
