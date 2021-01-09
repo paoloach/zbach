@@ -182,6 +182,24 @@ uint8 osal_start_timerEx( uint8 taskID, uint16 event_id, uint32 timeout_value ){
 }
 
 /*********************************************************************
+ * @fn      osal_start_timerEx
+ *
+ * @brief
+ *
+ *   This function is called to start a timer to expire in n mSecs.
+ *   When the timer expires, the calling task will get the specified event.
+ *
+ * @param   uint8 taskID - task id to set timer for
+ * @param   uint16 event_id - event to be notified with
+ * @param   uint32 timeout_value - in milliseconds.
+ *
+ * @return  SUCCESS, or NO_TIMER_AVAIL.
+ */
+uint8 osal_start_timerEx_bit( uint8 taskID, uint8 event_id_bit, uint32 timeout_value ){
+  return osal_start_timerEx(taskID, (1 << event_id_bit), timeout_value);
+}
+
+/*********************************************************************
  * @fn      osal_start_reload_timer
  *
  * @brief

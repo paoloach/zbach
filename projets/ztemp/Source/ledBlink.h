@@ -3,13 +3,12 @@
 
 #include "ZComDef.h"
 
-void blinkLedInit(void);
+void blinkLedInit(uint8 deviceTaskId);
 
 void blinkLedstart(byte taskid);
 
 void blinkLedEnd(byte taskid);
 
-void blinkLedAction(byte taskid);
 
 void setBlinkCounter(byte blinkCount);
 

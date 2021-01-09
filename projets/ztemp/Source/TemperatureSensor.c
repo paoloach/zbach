@@ -88,7 +88,7 @@ void temperatureSensorInit( byte task_id ){
         addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_MS_RELATIVE_HUMIDITY,humidityRelativeClusterReadAttribute);
 #endif
   	zcl_registerForMsg( deviceTaskId );
-  
+        eventManagerInit();  
   	EA=1;
   	clusterTemperatureMeasurementeInit();
 #ifdef DHT12        
@@ -98,9 +98,9 @@ void temperatureSensorInit( byte task_id ){
  	identifyInit(deviceTaskId);
 	ZMacSetTransmitPower(TX_PWR_PLUS_19);
 	//ZMacSetTransmitPower(POWER);
-  blinkLedInit();
+  blinkLedInit(deviceTaskId);
   blinkLedstart(deviceTaskId);
-  eventManagerInit();
+
 }
 
 static void initReport(void){
@@ -208,10 +208,11 @@ uint16 temperatureSensorEventLoop( uint8 task_id, uint16 events ){
 		return identifyLoop(events);
 	}
 	
+        /*
   if ( events & FAST_BLINK ) {
           blinkLedAction(deviceTaskId);
           return events ^ FAST_BLINK;
-  }
+  }*/
 
 
   if ( events & READ_TEMP_MASK ) {

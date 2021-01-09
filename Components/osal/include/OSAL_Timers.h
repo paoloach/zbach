@@ -82,6 +82,13 @@ extern "C"
    */
   extern uint8 osal_start_timerEx( uint8 task_id, uint16 event_id, uint32 timeout_value );
   
+  
+    /*
+   * Set a Timer with bit event
+   */
+  extern uint8 osal_start_timerEx_bit( uint8 task_id, uint8 event_id_bit, uint32 timeout_value );
+  
+  
   /*
    * Set a timer that reloads itself.
    */
@@ -91,6 +98,10 @@ extern "C"
    * Stop a Timer
    */
   extern uint8 osal_stop_timerEx( uint8 task_id, uint16 event_id );
+    /*
+   * Stop a Timer
+   */
+#define osal_stop_timerEx_bit(task_id, event_id_bit ) osal_stop_timerEx(task_id, (1 << event_id_bit)); 
 
   /*
    * Get the tick count of a Timer.

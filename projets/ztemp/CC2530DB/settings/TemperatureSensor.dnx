@@ -12,7 +12,7 @@
         <ByteLimit>50</ByteLimit>
     </Stack>
     <DebugChecksum>
-        <Checksum>2292310167</Checksum>
+        <Checksum>3031880181</Checksum>
     </DebugChecksum>
     <CallStack>
         <ShowArgs>0</ShowArgs>
@@ -73,6 +73,20 @@
         <Freq>50000000</Freq>
         <FreqHi>0</FreqHi>
     </Simulator>
+    <Breakpoints>
+        <Bp0>_ "STD_CODE" "LogicalCode:0x184E9" 0 0 0 0 "" 0 ""</Bp0>
+        <Bp1>_ "STD_CODE" "{$PROJ_DIR$\..\Source\ledBlink.c}.54.11" 0 0 0 0 "" 0 ""</Bp1>
+        <Bp2>_ "STD_CODE" "{$PROJ_DIR$\..\Source\ledBlink.c}.63.11" 0 0 0 0 "" 0 ""</Bp2>
+        <Bp3>_ "STD_CODE" "{$PROJ_DIR$\..\..\..\Components\external\dht112_SingleWire.c}.94.4" 0 0 0 0 "" 0 ""</Bp3>
+        <Bp4>_ "STD_CODE" "{$PROJ_DIR$\..\..\..\Components\external\dht112_SingleWire.c}.180.3" 0 0 0 0 "" 0 ""</Bp4>
+        <Bp5>_ "STD_CODE" "{$PROJ_DIR$\..\..\..\Components\external\dht112_SingleWire.c}.212.3" 0 0 0 0 "" 0 ""</Bp5>
+        <Bp6>_ "STD_CODE" "{$PROJ_DIR$\..\Source\ledBlink.c}.32.3" 1 0 0 0 "" 0 ""</Bp6>
+        <Count>7</Count>
+    </Breakpoints>
+    <ChipconEmu>
+        <StopTimersOnHalt>0</StopTimersOnHalt>
+        <LeaveTargetRunning>1</LeaveTargetRunning>
+    </ChipconEmu>
     <LogFile>
         <LoggingEnabled>_ 0</LoggingEnabled>
         <LogFile>_ ""</LogFile>
@@ -82,14 +96,6 @@
         <LoggingEnabled>_ 0</LoggingEnabled>
         <LogFile>_ ""</LogFile>
     </TermIOLog>
-    <Breakpoints>
-        <Bp0>_ "STD_CODE" "LogicalCode:0x184E9" 0 0 0 0 "" 0 ""</Bp0>
-        <Count>1</Count>
-    </Breakpoints>
-    <ChipconEmu>
-        <StopTimersOnHalt>0</StopTimersOnHalt>
-        <LeaveTargetRunning>1</LeaveTargetRunning>
-    </ChipconEmu>
     <Aliases>
         <Count>0</Count>
         <SuppressDialog>0</SuppressDialog>
