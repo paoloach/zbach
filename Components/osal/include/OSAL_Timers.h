@@ -86,7 +86,7 @@ extern "C"
     /*
    * Set a Timer with bit event
    */
-  extern uint8 osal_start_timerEx_bit( uint8 task_id, uint8 event_id_bit, uint32 timeout_value );
+  extern uint8 osal_start_timerEx_cb(uint32 timeout_value, void (* callback)(void) );
   
   
   /*
@@ -98,6 +98,13 @@ extern "C"
    * Stop a Timer
    */
   extern uint8 osal_stop_timerEx( uint8 task_id, uint16 event_id );
+  
+   
+    /*
+   * Stop a Timer
+   */
+  extern uint8 osal_stop_timerEx_cb( void (* callback)(void) );
+  
     /*
    * Stop a Timer
    */

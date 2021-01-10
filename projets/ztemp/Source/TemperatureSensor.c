@@ -54,6 +54,7 @@ static void processIncomingMsh( zclIncomingMsg_t *msg );
 static uint8 processInReadRspCmd( zclIncomingMsg_t *pInMsg );
 static uint8 processInWriteRspCmd( zclIncomingMsg_t *pInMsg );
 static uint8 processInDefaultRspCmd( zclIncomingMsg_t *pInMsg );
+static void eventReport(void);
 			   
 #ifdef ZCL_DISCOVER
 static uint8 processInDiscRspCmd( zclIncomingMsg_t *pInMsg );
@@ -62,7 +63,6 @@ static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg );
 
 static void initReport(void);
 static void nextReportEvent(void);
-static void eventReport(void);
 uint16 reportSecond = DEFAULT_REPORT_SEC;
 uint16 reportSecondCounter;
 uint8 reportSeqNum;
@@ -117,7 +117,7 @@ void nextReportEvent(void) {
     nextReportEventSec = reportSecondCounter;
   
   reportSecondCounter -= nextReportEventSec;
-  osal_start_timerEx( deviceTaskId, REPORT_EVT, nextReportEventSec*1000 );	
+  osal_start_timerEx_cb(nextReportEventSec*1000, &eventReport );
 }
 
 static void eventReport(void) {
@@ -146,7 +146,9 @@ static void eventReport(void) {
  * @return      none
  */
 uint16 temperatureSensorEventLoop( uint8 task_id, uint16 events ){
-  handleEvent(&events);
+  if (handleEvent(&events)){
+    return events;
+  };
   
   
       afIncomingMSGPacket_t *MSGpkt;
@@ -204,25 +206,6 @@ uint16 temperatureSensorEventLoop( uint8 task_id, uint16 events ){
     	return (events ^ SYS_EVENT_MSG);
 	}
 	
-	if ( events & IDENTIFY_TIMEOUT_EVT ) {
-		return identifyLoop(events);
-	}
-	
-        /*
-  if ( events & FAST_BLINK ) {
-          blinkLedAction(deviceTaskId);
-          return events ^ FAST_BLINK;
-  }*/
-
-
-  if ( events & READ_TEMP_MASK ) {
-    return readTemperatureLoop(events);
-  }
-  if (events & REPORT_EVT){
-    eventReport();
-    events = events ^ REPORT_EVT;
-  }
-
   return 0;
 }
 

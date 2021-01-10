@@ -14,6 +14,7 @@
 #include "zcl_general.h"
 #include "ClusterOSALEvents.h"
 #include "regs.h"
+#include "EventManager.h"
 
 #define ON_TIME 600
 #define OFF_TIME 400
@@ -21,6 +22,8 @@
 static uint16 identifyTime=0;
 
 static byte mainAppTaskId;
+static void identifyLoop(uint16 events);
+
 
 #define OFF 0
 #define  ON 1
@@ -59,28 +62,29 @@ void identifyInit(byte taskId){
   FUNCTION_SEL(IDENTIFY_PORT,   IDENTIFY_PIN)=0;
   PORT(IDENTIFY_PORT, IDENTIFY_PIN)=0;
   mainAppTaskId = taskId;
+  
+  addEventCB(IDENTIFY_TIMEOUT_EVT_BIT, &identifyLoop);
 }
 
-uint16 identifyLoop(uint16 events){
-	if (onOff==ON){
-		osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, OFF_TIME );
-		onOff=OFF;
-		PORT(IDENTIFY_PORT, IDENTIFY_PIN) = 1;
-	} else if (onOff==OFF ){
-		onOff=ON;
-		if ( identifyTime > 0 ){
-    		identifyTime--;
-		}
-    	if (identifyTime>0){
-			osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, ON_TIME );
-			osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_HOLD);
-			PORT(IDENTIFY_PORT, IDENTIFY_PIN) = 0;
-		} else{
-			osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_CONSERVE);
-			PORT(IDENTIFY_PORT, IDENTIFY_PIN) = 0;
-		}
-	} 
-    return ( events ^ IDENTIFY_TIMEOUT_EVT );
+void identifyLoop(uint16 events){
+  if (onOff==ON){
+          osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT_BIT, OFF_TIME );
+          onOff=OFF;
+          PORT(IDENTIFY_PORT, IDENTIFY_PIN) = 1;
+  } else if (onOff==OFF ){
+          onOff=ON;
+          if ( identifyTime > 0 ){
+          identifyTime--;
+          }
+  if (identifyTime>0){
+                  osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT_BIT, ON_TIME );
+                  osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_HOLD);
+                  PORT(IDENTIFY_PORT, IDENTIFY_PIN) = 0;
+          } else{
+                  osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_CONSERVE);
+                  PORT(IDENTIFY_PORT, IDENTIFY_PIN) = 0;
+          }
+  } 
 }
 
 
@@ -88,12 +92,12 @@ uint16 identifyLoop(uint16 events){
 
 void processIdentifyTimeChange( void ){
 	if ( identifyTime > 0 ) {
-		osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT, ON_TIME );
+		osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT_BIT, ON_TIME );
 		onOff=ON;
 		PORT(IDENTIFY_PORT, IDENTIFY_PIN) = 1;
 		osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_HOLD);
 	}  else {
-		osal_stop_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT );
+		osal_stop_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT_BIT );
 		osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_CONSERVE);
 	}
 }

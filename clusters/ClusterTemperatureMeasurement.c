@@ -72,12 +72,6 @@ void temperatureClusterReadAttribute(zclAttrRec_t * statusRec) {
 }
 
 uint16 readTemperatureLoop(uint16 events) {
-#ifdef DHT12
-  if (events & READ_TEMP_EVT){
-    dht112_loop(deviceTaskId);
-    return ( events ^ READ_TEMP_EVT );
-  }
-#endif
 #ifdef DS18B20
   if (events & START_READ_TEMP){
     startReadSyncronus();

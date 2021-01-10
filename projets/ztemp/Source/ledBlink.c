@@ -13,10 +13,8 @@
 static byte counter=0;
 static byte blink=1;
 static  byte stop=1;
-static uint8 taskId;
 
-
-static void blinkLedAction(uint16 event);
+static void blinkLedAction(void);
 
 
 void setBlinkCounter(byte blinkCount) {
@@ -24,18 +22,16 @@ void setBlinkCounter(byte blinkCount) {
 }
 
 void blinkLedInit(uint8 deviceTaskId) {
-  taskId = deviceTaskId;
   FUNCTION_SEL(LED_BLINK_PORT, LED_BLINK_PIN)=0;
   DIR(LED_BLINK_PORT, LED_BLINK_PIN)=1;
   PORT(LED_BLINK_PORT, LED_BLINK_PIN)=1;
 
   stop=0;
-  addEventCB(FAST_BLINK_BIT, &blinkLedAction);
 }
 
 
 void blinkLedstart(byte taskid){
-  osal_start_timerEx_bit( taskid, FAST_BLINK_BIT, FAST_BLINK_TIME_ON );
+  osal_start_timerEx_cb(FAST_BLINK_TIME_ON, &blinkLedAction );      
   PORT(LED_BLINK_PORT, LED_BLINK_PIN) = 1;
   stop=0;
 }
@@ -47,20 +43,21 @@ void blinkLedEnd(byte taskid){
 }
 
 
-void blinkLedAction(uint16 event){
+void blinkLedAction(void){
   if (stop)
     return;
   if (PORT(LED_BLINK_PORT, LED_BLINK_PIN)){
           PORT(LED_BLINK_PORT, LED_BLINK_PIN) = 0;
           if (counter > 0){
-                  osal_start_timerEx_bit( taskId, FAST_BLINK_BIT, FAST_BLINK_TIME_OFF_SHORT );
-                  counter--;
+            osal_start_timerEx_cb(FAST_BLINK_TIME_OFF_SHORT, &blinkLedAction );      
+            counter--;
           } else {
-                  osal_start_timerEx_bit( taskId, FAST_BLINK_BIT, FAST_BLINK_TIME_OFF_LONG );
-                  counter=blink;
+            osal_start_timerEx_cb(FAST_BLINK_TIME_OFF_LONG, &blinkLedAction );      
+            counter=blink;
           }
   }else{
           PORT(LED_BLINK_PORT, LED_BLINK_PIN) = 1;
-          osal_start_timerEx_bit( taskId, FAST_BLINK_BIT, FAST_BLINK_TIME_ON );
+          osal_start_timerEx_cb(FAST_BLINK_TIME_ON, &blinkLedAction );      
+          
   }
 }

@@ -7,7 +7,7 @@
 
 void eventManagerInit(void);
 void addEventCB(uint8 eventBit, void (* callback)(uint16 event) ); 
-void handleEvent(uint16 * event);
+uint8 handleEvent(uint16 * event);
 
 
 #endif

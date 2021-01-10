@@ -16,7 +16,7 @@
 
 void identifyInit(byte taskId);
 void processIdentifyTimeChange( void );
-uint16 identifyLoop(uint16 events);
+
 
 ZStatus_t processIdentifyClusterServerCommands( zclIncoming_t *pInMsg );
 ZStatus_t processIdentifyClusterClientCommands( zclIncoming_t *pInMsg );

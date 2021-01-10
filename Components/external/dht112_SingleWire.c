@@ -7,6 +7,7 @@
 #include "hal_i2c.h"
 
 #include "ClusterOSALEvents.h"
+#include "EventManager.h"
 #include "dht112.h"
 
 #define TIME_READ_ms 30*1000
@@ -16,6 +17,7 @@
 #define READ_PERIOD_MINUTES DEFAULT_READ_PERIOD_MINUTES
 #endif
 
+#define DHT_INIT_TIME_ms 1500
 #define READ_PERIOD_MAX_COUNTER 2*READ_PERIOD_MINUTES
 #define START_READ_PERIOD_ms 200
 #define STARTING_DELAY_ms 5000
@@ -31,7 +33,6 @@
 int16 temp;
 uint16 humidity;
 
-
 enum Status {
         START,
 	WAIT,
@@ -43,16 +44,16 @@ enum Status {
 static enum Status status=START; 
 static uint8 readPeriodCounter;
 
-static enum Status waitAction(uint8 taskid);
-static enum Status readStartAction(uint8 taskid);
-static enum Status readAction(uint8 taskid);
-static enum Status resetAction(uint8 taskid);
-static enum Status startAction(uint8 taskid);
+static enum Status waitAction(void);
+static enum Status readStartAction(void);
+static enum Status readAction(void);
+static enum Status resetAction(void);
+static enum Status startAction(void);
 static bool read8Bit(uint8 * data);
 static enum Status internalReadAction(void);
+static void dht112_loop(void);
 
-
-void dht112_init(uint8 taskid){
+void dht112_init(uint8 deviceTaskId){
     FUNCTION_SEL(DHT112_POWER_PORT, DHT112_POWER_PIN)=0;
     FUNCTION_SEL(DHT112_SDA_PORT, DHT112_SDA_PIN)=0;
   
@@ -64,67 +65,67 @@ void dht112_init(uint8 taskid){
     SDA_OFF;
     SDA = 0;
     
-    osal_start_timerEx(taskid, READ_TEMP_EVT, STARTING_DELAY_ms );
+    osal_start_timerEx_cb(STARTING_DELAY_ms, &dht112_loop );
 }
 
-void dht112_loop(uint8 taskid) {
+void dht112_loop(void) {
   do {
     switch(status){
       case START:
-        status = startAction(taskid);
+        status = startAction();
         break;
       case WAIT:
-        status = waitAction(taskid);
+        status = waitAction();
         break;
       case READ_START:
-        status = readStartAction(taskid);
+        status = readStartAction();
         break;
       case READ:
-        status = readAction(taskid);
+        status = readAction();
         break;
       case ERROR:
-        status = resetAction(taskid);
+        status = resetAction();
         break;
       }
-  } while (status == READ_START || status == ERROR);
+  } while (status == ERROR);
 }
 
-static enum Status startAction(uint8 taskid) {
+static enum Status startAction() {
   DHT112_POWER=1;
    readPeriodCounter=0;  
-  osal_start_timerEx(taskid, READ_TEMP_EVT, 10 ); 
-  return READ_START;
+   osal_start_timerEx_cb(DHT_INIT_TIME_ms, &dht112_loop );
+   return READ_START;
 }
 
-static enum Status waitAction(uint8 taskid) {
+static enum Status waitAction() {
   readPeriodCounter++;
   if (readPeriodCounter >= READ_PERIOD_MAX_COUNTER){
     readPeriodCounter=0;
-     osal_start_timerEx(taskid, READ_TEMP_EVT, STARTING_DELAY_ms );
+    osal_start_timerEx_cb(STARTING_DELAY_ms, &dht112_loop );
     return START;
   } else {
-    osal_start_timerEx(taskid, READ_TEMP_EVT, TIME_READ_ms );
+    osal_start_timerEx_cb(TIME_READ_ms, &dht112_loop );
     return WAIT;
   }
 	
 }
 
-static enum Status readStartAction(uint8 taskid) {
+static enum Status readStartAction() {
   SDA_ON;
-  osal_start_timerEx(taskid, READ_TEMP_EVT, START_READ_PERIOD_ms );
+  osal_start_timerEx_cb(START_READ_PERIOD_ms, &dht112_loop );
   return READ;
 }
 
 
 
-static enum Status readAction(uint8 taskid) {
+static enum Status readAction() {
   halIntState_t intState;
   HAL_ENTER_CRITICAL_SECTION( intState );
     enum Status ret = internalReadAction();
   HAL_EXIT_CRITICAL_SECTION( intState );
   if (status == WAIT){
-     osal_start_timerEx(taskid, READ_TEMP_EVT, TIME_READ_ms );
-  }
+    osal_start_timerEx_cb(TIME_READ_ms, &dht112_loop );
+   }
   return ret;
 }
 
@@ -204,9 +205,9 @@ static bool read8Bit(uint8 * data) {
   return true;
 }
 
-static enum Status resetAction(uint8 taskid) {
+static enum Status resetAction() {
   SDA_OFF; 
-  osal_start_timerEx(taskid, READ_TEMP_EVT, TIME_READ_ms );
+  osal_start_timerEx_cb(TIME_READ_ms, &dht112_loop );
   temp=0xFFFF;
   humidity=0xFFFF;
   DHT112_POWER=0;
