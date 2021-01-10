@@ -5,6 +5,7 @@
 #include "OSAL_Timers.h"
 #include "regs.h"
 #include "hal_i2c.h"
+#include "OSAL.h"
 
 #include "ClusterOSALEvents.h"
 #include "EventManager.h"
@@ -32,6 +33,7 @@
 
 int16 temp;
 uint16 humidity;
+uint8 taskId;
 
 enum Status {
         START,
@@ -54,6 +56,7 @@ static enum Status internalReadAction(void);
 static void dht112_loop(void);
 
 void dht112_init(uint8 deviceTaskId){
+    taskId = deviceTaskId;
     FUNCTION_SEL(DHT112_POWER_PORT, DHT112_POWER_PIN)=0;
     FUNCTION_SEL(DHT112_SDA_PORT, DHT112_SDA_PIN)=0;
   
@@ -179,6 +182,9 @@ static enum Status internalReadAction(void){
   humidity = (uint16)data[0]*100 + data[1];
   temp = (uint16)data[2]*100 + data[3];
   DHT112_POWER=0;
+  osal_start_timerEx_cb(STARTING_DELAY_ms, &dht112_loop );
+  osal_set_event_bit( taskId,  NEW_TEMP_BIT );
+  osal_set_event_bit( taskId,  NEW_HUMIDITY_BIT );
   return WAIT;
 }
 

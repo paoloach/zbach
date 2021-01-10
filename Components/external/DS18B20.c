@@ -12,24 +12,31 @@
 
 #include "DS18B20.h"
 
+
+#define DEFAULT_READ_PERIOD_MINUTES 5
+
+#ifndef READ_PERIOD_MINUTES
+#define READ_PERIOD_MINUTES DEFAULT_READ_PERIOD_MINUTES
+#endif
+
+#define READ_PERIOD_MAX_COUNTER 2*READ_PERIOD_MINUTES
+
+
 #define DS18B20_POWER  PORT(DS18B20_POWER_PORT, DS18B20_POWER_PIN)
-
-
 #define DATA_LOW  DIR(DS18B20_DATA_PORT, DS18B20_DATA_PIN)=1;PORT(DS18B20_DATA_PORT, DS18B20_DATA_PIN)=0;
 #define DATA_HIGH DIR(DS18B20_DATA_PORT, DS18B20_DATA_PIN)=1
 #define DATA DIR(DS18B20_DATA_PORT, DS18B20_DATA_PIN)
 
 int16 temp=0;
 
-
+static uint8 readWaitCounter=0;
 static uint8 taskId;
-static uint8 reportEndpoint;
-static afAddrType_t * reportDstAddr;
-static uint8 * reportSegNum;
 
 static uint8 reset(void);
 static void write(unsigned char byte);
 static uint8  read(void);
+static void waitRead(void);
+
 
 void DS18B20_init(uint8 deviceTaskId) {
   taskId = deviceTaskId;
@@ -45,11 +52,21 @@ void DS18B20_init(uint8 deviceTaskId) {
 }
 
 
+void waitRead(void) {
+  if (readWaitCounter==0){
+    readTemperature();
+    readWaitCounter = READ_PERIOD_MAX_COUNTER;
+  } else {
+    readWaitCounter--;
+     osal_start_timerEx_cb(30000,&startReadSyncronus );
+  }
+}
+
 void readTemperature(void) {
   DS18B20_POWER=1;
   PORT(DS18B20_DATA_PORT, DS18B20_DATA_PIN)=1;
   osal_pwrmgr_task_state(taskId, PWRMGR_HOLD);
-  osal_start_timerEx(taskId, START_READ_TEMP, 100 );
+  osal_start_timerEx_cb(100,&startReadSyncronus );
 }
 
 
@@ -72,7 +89,7 @@ void startReadSyncronus(void) {
   write(0xCC);
   write(0x44);
 
-  osal_start_timerEx( taskId, END_READ_TEMP_EVT, 1000 );
+  osal_start_timerEx_cb( 1000, &finalizeReadTemp );
 }
 
 void finalizeReadTemp(void){
@@ -93,23 +110,11 @@ void finalizeReadTemp(void){
   temp += decTemperatureValue >> 4;
   DS18B20_POWER=0;  
   
-  
-  zclReportCmd_t *pReportCmd;
-
-  pReportCmd = osal_mem_alloc( sizeof(zclReportCmd_t) + sizeof(zclReport_t) );
-  if ( pReportCmd != NULL ) {
-    pReportCmd->numAttr = 1;
-    pReportCmd->attrList[0].attrID = ATTRID_TEMPERATURE_MEASURE_VALUE;
-    pReportCmd->attrList[0].dataType = ZCL_DATATYPE_INT16;
-    pReportCmd->attrList[0].attrData = (void *)(&temp);
-
-    zcl_SendReportCmd( reportEndpoint, reportDstAddr,
-                       ZCL_CLUSTER_ID_MS_TEMPERATURE_MEASUREMENT,
-                       pReportCmd, ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, (*reportSegNum)++ );
-    osal_mem_free( pReportCmd );
-  }
-  
+  osal_set_event_bit( taskId,  NEW_TEMP_BIT );
+  osal_start_timerEx_cb( 1000, &finalizeReadTemp );
+  waitRead();
   osal_pwrmgr_task_state(taskId, PWRMGR_CONSERVE);
+  
 }
 
 
@@ -191,11 +196,4 @@ uint8  read(void) {
 		bit--;
 	}
 	return result;
-}
-
-
-void setReportDest(uint8 endpoint, afAddrType_t * dstAddr, uint8 * segNum) {
-  reportEndpoint=endpoint;
-  reportDstAddr=dstAddr;
-  reportSegNum=segNum;
 }

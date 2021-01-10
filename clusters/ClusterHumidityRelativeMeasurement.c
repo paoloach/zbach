@@ -17,6 +17,8 @@ RESOURCES:
 #include "ZDApp.h"
 #include "ClusterHumidityRelativeMeasurement.h"
 #include "dht112.h"
+#include "report.h"
+#include "EventManager.h"
 
 
 const int16 minHumidityValue=0;
@@ -25,8 +27,11 @@ const uint16 toleranceHumidity=10;
 
 extern byte zProxSensorTaskID;
 
+static void sendReport(void);
+static void newHumidity(uint16 );
 
 void clusterHumidityMeasurementeInit(void) {
+  addEventCB(NEW_HUMIDITY_BIT, &newHumidity);
 }
 
 void humidityRelativeClusterReadAttribute(zclAttrRec_t * statusRec) {
@@ -62,7 +67,12 @@ uint16 readHumidityLoop(uint16 events) {
 }
 
 
-void humidityRelativeClusterSendReport(uint8 endpoint, afAddrType_t * dstAddr, uint8 * segNum){
+void newHumidity(uint16 events ){
+  sendReport();
+}
+
+
+void sendReport(void){
   zclReportCmd_t *pReportCmd;
   if (humidity == 0xFFFF)
     return;
@@ -73,9 +83,9 @@ void humidityRelativeClusterSendReport(uint8 endpoint, afAddrType_t * dstAddr, u
     pReportCmd->attrList[0].dataType = ZCL_DATATYPE_UINT16;
     pReportCmd->attrList[0].attrData = (void *)(&humidity);
 
-    zcl_SendReportCmd( endpoint, dstAddr,
-                       ZCL_CLUSTER_ID_MS_RELATIVE_HUMIDITY,
-                       pReportCmd, ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, (*segNum)++ );
+    zcl_SendReportCmd( reportEndpoint, &reportDstAddr,
+                       ZCL_CLUSTER_ID_MS_TEMPERATURE_MEASUREMENT,
+                       pReportCmd, ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, reportSeqNum++ );
     
     osal_mem_free( pReportCmd );
   }

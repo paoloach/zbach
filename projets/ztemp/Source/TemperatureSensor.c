@@ -40,7 +40,12 @@
 #include "clusters/ClusterHumidityRelativeMeasurement.h"
 #endif
 #include "ledBlink.h"
+#ifdef DHT12
 #include "dht112.h"
+#endif
+#ifdef DS18B20
+#include "DS18B20.h"
+#endif
 	  
 
 byte deviceTaskId;
@@ -67,14 +72,10 @@ uint16 reportSecond = DEFAULT_REPORT_SEC;
 uint16 reportSecondCounter;
 uint8 reportSeqNum;
 afAddrType_t reportDstAddr;
-
-
-
-
+uint8  reportEndpoint;
 
 void temperatureSensorInit( byte task_id ){
  	deviceTaskId = task_id;
-
    	zcl_registerPlugin( ZCL_CLUSTER_ID_GEN_BASIC,  ZCL_CLUSTER_ID_GEN_MULTISTATE_VALUE_BASIC,    handleClusterCommands );
   
 	zclHA_Init( &temperatureSimpleDesc );
@@ -100,14 +101,21 @@ void temperatureSensorInit( byte task_id ){
 	//ZMacSetTransmitPower(POWER);
   blinkLedInit(deviceTaskId);
   blinkLedstart(deviceTaskId);
-
+#ifdef DHT12
+  dht112_init(deviceTaskId);
+#endif
+#ifdef DS18B20  
+  DS18B20_init(deviceTaskId);
+#endif
 }
 
 static void initReport(void){
+  reportEndpoint = ENDPOINT;
   reportSecondCounter = reportSecond;
   reportDstAddr.addrMode = afAddr16Bit;
-  reportDstAddr.endPoint = 0;
+  reportDstAddr.endPoint = ENDPOINT;
   reportDstAddr.addr.shortAddr = 0;
+  reportDstAddr.panId=_NIB.nodeDepth;
   nextReportEvent();
 }
 
@@ -124,13 +132,9 @@ static void eventReport(void) {
   if (reportSecondCounter <= 0){
     reportDstAddr.panId=_NIB.nodeDepth;
     reportDstAddr.endPoint=ENDPOINT;
-    temperatureClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
 #if !defined RTR_NWK   
     powerClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
 #endif    
-#ifdef DHT12
-    humidityRelativeClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
-#endif
     reportSecondCounter=reportSecond;
   }
   nextReportEvent();

@@ -1442,7 +1442,7 @@
                     <item>timerRec</item>
                     <item>humidity</item>
                     <item>temp</item>
-                    <item></item>
+                    <item />
                 </expressions>
                 <col-names>
                     <item>Expression</item>

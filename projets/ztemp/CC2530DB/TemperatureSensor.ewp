@@ -6959,6 +6959,9 @@
             <file>
                 <name>$PROJ_DIR$\..\..\..\clusters\ClusterTemperatureMeasurement.c</name>
             </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\clusters\report.h</name>
+            </file>
         </group>
         <file>
             <name>$PROJ_DIR$\..\Source\ledBlink.c</name>

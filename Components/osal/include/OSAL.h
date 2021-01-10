@@ -182,6 +182,7 @@ typedef void * osal_msg_q_t;
    */
   extern uint8 osal_set_event( uint8 task_id, uint16 event_flag );
 
+#define osal_set_event_bit(task_id, event_bit) osal_set_event(task_id, (1 << event_bit) )
 
   /*
    * Clear a Task Event
