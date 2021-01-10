@@ -22,27 +22,22 @@
 static uint16 identifyTime=0;
 
 static byte mainAppTaskId;
-static void identifyLoop(uint16 events);
-
-
-#define OFF 0
-#define  ON 1
-
-static uint8  onOff=OFF;
+static void ledOff(void);
+static void ledOn(void);
 
 
 void identifyClusterReadAttribute(zclAttrRec_t * attribute){
-	if (attribute == NULL){
-		return;
-	}
-	
-	if (attribute->attrId == ATTRID_IDENTIFY_TIME){
-		attribute->dataType = ZCL_DATATYPE_UINT16;
-		attribute->dataPtr = (void *)&identifyTime;
-		attribute->status = ZCL_STATUS_SUCCESS;
-	} else {
-		attribute->status = ZCL_STATUS_UNSUPPORTED_ATTRIBUTE;
-	}
+  if (attribute == NULL){
+      return;
+  }
+
+  if (attribute->attrId == ATTRID_IDENTIFY_TIME){
+    attribute->dataType = ZCL_DATATYPE_UINT16;
+    attribute->dataPtr = (void *)&identifyTime;
+    attribute->status = ZCL_STATUS_SUCCESS;
+  } else {
+    attribute->status = ZCL_STATUS_UNSUPPORTED_ATTRIBUTE;
+  }
 }
 void identifyClusterWriteAttribute(ZclWriteAttribute_t * writeAttribute){
 	if (writeAttribute == NULL){
@@ -62,65 +57,49 @@ void identifyInit(byte taskId){
   FUNCTION_SEL(IDENTIFY_PORT,   IDENTIFY_PIN)=0;
   PORT(IDENTIFY_PORT, IDENTIFY_PIN)=0;
   mainAppTaskId = taskId;
+}
+
+
+void ledOff(void){
+  PORT(IDENTIFY_PORT, IDENTIFY_PIN) = 0;
+  if ( identifyTime > 0 ){
+    identifyTime--;
+    osal_start_timerEx_cb(OFF_TIME,&ledOn  );
+  } else {
+    osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_CONSERVE);
+  }
   
-  addEventCB(IDENTIFY_TIMEOUT_EVT_BIT, &identifyLoop);
 }
 
-void identifyLoop(uint16 events){
-  if (onOff==ON){
-          osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT_BIT, OFF_TIME );
-          onOff=OFF;
-          PORT(IDENTIFY_PORT, IDENTIFY_PIN) = 1;
-  } else if (onOff==OFF ){
-          onOff=ON;
-          if ( identifyTime > 0 ){
-          identifyTime--;
-          }
-  if (identifyTime>0){
-                  osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT_BIT, ON_TIME );
-                  osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_HOLD);
-                  PORT(IDENTIFY_PORT, IDENTIFY_PIN) = 0;
-          } else{
-                  osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_CONSERVE);
-                  PORT(IDENTIFY_PORT, IDENTIFY_PIN) = 0;
-          }
-  } 
-}
-
-
-
-
-void processIdentifyTimeChange( void ){
-	if ( identifyTime > 0 ) {
-		osal_start_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT_BIT, ON_TIME );
-		onOff=ON;
-		PORT(IDENTIFY_PORT, IDENTIFY_PIN) = 1;
-		osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_HOLD);
-	}  else {
-		osal_stop_timerEx( mainAppTaskId, IDENTIFY_TIMEOUT_EVT_BIT );
-		osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_CONSERVE);
-	}
+void ledOn(void) {
+  if ( identifyTime > 0){
+    PORT(IDENTIFY_PORT, IDENTIFY_PIN) = 1;
+    osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_HOLD);
+    osal_start_timerEx_cb(ON_TIME, &ledOff );
+  } else {
+    PORT(IDENTIFY_PORT, IDENTIFY_PIN) = 0;
+    osal_pwrmgr_task_state(mainAppTaskId, PWRMGR_CONSERVE);
+  }
+  
 }
 
 ZStatus_t processIdentifyClusterServerCommands( zclIncoming_t *pInMsg ){
 
-	switch(pInMsg->hdr.commandID){
-	case COMMAND_IDENTIFY:
-		identifyTime = BUILD_UINT16( pInMsg->pData[0], pInMsg->pData[1] );
-		processIdentifyTimeChange();
-		return ZSuccess;
-	case COMMAND_IDENTIFY_QUERY:
-		if ( identifyTime > 0 ) {
-			zcl_SendCommand( pInMsg->msg->endPoint, &pInMsg->msg->srcAddr, ZCL_CLUSTER_ID_GEN_IDENTIFY,
-                         COMMAND_IDENTIFY_QUERY_RSP, TRUE,
-                         ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, 0, pInMsg->hdr.transSeqNum, 2, (uint8 *) &identifyTime );
-			return  ZCL_STATUS_CMD_HAS_RSP;
-	    } else {
-			return ZSuccess;
-		}
-	default:
-    	return ZFailure;   // Error ignore the command
-	}
+  switch(pInMsg->hdr.commandID){
+  case COMMAND_IDENTIFY:
+    identifyTime = BUILD_UINT16( pInMsg->pData[0], pInMsg->pData[1] );
+    ledOn();
+    return ZSuccess;
+  case COMMAND_IDENTIFY_QUERY:
+    if ( identifyTime > 0 ) {
+      zcl_SendCommand( pInMsg->msg->endPoint, &pInMsg->msg->srcAddr, ZCL_CLUSTER_ID_GEN_IDENTIFY, COMMAND_IDENTIFY_QUERY_RSP, TRUE, ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, 0, pInMsg->hdr.transSeqNum, 2, (uint8 *) &identifyTime );
+      return  ZCL_STATUS_CMD_HAS_RSP;
+    } else {
+       return ZSuccess;
+    }
+  default:
+  return ZFailure;   // Error ignore the command
+  }
 }
 
 ZStatus_t processIdentifyClusterClientCommands( zclIncoming_t *pInMsg ){

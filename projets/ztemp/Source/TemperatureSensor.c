@@ -130,8 +130,6 @@ void nextReportEvent(void) {
 
 static void eventReport(void) {
   if (reportSecondCounter <= 0){
-    reportDstAddr.panId=_NIB.nodeDepth;
-    reportDstAddr.endPoint=ENDPOINT;
 #if !defined RTR_NWK   
     powerClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
 #endif    

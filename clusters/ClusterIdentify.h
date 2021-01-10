@@ -15,7 +15,6 @@
 
 
 void identifyInit(byte taskId);
-void processIdentifyTimeChange( void );
 
 
 ZStatus_t processIdentifyClusterServerCommands( zclIncoming_t *pInMsg );

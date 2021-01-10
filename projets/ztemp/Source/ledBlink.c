@@ -37,7 +37,6 @@ void blinkLedstart(byte taskid){
 }
 
 void blinkLedEnd(byte taskid){
-  osal_stop_timerEx_bit( taskid, FAST_BLINK_BIT );
   PORT(LED_BLINK_PORT, LED_BLINK_PIN) = 0;
   stop=1;
 }
