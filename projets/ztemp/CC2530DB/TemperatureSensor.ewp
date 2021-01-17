@@ -9064,6 +9064,18 @@
             <name>$PROJ_DIR$\..\..\..\Components\ha\zcl_ha.h</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\..\..\Components\stack\zcl\zcl_ota.c</name>
+            <excluded>
+                <configuration>EndDevice_DH112</configuration>
+            </excluded>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\Components\stack\zcl\zcl_ota.h</name>
+            <excluded>
+                <configuration>EndDevice_DH112</configuration>
+            </excluded>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\..\..\Components\stack\zcl\zclReadAttributeFn.c</name>
         </file>
         <file>

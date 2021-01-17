@@ -72,6 +72,8 @@
 #if (defined HAL_SPI) && (HAL_SPI == TRUE)
 #include "hal_spi.h"
 #endif
+#include "regs.h"
+#include "ClusterOSALEvents.h"
 
 #define NO_TASK_ID 0xFF
 
@@ -106,6 +108,15 @@ void Hal_Init( uint8 task_id )
   osal_start_reload_timer( Hal_TaskID, PERIOD_RSSI_RESET_EVT, PERIOD_RSSI_RESET_TIMEOUT );
 #endif
 }
+
+#if (defined SWITCH1_PORT) && (defined SWITCH1_PIN)
+static void initSwitch1(void) {
+   FUNCTION_SEL(SWITCH1_PORT, SWITCH1_PIN)=0;
+   DIR(SWITCH1_PORT, SWITCH1_PIN)=0;
+   DIR(2, 0)=0;
+}
+#endif
+
 
 /**************************************************************************************************
  * @fn      Hal_DriverInit
@@ -167,6 +178,11 @@ void HalDriverInit (void)
 #if (defined HAL_HID) && (HAL_HID == TRUE)
   usbHidInit();
 #endif
+  
+#if (defined SWITCH1_PORT) && (defined SWITCH1_PIN)
+  initSwitch1();
+#endif 
+  
 }
 
 /**************************************************************************************************
@@ -267,6 +283,27 @@ uint16 Hal_ProcessEvent( uint8 task_id, uint16 events )
   return 0;
 }
 
+#if (defined SWITCH1_PORT) && (defined SWITCH1_PIN)
+static uint8 previousSwitch1Status=0;
+static void switch1Process(void) {
+  if ( PORT(SWITCH1_PORT, SWITCH1_PIN)){
+    if (previousSwitch1Status==0){
+      previousSwitch1Status=1;
+      if (registeredKeysTaskID != 0){
+        osal_set_event_bit(registeredKeysTaskID, SWITCH1_UP_EVT_BIT);
+      }
+    }                
+  } else {
+    if (previousSwitch1Status==1){
+      previousSwitch1Status=0;
+      if (registeredKeysTaskID != 0){
+        osal_set_event_bit(registeredKeysTaskID, SWITCH1_DOWN_EVT_BIT);
+      }
+    }
+  }
+}
+#endif
+
 /**************************************************************************************************
  * @fn      Hal_ProcessPoll
  *
@@ -297,7 +334,9 @@ void Hal_ProcessPoll (){
 	usbHidProcessEvents();
 #endif
 
-
+#if (defined SWITCH1_PORT) && (defined SWITCH1_PIN)
+        switch1Process();
+#endif
  
 }
 

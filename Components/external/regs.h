@@ -57,6 +57,16 @@ __sfr __no_init volatile struct  {
 	unsigned char DIR1_7: 1;
 } @ 0xFE;
 
+__sfr __no_init volatile struct  {
+	unsigned char DIR2_0: 1;
+	unsigned char DIR2_1: 1;
+	unsigned char DIR2_2: 1;
+	unsigned char DIR2_3: 1;
+	unsigned char DIR2_4: 1;
+	unsigned char DIR2_5: 1;
+	unsigned char DIR2_6: 1;
+	unsigned char DIR2_7: 1;
+} @ 0xFF;
 
 
 

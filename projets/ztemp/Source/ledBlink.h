@@ -5,9 +5,9 @@
 
 void blinkLedInit(uint8 deviceTaskId);
 
-void blinkLedstart(byte taskid);
+void blinkLedstart(void);
 
-void blinkLedEnd(byte taskid);
+void blinkLedEnd(void);
 
 
 void setBlinkCounter(byte blinkCount);

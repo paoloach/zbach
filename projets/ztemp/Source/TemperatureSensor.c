@@ -16,6 +16,8 @@
  */
 #include "ZComDef.h"
 #include "OSAL.h"
+#include "OSAL_Clock.h"
+#include "hal_drivers.h"
 #include "AF.h"
 #include "nwk.h"
 #include "ZDApp.h"
@@ -59,6 +61,7 @@ static void processIncomingMsh( zclIncomingMsg_t *msg );
 static uint8 processInReadRspCmd( zclIncomingMsg_t *pInMsg );
 static uint8 processInWriteRspCmd( zclIncomingMsg_t *pInMsg );
 static uint8 processInDefaultRspCmd( zclIncomingMsg_t *pInMsg );
+
 static void eventReport(void);
 			   
 #ifdef ZCL_DISCOVER
@@ -68,11 +71,17 @@ static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg );
 
 static void initReport(void);
 static void nextReportEvent(void);
+static void switch1Down(uint16 event);
+static void switch1Up(uint16 event);
+
+
 uint16 reportSecond = DEFAULT_REPORT_SEC;
 uint16 reportSecondCounter;
 uint8 reportSeqNum;
 afAddrType_t reportDstAddr;
 uint8  reportEndpoint;
+uint8  connected=false;
+uint32 switch1DownStart;
 
 void temperatureSensorInit( byte task_id ){
  	deviceTaskId = task_id;
@@ -100,13 +109,16 @@ void temperatureSensorInit( byte task_id ){
 	ZMacSetTransmitPower(TX_PWR_PLUS_19);
 	//ZMacSetTransmitPower(POWER);
   blinkLedInit(deviceTaskId);
-  blinkLedstart(deviceTaskId);
+  blinkLedstart();
 #ifdef DHT12
   dht112_init(deviceTaskId);
 #endif
 #ifdef DS18B20  
   DS18B20_init(deviceTaskId);
 #endif
+  setRegisteredKeysTaskID(deviceTaskId);
+  addEventCB(SWITCH1_UP_EVT_BIT, switch1Up);
+  addEventCB(SWITCH1_DOWN_EVT_BIT, switch1Down);
 }
 
 static void initReport(void){
@@ -138,6 +150,17 @@ static void eventReport(void) {
   nextReportEvent();
   }
 
+static void switch1Down(uint16 event){
+  switch1DownStart = osal_getClock();
+}
+
+static void switch1Up(uint16 event){
+  if (osal_getClock() -switch1DownStart >2){
+    if (connected){
+      ZDApp_LeaveReset(FALSE);
+    }
+  }
+}
 /*********************************************************************
  * @fn          zclSample_event_loop
  *
@@ -169,31 +192,40 @@ uint16 temperatureSensorEventLoop( uint8 task_id, uint16 events ){
                                     
                                   switch(zclSampleSw_NwkState){
                                   case DEV_NWK_DISC:
+                                    connected=false;
                                     setBlinkCounter(0);
                                     break;
                                   case DEV_NWK_JOINING:
+                                    connected=false;
                                     setBlinkCounter(1);
                                     break;
                                   case DEV_NWK_REJOIN:
+                                    connected=false;
                                     setBlinkCounter(2);
                                     break;
                                   case DEV_END_DEVICE_UNAUTH:
+                                    connected=false;
                                     setBlinkCounter(3);
                                     break;
                                   case DEV_END_DEVICE:
-                                    blinkLedEnd(task_id);
+                                    connected=true;
+                                    blinkLedEnd();
                                     initReport();
                                     break;
                                   case DEV_ROUTER:
+                                    connected=true;
                                     setBlinkCounter(5);
                                     break;
                                   case DEV_COORD_STARTING:
+                                    connected=false;
                                     setBlinkCounter(6);
                                     break;
                                   case DEV_ZB_COORD:
+                                    connected=true;
                                     setBlinkCounter(7);
                                     break;
                                   case DEV_NWK_ORPHAN:
+                                    connected=false;
                                     setBlinkCounter(8);
                                     break;
                                   }

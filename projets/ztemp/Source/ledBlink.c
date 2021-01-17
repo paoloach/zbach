@@ -30,13 +30,13 @@ void blinkLedInit(uint8 deviceTaskId) {
 }
 
 
-void blinkLedstart(byte taskid){
+void blinkLedstart(){
   osal_start_timerEx_cb(FAST_BLINK_TIME_ON, &blinkLedAction );      
   PORT(LED_BLINK_PORT, LED_BLINK_PIN) = 1;
   stop=0;
 }
 
-void blinkLedEnd(byte taskid){
+void blinkLedEnd(){
   PORT(LED_BLINK_PORT, LED_BLINK_PIN) = 0;
   stop=1;
 }

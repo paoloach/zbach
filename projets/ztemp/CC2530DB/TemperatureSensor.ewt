@@ -7036,6 +7036,12 @@
             <name>$PROJ_DIR$\..\..\..\Components\ha\zcl_ha.h</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\..\..\Components\stack\zcl\zcl_ota.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\Components\stack\zcl\zcl_ota.h</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\..\..\Components\stack\zcl\zclReadAttributeFn.c</name>
         </file>
         <file>

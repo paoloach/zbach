@@ -19,14 +19,15 @@ void addEventCB(uint8 eventBit, void (* callback)(uint16 event) ){
 
 uint8 handleEvent(uint16 * event){
   uint8 bit=1;
+  uint16 tmpEvent = *event;
   for(uint8 i=0; i < 16; i++){
-    if (callbacks[i] != NULL){
-      callbacks[i](*event);
-      *event = *event  ^ bit;
-      return 1;
+    if ((tmpEvent & bit) && (callbacks[i] != NULL)){
+      callbacks[i](tmpEvent);
+      tmpEvent = tmpEvent  ^ bit;
     }
     bit = bit << 1;
   }
-  return 0;
+  *event = tmpEvent;
+  return tmpEvent;
   
 }
