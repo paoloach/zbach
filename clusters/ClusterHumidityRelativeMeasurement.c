@@ -84,7 +84,7 @@ void sendReport(void){
     pReportCmd->attrList[0].attrData = (void *)(&humidity);
 
     zcl_SendReportCmd( reportEndpoint, &reportDstAddr,
-                       ZCL_CLUSTER_ID_MS_TEMPERATURE_MEASUREMENT,
+                       ZCL_CLUSTER_ID_MS_RELATIVE_HUMIDITY,
                        pReportCmd, ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, reportSeqNum++ );
     
     osal_mem_free( pReportCmd );
