@@ -57,6 +57,8 @@
 #include "hal_assert.h"
 #include "mac_mcu.h"
 
+
+
 #ifndef ZG_BUILD_ENDDEVICE_TYPE
 # define ZG_BUILD_ENDDEVICE_TYPE TRUE
 #endif
@@ -332,16 +334,18 @@ void halSleep( uint32 osal_timeout )
     HAL_DISABLE_INTERRUPTS();
 
     /* always use "deep sleep" to turn off radio VREG on CC2530 */
+    if (timeout > 1000){
+      for(uint8 i=0; i< 20; i++){
+        if ( MAC_PwrOffReq(MAC_PWR_SLEEP_DEEP) == MAC_SUCCESS)
+          break;
+      }
+    }
+    
     if (halSleepPconValue != 0 && MAC_PwrOffReq(MAC_PWR_SLEEP_DEEP) == MAC_SUCCESS)
     {
       /* The PCON value is not zero. There is no interrupt overriding the 
        * sleep decision. Also, the radio granted the sleep request.
        */
-
-#if ((defined HAL_KEY) && (HAL_KEY == TRUE))
-      /* get peripherals ready for sleep */
-      HalKeyEnterSleep();
-#endif
 
       /* use this to turn LEDs off during sleep */
       HalLedEnterSleep();
@@ -373,16 +377,6 @@ void halSleep( uint32 osal_timeout )
           HAL_SLEEP_TIMER_ENABLE_INT();
         }
 
-#ifdef HAL_SLEEP_DEBUG_LED
-        if (halPwrMgtMode == CC2530_PM1)
-        {
-          HAL_TURN_ON_LED1();
-        }
-        else
-        {
-          HAL_TURN_OFF_LED1();
-        }
-#endif
         /* Prep CC2530 power mode */
         HAL_SLEEP_PREP_POWER_MODE(halPwrMgtMode);
 
@@ -407,20 +401,6 @@ void halSleep( uint32 osal_timeout )
         /* disable sleep timer interrupt */
         HAL_SLEEP_TIMER_DISABLE_INT();
 
-#ifdef HAL_SLEEP_DEBUG_LED
-        HAL_TURN_ON_LED3();
-#else
-        /* use this to turn LEDs back on after sleep */
-        HalLedExitSleep();
-#endif
-
-#if ((defined HAL_KEY) && (HAL_KEY == TRUE))
-        /* handle peripherals */
-        if(HalKeyExitSleep())
-        {
-          break; 
-        }
-#endif
 
       } while(timeout != 0);
 
@@ -438,6 +418,7 @@ void halSleep( uint32 osal_timeout )
        * drives the chip in sleep and SYNC start is used.
        */
       macMcuTimer2OverflowWorkaround();
+
     }
     else
     {

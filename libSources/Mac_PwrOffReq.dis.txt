@@ -1,0 +1,43 @@
+#define MAC_PWR_ON                  0     /* MAC and radio hardware is powered on */
+#define MAC_PWR_SLEEP_LITE          1     /* MAC and radio hardware are partially powered off */
+#define MAC_PWR_SLEEP_DEEP          2     /* MAC and radio hardware are fully powered off */
+
+uint8 MAC_PwrOffReq(uint8 mode);
+MAC_PwrOffReq:
+ 02A202  74 F7           MOV   A,#0xF7
+ 02A204  12 03 8D        LCALL ?BANKED_ENTER_XDATA
+ 02A207  E9              MOV   A,R1
+ 02A208  FE              MOV   R6,A // R6 argument
+ 
+ 02A209  90 0E C1        MOV   DPTR,#0x0EC1 // macPwr
+ 02A20C  E0              MOVX  A,@DPTR
+ 02A20D  6E              XRL   A,R6
+ 02A20E  60 16           JZ    0x2A226        // Se è già nello stesso stato, escu
+ 
+ 02A210  E0              MOVX  A,@DPTR
+ 02A211  70 17           JNZ   0x2A22A        
+ 
+ // E' in PwrOn
+ 02A213  12 1E 33        LCALL macStateIdleOrPolling::?relay // return boolean in R1
+ 02A216  E9              MOV   A,R1
+ 02A217  60 11           JZ    0x2A22A
+// if ( macStateIdleOrPolling() != 0) {
+	 02A219  EE              MOV   A,R6
+	 02A21A  F9              MOV   R1,A
+	 02A21B  12 0E 73        LCALL macSleep::?relay
+	 02A21E  E9              MOV   A,R1
+	 02A21F  60 09           JZ    0x2A22A
+	 02A221  EE              MOV   A,R6
+	 02A222  90 0E C1        MOV   DPTR,#0x0EC1
+	 02A225  F0              MOVX  @DPTR,A
+	 02A226  79 00           MOV   R1,#0x00
+	 02A228  80 02           SJMP  0x2A22C
+ }
+ 02A22A  79 E2           MOV   R1,#0xE2
+ 02A22C  02 8B 09        LJMP  0x8B09
+MAC_PwrOnReq:
+ 02A22F  C0 82           PUSH  DPL
+ 02A231  C0 83           PUSH  DPH
+ 02A233  90 0E C1        MOV   DPTR,#0x0EC1
+ 02A236  E0              MOVX  A,@DPTR
+ 02A237  60 08           JZ    0x2A241

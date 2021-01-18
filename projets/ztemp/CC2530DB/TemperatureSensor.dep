@@ -9718,6 +9718,10 @@
                     <name>ICC8051</name>
                     <file> 476 485 483 489 488 339 425 342 346 473 43 340 383 41 347 379</file>
                 </tool>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 339 340 473 425 347 342 346 43 383 41 379</file>
+                </tool>
             </inputs>
         </file>
         <file>

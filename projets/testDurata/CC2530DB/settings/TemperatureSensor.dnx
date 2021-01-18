@@ -12,7 +12,7 @@
         <ByteLimit>50</ByteLimit>
     </Stack>
     <DebugChecksum>
-        <Checksum>401156609</Checksum>
+        <Checksum>1486838453</Checksum>
     </DebugChecksum>
     <CallStack>
         <ShowArgs>0</ShowArgs>
@@ -76,6 +76,8 @@
     <watch_formats>
         <Fmt0>{W}1:*event	1	0</Fmt0>
         <Fmt1>{W}1:event	1	0</Fmt1>
+        <Fmt2>{W}1:events	4	0</Fmt2>
+        <Fmt3>{W}1:tasksEvents[0]	4	0</Fmt3>
     </watch_formats>
     <LogFile>
         <LoggingEnabled>_ 0</LoggingEnabled>
@@ -87,17 +89,14 @@
         <LogFile>_ ""</LogFile>
     </TermIOLog>
     <Breakpoints>
-        <Bp0>_ "STD_CODE" "LogicalCode:0x184E9" 0 0 0 0 "" 0 ""</Bp0>
-        <Bp1>_ "STD_CODE" "{$PROJ_DIR$\..\Source\ledBlink.c}.49.11" 0 0 0 0 "" 0 ""</Bp1>
-        <Bp2>_ "STD_CODE" "{$PROJ_DIR$\..\Source\ledBlink.c}.58.11" 0 0 0 0 "" 0 ""</Bp2>
-        <Bp3>_ "STD_CODE" "{$PROJ_DIR$\..\Source\ledBlink.c}.29.3" 0 0 0 0 "" 0 ""</Bp3>
-        <Bp4>_ "STD_CODE" "{$PROJ_DIR$\..\..\..\Components\hal\common\hal_drivers.c}.293.9" 0 0 0 0 "" 0 ""</Bp4>
-        <Bp5>_ "STD_CODE" "{$PROJ_DIR$\..\Source\TemperatureSensor.c}.174.3" 0 0 0 0 "" 0 ""</Bp5>
-        <Bp6>_ "STD_CODE" "{$PROJ_DIR$\..\..\..\Components\external\dht112_SingleWire.c}.71.5" 0 0 0 0 "" 0 ""</Bp6>
-        <Count>7</Count>
+        <Bp0>_ "STD_CODE" "LogicalCode:0x292A2" 0 0 0 0 "" 0 ""</Bp0>
+        <Bp1>_ "STD_CODE" "LogicalCode:0x2A209" 0 0 0 0 "" 0 ""</Bp1>
+        <Bp2>_ "STD_CODE" "{$PROJ_DIR$\..\..\..\Components\mac\low_level\srf04\mac_sleep.c}.144.3" 0 0 0 0 "" 0 ""</Bp2>
+        <Bp3>_ "STD_CODE" "{$PROJ_DIR$\..\..\..\Components\osal\common\OSAL.c}.954.7" 1 0 0 0 "" 0 ""</Bp3>
+        <Count>4</Count>
     </Breakpoints>
     <ChipconEmu>
-        <StopTimersOnHalt>1</StopTimersOnHalt>
+        <StopTimersOnHalt>0</StopTimersOnHalt>
         <LeaveTargetRunning>1</LeaveTargetRunning>
     </ChipconEmu>
     <Aliases>
