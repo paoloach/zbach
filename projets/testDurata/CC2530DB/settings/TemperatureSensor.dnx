@@ -12,7 +12,7 @@
         <ByteLimit>50</ByteLimit>
     </Stack>
     <DebugChecksum>
-        <Checksum>1486838453</Checksum>
+        <Checksum>1191419649</Checksum>
     </DebugChecksum>
     <CallStack>
         <ShowArgs>0</ShowArgs>
@@ -79,6 +79,19 @@
         <Fmt2>{W}1:events	4	0</Fmt2>
         <Fmt3>{W}1:tasksEvents[0]	4	0</Fmt3>
     </watch_formats>
+    <Breakpoints>
+        <Bp0>_ "STD_CODE" "LogicalCode:0x292A2" 0 0 0 0 "" 0 ""</Bp0>
+        <Bp1>_ "STD_CODE" "LogicalCode:0x2A209" 0 0 0 0 "" 0 ""</Bp1>
+        <Bp2>_ "STD_CODE" "{$PROJ_DIR$\..\..\..\Components\mac\low_level\srf04\mac_sleep.c}.144.3" 0 0 0 0 "" 0 ""</Bp2>
+        <Bp3>_ "STD_CODE" "{$PROJ_DIR$\..\..\..\Components\hal\target\CC2530EB\hal_sleep.c}.352.11" 0 0 0 0 "" 0 ""</Bp3>
+        <Bp4>_ "STD_CODE" "{$PROJ_DIR$\..\..\..\Components\hal\target\CC2530EB\hal_sleep.c}.354.11" 0 0 0 0 "" 0 ""</Bp4>
+        <Bp5>_ "STD_CODE" "{$PROJ_DIR$\..\Source\TemperatureSensor.c}.110.22" 1 0 0 0 "" 0 ""</Bp5>
+        <Count>6</Count>
+    </Breakpoints>
+    <ChipconEmu>
+        <StopTimersOnHalt>0</StopTimersOnHalt>
+        <LeaveTargetRunning>1</LeaveTargetRunning>
+    </ChipconEmu>
     <LogFile>
         <LoggingEnabled>_ 0</LoggingEnabled>
         <LogFile>_ ""</LogFile>
@@ -88,17 +101,6 @@
         <LoggingEnabled>_ 0</LoggingEnabled>
         <LogFile>_ ""</LogFile>
     </TermIOLog>
-    <Breakpoints>
-        <Bp0>_ "STD_CODE" "LogicalCode:0x292A2" 0 0 0 0 "" 0 ""</Bp0>
-        <Bp1>_ "STD_CODE" "LogicalCode:0x2A209" 0 0 0 0 "" 0 ""</Bp1>
-        <Bp2>_ "STD_CODE" "{$PROJ_DIR$\..\..\..\Components\mac\low_level\srf04\mac_sleep.c}.144.3" 0 0 0 0 "" 0 ""</Bp2>
-        <Bp3>_ "STD_CODE" "{$PROJ_DIR$\..\..\..\Components\osal\common\OSAL.c}.954.7" 1 0 0 0 "" 0 ""</Bp3>
-        <Count>4</Count>
-    </Breakpoints>
-    <ChipconEmu>
-        <StopTimersOnHalt>0</StopTimersOnHalt>
-        <LeaveTargetRunning>1</LeaveTargetRunning>
-    </ChipconEmu>
     <Aliases>
         <Count>0</Count>
         <SuppressDialog>0</SuppressDialog>

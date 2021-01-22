@@ -949,13 +949,7 @@ uint8 osal_set_event( uint8 task_id, uint16 event_flag )
 {
   if ( task_id < tasksCnt )
   {
-     if (task_id==0 && (event_flag == 0x8010 || event_flag==0x10)){
-            
-      if (P1_4 == 0)
-        P1_4 = 1;
-      else
-        P1_4 =0;
-    }
+
     halIntState_t   intState;
     HAL_ENTER_CRITICAL_SECTION(intState);    // Hold off interrupts
     tasksEvents[task_id] |= event_flag;  // Stuff the event bit(s)

@@ -333,10 +333,29 @@ void halSleep( uint32 osal_timeout )
     HAL_ASSERT(HAL_INTERRUPTS_ARE_ENABLED());
     HAL_DISABLE_INTERRUPTS();
 
-    /* always use "deep sleep" to turn off radio VREG on CC2530 */
+      if (P1_4 == 0)
+        P1_4 = 1;
+      else
+        P1_4 =0;
+
+      /* always use "deep sleep" to turn off radio VREG on CC2530 */
     if (timeout > 1000){
-      for(uint8 i=0; i< 20; i++){
-        if ( MAC_PwrOffReq(MAC_PWR_SLEEP_DEEP) == MAC_SUCCESS)
+      uint16 events;
+      halIntState_t intState;
+      for(uint8 i=0; i< 20; i++){  
+        if (tasksEvents[0] != 0){
+          HAL_ENTER_CRITICAL_SECTION(intState);
+          events = tasksEvents[0];
+          tasksEvents[0] = 0;  // Clear the Events for this task.
+          HAL_EXIT_CRITICAL_SECTION(intState);
+
+          events = (tasksArr[0])(0, events );
+          HAL_ENTER_CRITICAL_SECTION(intState);
+          tasksEvents[0] |= events;  // Add back unprocessed events to the current task.
+          HAL_EXIT_CRITICAL_SECTION(intState);
+
+        }
+       if ( MAC_PwrOffReq(MAC_PWR_SLEEP_DEEP) == MAC_SUCCESS)
           break;
       }
     }
