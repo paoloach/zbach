@@ -9,7 +9,7 @@
             <file>$PROJ_DIR$\..\Source\clusters\ClusterData.c</file>
             <file>$PROJ_DIR$\..\..\..\clusters\report.h</file>
             <file>$PROJ_DIR$\..\..\..\Components\external\dht112.h</file>
-            <file>$PROJ_DIR$\..\Source\OSAL_TemperatureSensor.c</file>
+            <file>$PROJ_DIR$\..\Source\OSAL_zLightController.c</file>
             <file>$PROJ_DIR$\..\..\..\clusters\ClusterIdentify.h</file>
             <file>$PROJ_DIR$\..\Source\ledBlink.c</file>
             <file>$PROJ_DIR$\..\..\..\clusters\ClusterIdentify.c</file>
@@ -20,9 +20,9 @@
             <file>$PROJ_DIR$\..\..\..\clusters\ClusterPower.c</file>
             <file>$PROJ_DIR$\..\..\..\clusters\ClusterTemperatureMeasurement.c</file>
             <file>$PROJ_DIR$\..\..\..\clusters\ClusterBasic.c</file>
-            <file>$PROJ_DIR$\..\Source\TemperatureSensor.c</file>
-            <file>$PROJ_DIR$\..\Source\TemperatureSensor_data.c</file>
-            <file>$PROJ_DIR$\..\Source\TemperatureSensor.h</file>
+            <file>$PROJ_DIR$\..\Source\zLightController.c</file>
+            <file>$PROJ_DIR$\..\Source\zLightController_data.c</file>
+            <file>$PROJ_DIR$\..\Source\zLightController.h</file>
             <file>$PROJ_DIR$\..\..\..\clusters\ClusterOSALEvents.h</file>
             <file>$PROJ_DIR$\..\..\..\Components\hal\common\hal_assert.c</file>
             <file>$PROJ_DIR$\..\..\..\Components\external\regs.h</file>
@@ -103,7 +103,7 @@
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\nwk_globals.s51</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\hal_adc.lst</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\hal_sleep.lst</file>
-            <file>$PROJ_DIR$\EndDevice-DS18B20\List\TemperatureSensor.lst</file>
+            <file>$PROJ_DIR$\EndDevice-DS18B20\List\zLightController.lst</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\mac_radio_defs.lst</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\ClusterIdentify.lst</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\hal_assert.s51</file>
@@ -116,15 +116,15 @@
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\ClusterData.lst</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\hal_lcd.lst</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\mac_mcu.lst</file>
-            <file>$PROJ_DIR$\EndDevice-DS18B20\List\TemperatureSensor.s51</file>
+            <file>$PROJ_DIR$\EndDevice-DS18B20\List\zLightController.s51</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\hal_key.s51</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\stub_aps.lst</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\OSAL_Nv.lst</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\mac_tx.lst</file>
-            <file>$PROJ_DIR$\EndDevice-DS18B20\List\OSAL_TemperatureSensor.s51</file>
+            <file>$PROJ_DIR$\EndDevice-DS18B20\List\OSAL_zLightController.s51</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\zclReadAttributeFn.s51</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\zcl_ha.s51</file>
-            <file>$PROJ_DIR$\EndDevice-DS18B20\List\TemperatureSensor_data.s51</file>
+            <file>$PROJ_DIR$\EndDevice-DS18B20\List\zLightController_data.s51</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\zcl_ezmode.lst</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\OSAL_PwrMgr.lst</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\mac_radio.lst</file>
@@ -142,7 +142,7 @@
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\saddr.s51</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\mac_cfg.s51</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\OSAL_Clock.lst</file>
-            <file>$PROJ_DIR$\EndDevice-DS18B20\List\TemperatureSensor_data.lst</file>
+            <file>$PROJ_DIR$\EndDevice-DS18B20\List\zLightController_data.lst</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\mac_csp_tx.lst</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\OnBoard.lst</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\OSAL_Memory.lst</file>
@@ -176,20 +176,20 @@
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\mac_sleep.lst</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\hal_dma.lst</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\mac_pib.lst</file>
-            <file>$PROJ_DIR$\EndDevice-DS18B20\List\OSAL_TemperatureSensor.lst</file>
+            <file>$PROJ_DIR$\EndDevice-DS18B20\List\OSAL_zLightController.lst</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\hal_uart.lst</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\mac_rffrontend.s51</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\mac_radio_defs.s51</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\mac_rx_onoff.lst</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\mac_low_level.pbi</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\ledBlink.r51</file>
-            <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\TemperatureSensor_data.r51</file>
+            <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\zLightController_data.r51</file>
             <file>$PROJ_DIR$\..\..\..\Components\stack\zcl\zcl_ms.h</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\ClusterTemperatureMeasurement.r51</file>
             <file>$PROJ_DIR$\..\..\..\Components\mt\MT_SYS.h</file>
-            <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\TemperatureSensor_data.pbi</file>
+            <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\zLightController_data.pbi</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\DS18B20.pbi</file>
-            <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\OSAL_TemperatureSensor.r51</file>
+            <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\OSAL_zLightController.r51</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\EventManager.pbi</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\mac_sleep.pbi</file>
             <file>$PROJ_DIR$\..\..\..\Components\mt\MT_MAC.h</file>
@@ -206,7 +206,7 @@
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\ClusterIdentify.pbi</file>
             <file>$PROJ_DIR$\..\..\..\Components\stack\zcl\zcl_closures.h</file>
             <file>$PROJ_DIR$\..\..\..\Components\stack\zcl\zcl_hvac.h</file>
-            <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\TemperatureSensor.r51</file>
+            <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\zLightController.r51</file>
             <file>$PROJ_DIR$\..\..\..\Components\stack\zcl\zcl_ss.h</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\hal_led.pbi</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\ClusterData.pbi</file>
@@ -235,7 +235,7 @@
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\ZMain.lst</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\ZDSecMgr.s51</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\ZGlobals.lst</file>
-            <file>$PROJ_DIR$\EndDevice-DS18B20\List\TemperatureSensor.map</file>
+            <file>$PROJ_DIR$\EndDevice-DS18B20\List\zLightController.map</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\OSAL_PwrMgr.s51</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\zcl_diagnostic.s51</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\zmac_cb.s51</file>
@@ -246,7 +246,7 @@
             <file>$PROJ_DIR$\EndDevice-DS18B20\List\zcl.s51</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\hal_dma.r51</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\ZDConfig.pbi</file>
-            <file>$PROJ_DIR$\EndDevice-DS18B20\Exe\TemperatureSensor.d51</file>
+            <file>$PROJ_DIR$\EndDevice-DS18B20\Exe\zLightController.d51</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\hal_lcd.r51</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\zmac_cb.pbi</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\BindingTable.pbi</file>
@@ -257,9 +257,9 @@
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\hal_uart.pbi</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\hal_timer.pbi</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\OSAL_Memory.pbi</file>
-            <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\OSAL_TemperatureSensor.pbi</file>
+            <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\OSAL_zLightController.pbi</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\ClusterTemperatureMeasurement.pbi</file>
-            <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\TemperatureSensor.pbi</file>
+            <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\zLightController.pbi</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\hal_flash.pbi</file>
             <file>$PROJ_DIR$\..\..\..\Components\mt\MT.h</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\stub_aps.pbi</file>
@@ -301,7 +301,7 @@
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\hal_flash.r51</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\mac_csp_tx.pbi</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\mac_autopend.pbi</file>
-            <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\TemperatureSensor.pbd</file>
+            <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\zLightController.pbd</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\ZDObject.pbi</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\mac_rx.r51</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\OSAL_Clock.pbi</file>
@@ -448,7 +448,7 @@
             <file>$PROJ_DIR$\..\..\..\Components\stack\zdo\ZDSecMgr.h</file>
             <file>$PROJ_DIR$\..\..\..\Components\stack\zdo\ZDProfile.c</file>
             <file>$PROJ_DIR$\..\..\..\Components\zmain\OnBoard.h</file>
-            <file>$PROJ_DIR$\EndDeviceEB\Exe\TemperatureSensor.d51</file>
+            <file>$PROJ_DIR$\EndDeviceEB\Exe\zLightController.d51</file>
             <file>$PROJ_DIR$\..\..\..\Components\zmac\ZMAC.h</file>
             <file>$PROJ_DIR$\..\..\..\Components\stack\zdo\ZDObject.h</file>
             <file>$PROJ_DIR$\..\..\..\Components\zmac\f8w\zmac.c</file>
@@ -510,13 +510,13 @@
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\ClusterTemperatureMeasurement.__cstat.et</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\ledBlink.__cstat.et</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\ClusterIdentify.__cstat.et</file>
-            <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\OSAL_TemperatureSensor.__cstat.et</file>
+            <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\OSAL_zLightController.__cstat.et</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\DS18B20.__cstat.et</file>
-            <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\TemperatureSensor.__cstat.et</file>
+            <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\zLightController.__cstat.et</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\hal_assert.__cstat.et</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\hal_dma.__cstat.et</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\hal_flash.__cstat.et</file>
-            <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\TemperatureSensor_data.__cstat.et</file>
+            <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\zLightController_data.__cstat.et</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\hal_key.__cstat.et</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\ClusterBasic.__cstat.et</file>
             <file>$PROJ_DIR$\EndDevice-DS18B20\Obj\hal_drivers.__cstat.et</file>
@@ -603,7 +603,7 @@
             </inputs>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Source\OSAL_TemperatureSensor.c</name>
+            <name>$PROJ_DIR$\..\Source\OSAL_zLightController.c</name>
             <outputs>
                 <tool>
                     <name>BICOMP</name>
@@ -765,7 +765,7 @@
             </inputs>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Source\TemperatureSensor.c</name>
+            <name>$PROJ_DIR$\..\Source\zLightController.c</name>
             <outputs>
                 <tool>
                     <name>BICOMP</name>
@@ -792,7 +792,7 @@
             </inputs>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Source\TemperatureSensor_data.c</name>
+            <name>$PROJ_DIR$\..\Source\zLightController_data.c</name>
             <outputs>
                 <tool>
                     <name>BICOMP</name>
@@ -1175,7 +1175,7 @@
             </outputs>
         </file>
         <file>
-            <name>$PROJ_DIR$\EndDevice-DS18B20\Exe\TemperatureSensor.d51</name>
+            <name>$PROJ_DIR$\EndDevice-DS18B20\Exe\zLightController.d51</name>
             <outputs>
                 <tool>
                     <name>XLINK</name>
@@ -2535,7 +2535,7 @@
             <file>$PROJ_DIR$\..\Source\clusters\ClusterData.c</file>
             <file>$PROJ_DIR$\..\..\..\clusters\report.h</file>
             <file>$PROJ_DIR$\..\..\..\Components\external\dht112.h</file>
-            <file>$PROJ_DIR$\..\Source\OSAL_TemperatureSensor.c</file>
+            <file>$PROJ_DIR$\..\Source\OSAL_zLightController.c</file>
             <file>$PROJ_DIR$\..\..\..\clusters\ClusterIdentify.h</file>
             <file>$PROJ_DIR$\..\Source\ledBlink.c</file>
             <file>$PROJ_DIR$\..\..\..\clusters\ClusterIdentify.c</file>
@@ -2546,9 +2546,9 @@
             <file>$PROJ_DIR$\..\..\..\clusters\ClusterPower.c</file>
             <file>$PROJ_DIR$\..\..\..\clusters\ClusterTemperatureMeasurement.c</file>
             <file>$PROJ_DIR$\..\..\..\clusters\ClusterBasic.c</file>
-            <file>$PROJ_DIR$\..\Source\TemperatureSensor.c</file>
-            <file>$PROJ_DIR$\..\Source\TemperatureSensor_data.c</file>
-            <file>$PROJ_DIR$\..\Source\TemperatureSensor.h</file>
+            <file>$PROJ_DIR$\..\Source\zLightController.c</file>
+            <file>$PROJ_DIR$\..\Source\zLightController_data.c</file>
+            <file>$PROJ_DIR$\..\Source\zLightController.h</file>
             <file>$PROJ_DIR$\..\..\..\clusters\ClusterOSALEvents.h</file>
             <file>$PROJ_DIR$\..\..\..\Components\hal\common\hal_assert.c</file>
             <file>$PROJ_DIR$\..\..\..\Components\external\regs.h</file>
@@ -2637,7 +2637,7 @@
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\hal_sleep.r51</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\ZDObject.lst</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\ZDConfig.lst</file>
-            <file>$PROJ_DIR$\EndDevice_DH112\Obj\TemperatureSensor_data.r51</file>
+            <file>$PROJ_DIR$\EndDevice_DH112\Obj\zLightController_data.r51</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\hal_timer.r51</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\ZDObject.s51</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\zmac.s51</file>
@@ -2690,7 +2690,7 @@
             <file>$PROJ_DIR$\EndDevice_DH112\List\mac_radio.lst</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\mac_mem.lst</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\mac_rffrontend.s51</file>
-            <file>$PROJ_DIR$\EndDevice_DH112\List\OSAL_TemperatureSensor.lst</file>
+            <file>$PROJ_DIR$\EndDevice_DH112\List\OSAL_zLightController.lst</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\mac_radio_defs.lst</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\hal_key.r51</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\hal_startup.pbi</file>
@@ -2699,7 +2699,7 @@
             <file>$PROJ_DIR$\EndDevice_DH112\List\mac_autopend.lst</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\mac_low_level.lst</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\mac_pib.lst</file>
-            <file>$PROJ_DIR$\EndDevice_DH112\Exe\TemperatureSensor.d51</file>
+            <file>$PROJ_DIR$\EndDevice_DH112\Exe\zLightController.d51</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\OnBoard.pbi</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\mac_backoff_timer.s51</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\mac_rx.s51</file>
@@ -2718,10 +2718,10 @@
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\mac_mem.pbi</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\hal_led.r51</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\hal_assert.r51</file>
-            <file>$PROJ_DIR$\EndDevice_DH112\Obj\TemperatureSensor.r51</file>
+            <file>$PROJ_DIR$\EndDevice_DH112\Obj\zLightController.r51</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\ZDConfig.pbi</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\zclWriteAttributeFn.lst</file>
-            <file>$PROJ_DIR$\EndDevice_DH112\List\TemperatureSensor_data.s51</file>
+            <file>$PROJ_DIR$\EndDevice_DH112\List\zLightController_data.s51</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\hal_lcd.pbi</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\zcl_ha.s51</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\mac_autopend.pbi</file>
@@ -2740,7 +2740,7 @@
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\hal_drivers.r51</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\ZDiags.pbi</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\hal_uart.pbi</file>
-            <file>$PROJ_DIR$\EndDevice_DH112\Obj\OSAL_TemperatureSensor.r51</file>
+            <file>$PROJ_DIR$\EndDevice_DH112\Obj\OSAL_zLightController.r51</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\ledBlink.r51</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\EventManager.r51</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\mac_pib.pbi</file>
@@ -2756,7 +2756,7 @@
             <file>$PROJ_DIR$\EndDevice_DH112\List\zcl_general.lst</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\hal_timer.s51</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\hal_startup.s51</file>
-            <file>$PROJ_DIR$\EndDevice_DH112\List\TemperatureSensor_data.lst</file>
+            <file>$PROJ_DIR$\EndDevice_DH112\List\zLightController_data.lst</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\mac_rffrontend.pbi</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\zclReadAttributeFn.s51</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\ZDSecMgr.pbi</file>
@@ -2792,12 +2792,12 @@
             <file>$PROJ_DIR$\EndDevice_DH112\List\BindingTable.lst</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\mac_rx_onoff.pbi</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\hal_adc.s51</file>
-            <file>$PROJ_DIR$\EndDevice_DH112\Obj\TemperatureSensor.pbi</file>
+            <file>$PROJ_DIR$\EndDevice_DH112\Obj\zLightController.pbi</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\ledBlink.pbi</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\hal_flash.lst</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\ClusterPower.pbi</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\ClusterBasic.pbi</file>
-            <file>$PROJ_DIR$\EndDevice_DH112\Obj\OSAL_TemperatureSensor.pbi</file>
+            <file>$PROJ_DIR$\EndDevice_DH112\Obj\OSAL_zLightController.pbi</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\ClusterIdentify.pbi</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\mac_sleep.pbi</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\ClusterIdentify.lst</file>
@@ -2810,7 +2810,7 @@
             <file>$PROJ_DIR$\EndDevice_DH112\List\OSAL_PwrMgr.lst</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\EventManager.s51</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\ClusterBasic.s51</file>
-            <file>$PROJ_DIR$\EndDevice_DH112\Obj\TemperatureSensor_data.pbi</file>
+            <file>$PROJ_DIR$\EndDevice_DH112\Obj\zLightController_data.pbi</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\ClusterBasic.lst</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\ClusterData.lst</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\mac_csp_tx.pbi</file>
@@ -2846,8 +2846,8 @@
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\ZDObject.r51</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\mac_radio.pbi</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\zcl_ha.r51</file>
-            <file>$PROJ_DIR$\EndDevice_DH112\List\TemperatureSensor.map</file>
-            <file>$PROJ_DIR$\EndDevice_DH112\List\TemperatureSensor.lst</file>
+            <file>$PROJ_DIR$\EndDevice_DH112\List\zLightController.map</file>
+            <file>$PROJ_DIR$\EndDevice_DH112\List\zLightController.lst</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\OSAL_Math.r51</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\OSAL.s51</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\ClusterData.r51</file>
@@ -2860,7 +2860,7 @@
             <file>$PROJ_DIR$\EndDevice_DH112\List\nwk_globals.lst</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\ZMain.r51</file>
             <file>$PROJ_DIR$\..\Source\hal_i2c.h</file>
-            <file>$PROJ_DIR$\EndDevice_DH112\List\TemperatureSensor.s51</file>
+            <file>$PROJ_DIR$\EndDevice_DH112\List\zLightController.s51</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\ClusterHumidityRelativeMeasurement.lst</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\ClusterHumidityRelativeMeasurement.r51</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\OSAL_Memory.lst</file>
@@ -2870,7 +2870,7 @@
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\ClusterHumidityRelativeMeasurement.pbi</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\ClusterPower.s51</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\mac_tx.s51</file>
-            <file>$PROJ_DIR$\EndDevice_DH112\List\OSAL_TemperatureSensor.s51</file>
+            <file>$PROJ_DIR$\EndDevice_DH112\List\OSAL_zLightController.s51</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\saddr.s51</file>
             <file>$PROJ_DIR$\EndDevice_DH112\Obj\ClusterTemperatureMeasurement.pbi</file>
             <file>$PROJ_DIR$\EndDevice_DH112\List\OSAL_Clock.s51</file>
@@ -3029,7 +3029,7 @@
             </inputs>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Source\OSAL_TemperatureSensor.c</name>
+            <name>$PROJ_DIR$\..\Source\OSAL_zLightController.c</name>
             <outputs>
                 <tool>
                     <name>BICOMP</name>
@@ -3190,7 +3190,7 @@
             </inputs>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Source\TemperatureSensor.c</name>
+            <name>$PROJ_DIR$\..\Source\zLightController.c</name>
             <outputs>
                 <tool>
                     <name>BICOMP</name>
@@ -3213,7 +3213,7 @@
             </inputs>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Source\TemperatureSensor_data.c</name>
+            <name>$PROJ_DIR$\..\Source\zLightController_data.c</name>
             <outputs>
                 <tool>
                     <name>BICOMP</name>
@@ -3540,7 +3540,7 @@
             </outputs>
         </file>
         <file>
-            <name>$PROJ_DIR$\EndDevice_DH112\Exe\TemperatureSensor.d51</name>
+            <name>$PROJ_DIR$\EndDevice_DH112\Exe\zLightController.d51</name>
             <outputs>
                 <tool>
                     <name>XLINK</name>

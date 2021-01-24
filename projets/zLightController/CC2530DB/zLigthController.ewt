@@ -6520,16 +6520,16 @@
             <name>$PROJ_DIR$\..\Source\ledBlink.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Source\OSAL_TemperatureSensor.c</name>
+            <name>$PROJ_DIR$\..\Source\OSAL_zLightController.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Source\TemperatureSensor.c</name>
+            <name>$PROJ_DIR$\..\Source\zLightController.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Source\TemperatureSensor.h</name>
+            <name>$PROJ_DIR$\..\Source\zLightController.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Source\TemperatureSensor_data.c</name>
+            <name>$PROJ_DIR$\..\Source\zLightController_data.c</name>
         </file>
     </group>
     <group>
@@ -7160,6 +7160,6 @@
         </file>
     </group>
     <file>
-        <name>$PROJ_DIR$\EndDeviceEB\Exe\TemperatureSensor.d51</name>
+        <name>$PROJ_DIR$\EndDeviceEB\Exe\zLightController.d51</name>
     </file>
 </project>
