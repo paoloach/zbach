@@ -1,0 +1,24 @@
+
+//uint8 macStateIdleOrPolling();
+macStateIdleOrPolling:
+ 02929B  C0 82           PUSH  DPL
+ 02929D  C0 83           PUSH  DPH
+ 02929F  90 0E 86        MOV   DPTR,#0x0E86 (macMain+7)
+ 0292A2  E0              MOVX  A,@DPTR
+ 0292A3  60 04           JZ    0x292A9
+ 
+ 0292A5  64 02           XRL   A,#0x02
+ 0292A7  70 04           JNZ   0x292AD
+ 
+ 0292A9  79 01           MOV   R1,#0x01
+ 0292AB  80 02           SJMP  0x292AF
+ 0292AD  79 00           MOV   R1,#0x00
+ 0292AF  02 8A 6B        LJMP  0x8A6B
+
+if ( *(macMain+7) == 0)
+   return 1
+else if ( *(macMain+7)  == 2){
+   return 1;
+}  else {
+	return 0;
+}

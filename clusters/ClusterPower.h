@@ -14,7 +14,6 @@
 void powerClusterReadAttribute(zclAttrRec_t *);
 void powerClusterInit(byte appId);
 void powerClusterCheckBattery(void);
-void powerClusterSendReport(uint8 endpoint, afAddrType_t * dstAddr, uint8 * segNum); 
 
 extern const uint8 batterySize;
 extern const uint8 batteryQuantity;

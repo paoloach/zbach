@@ -24,8 +24,8 @@
 
 #define DS18B20_POWER  PORT(DS18B20_POWER_PORT, DS18B20_POWER_PIN)
 #define DATA_LOW  DIR(DS18B20_DATA_PORT, DS18B20_DATA_PIN)=1;PORT(DS18B20_DATA_PORT, DS18B20_DATA_PIN)=0;
-#define DATA_HIGH DIR(DS18B20_DATA_PORT, DS18B20_DATA_PIN)=1
-#define DATA DIR(DS18B20_DATA_PORT, DS18B20_DATA_PIN)
+#define DATA_HIGH DIR(DS18B20_DATA_PORT, DS18B20_DATA_PIN)=0;PORT(DS18B20_DATA_PORT, DS18B20_DATA_PIN)=1;
+#define DATA PORT(DS18B20_DATA_PORT, DS18B20_DATA_PIN)
 
 int16 temp=0;
 
@@ -58,20 +58,15 @@ void waitRead(void) {
     readWaitCounter = READ_PERIOD_MAX_COUNTER;
   } else {
     readWaitCounter--;
-     osal_start_timerEx_cb(30000,&startReadSyncronus );
+     osal_start_timerEx_cb(30000,&waitRead );
   }
 }
 
 void readTemperature(void) {
   DS18B20_POWER=1;
-  PORT(DS18B20_DATA_PORT, DS18B20_DATA_PIN)=1;
+  DATA_HIGH;
   osal_pwrmgr_task_state(taskId, PWRMGR_HOLD);
-  osal_start_timerEx_cb(100,&startReadSyncronus );
-}
 
-
-void startReadSyncronus(void) {
-  DS18B20_POWER = 1;
   T3CTL = 0x04 | 0xA0; //Clear counter. interrupt disable. Compare mode. 4us at cycle
   T3CCTL0 = 0x4; // compare mode
   T3CCTL1 = 0;
@@ -82,14 +77,20 @@ void startReadSyncronus(void) {
           
   if (reset()==0){
     DS18B20_POWER=0; 
+    waitRead();
     osal_pwrmgr_task_state(taskId, PWRMGR_CONSERVE);
     return;
   }
 
   write(0xCC);
   write(0x44);
+  // convertion time:
+  // 9bits  ->93.75ms
+  // 10bits -> 187.5ms
+  // 11bits -> 375ms
+  // 12bits -> 750ms
 
-  osal_start_timerEx_cb( 1000, &finalizeReadTemp );
+  osal_start_timerEx_cb( 750, &finalizeReadTemp );
 }
 
 void finalizeReadTemp(void){
@@ -111,7 +112,6 @@ void finalizeReadTemp(void){
   DS18B20_POWER=0;  
   
   osal_set_event_bit( taskId,  NEW_TEMP_BIT );
-  osal_start_timerEx_cb( 1000, &finalizeReadTemp );
   waitRead();
   osal_pwrmgr_task_state(taskId, PWRMGR_CONSERVE);
   
@@ -125,30 +125,26 @@ uint8 reset() {
   T3_clear=1;
   T3CNT=0;
   T3_start=1;
-  while(T3CNT <250 );
+  while(T3CNT <240 ); // 2uS*240 = 480us
   T3_start=0;
   DATA_HIGH;
   T3_clear=1;
   T3_start=1;
   while(T3CNT < 30);
   T3_clear=1;
-  while(T3CNT < 240  && P1_0 == 1);
+  while(T3CNT < 240  &&  DATA == 1);
 
-  if (DATA== 1){
+  if (DATA== 1){ // If after 480us DS18B20 doesn't send presence, it fails
     return 0;
   }
-  T3_clear=1;
-  while(T3CNT < 240){
-    if (DATA == 1)
-      return 1;
-  }
-  return 0;
+  while(T3CNT < 240);
+  return 1;
 }
 
 void write(unsigned char byte){
 	uint8 bit=8;
 	T3_start = 0;
-	T3_div=5;
+	T3_div=5; /// 1us
 	T3_start=1;
 	T3_clear=1;
 	while(T3CNT < 2);
@@ -185,14 +181,12 @@ uint8  read(void) {
 		T3_clear=1;
 		while(T3CNT < 2);
 		DATA_HIGH;
-		T3_clear=1;
-		while(T3CNT < 10);
+		while(T3CNT < 12);
 		result >>= 1;
 		if (DATA){
-			result |= 0x80;
+		  result |= 0x80;
 		}
-		T3_clear=1;
-		while(T3CNT < 30);
+		while(T3CNT < 60);
 		bit--;
 	}
 	return result;

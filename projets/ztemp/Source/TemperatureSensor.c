@@ -62,7 +62,6 @@ static uint8 processInReadRspCmd( zclIncomingMsg_t *pInMsg );
 static uint8 processInWriteRspCmd( zclIncomingMsg_t *pInMsg );
 static uint8 processInDefaultRspCmd( zclIncomingMsg_t *pInMsg );
 
-static void eventReport(void);
 			   
 #ifdef ZCL_DISCOVER
 static uint8 processInDiscRspCmd( zclIncomingMsg_t *pInMsg );
@@ -70,7 +69,6 @@ static uint8 processInDiscRspCmd( zclIncomingMsg_t *pInMsg );
 static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg );
 
 static void initReport(void);
-static void nextReportEvent(void);
 static void switch1Down(uint16 event);
 static void switch1Up(uint16 event);
 
@@ -128,27 +126,8 @@ static void initReport(void){
   reportDstAddr.endPoint = ENDPOINT;
   reportDstAddr.addr.shortAddr = 0;
   reportDstAddr.panId=_NIB.nodeDepth;
-  nextReportEvent();
 }
 
-void nextReportEvent(void) {
-  uint16 nextReportEventSec = 10;
-  if (reportSecondCounter < 10)
-    nextReportEventSec = reportSecondCounter;
-  
-  reportSecondCounter -= nextReportEventSec;
-  osal_start_timerEx_cb(nextReportEventSec*1000, &eventReport );
-}
-
-static void eventReport(void) {
-  if (reportSecondCounter <= 0){
-#if !defined RTR_NWK   
-    powerClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
-#endif    
-    reportSecondCounter=reportSecond;
-  }
-  nextReportEvent();
-  }
 
 static void switch1Down(uint16 event){
   switch1DownStart = osal_getClock();

@@ -949,6 +949,7 @@ uint8 osal_set_event( uint8 task_id, uint16 event_flag )
 {
   if ( task_id < tasksCnt )
   {
+
     halIntState_t   intState;
     HAL_ENTER_CRITICAL_SECTION(intState);    // Hold off interrupts
     tasksEvents[task_id] |= event_flag;  // Stuff the event bit(s)
@@ -1170,6 +1171,7 @@ void osal_run_system( void )
     HAL_EXIT_CRITICAL_SECTION(intState);
 
     activeTaskID = idx;
+
     events = (tasksArr[idx])( idx, events );
     activeTaskID = TASK_NO_TASK;
 

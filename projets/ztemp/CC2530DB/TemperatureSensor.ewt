@@ -6964,9 +6964,6 @@
             <name>$PROJ_DIR$\..\..\..\Components\osal\include\OSAL_PwrMgr.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\Components\osal\include\osal_task.h</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\..\..\Components\osal\include\OSAL_Tasks.h</name>
         </file>
         <file>
@@ -7006,6 +7003,9 @@
             <name>$PROJ_DIR$\..\..\..\Components\stack\af\AF.h</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\..\..\Components\osal\include\osal_task.h</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\..\..\Components\stack\zcl\zcl.c</name>
         </file>
         <file>
@@ -7034,12 +7034,6 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\Components\ha\zcl_ha.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Components\stack\zcl\zcl_ota.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Components\stack\zcl\zcl_ota.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\Components\stack\zcl\zclReadAttributeFn.c</name>
@@ -7077,6 +7071,9 @@
     </group>
     <group>
         <name>Tools</name>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\Tools\f8w2530.xcl</name>
+        </file>
         <file>
             <name>$PROJ_DIR$\..\Configuration\f8wEndev.cfg</name>
         </file>

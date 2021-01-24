@@ -15,21 +15,35 @@
 #include "ClusterPower.h"
 #include "ioCC2530.h"
 #include "ClusterOSALEvents.h"
+#include "report.h"
 
 #if !defined RTR_NWK
  static void readBatteryVolt(void);
 #endif
 
+#define MAX_TIMEOUT_SEC 30
+#define BATTERY_POLL_TIME_SEC 300
+
 static uint16 mainVoltage=0;
 static uint16 batteryVoltage=0xFF;
 static uint16 batteryPercRemaining=100;
 static uint8  batteryAlarmMask=0x0;
+static uint16 remainingSec=BATTERY_POLL_TIME_SEC;
+
 extern NodePowerDescriptorFormat_t ZDO_Config_Power_Descriptor;
 
-#define BATTERY_POLL_TIME_MS 60000
+
+
+
+static void eventReport(void);
+static void powerClusterSendReport(void); 
+static void setTimer(void);
 
 
 void powerClusterInit(byte appId) {
+#if !defined RTR_NWK
+  setTimer();
+#endif
 }
 
 #if !defined RTR_NWK
@@ -87,6 +101,29 @@ void powerClusterReadAttribute(zclAttrRec_t * attribute) {
 }
 
 #if !defined RTR_NWK
+
+static void setTimer(void) {
+  
+  uint16 nextReportEventSec;
+  if (remainingSec==0){
+    remainingSec = BATTERY_POLL_TIME_SEC;
+  }
+  if (remainingSec > MAX_TIMEOUT_SEC){
+    nextReportEventSec = MAX_TIMEOUT_SEC;
+  } else {
+    nextReportEventSec = remainingSec;
+  }
+  remainingSec -= nextReportEventSec;
+  osal_start_timerEx_cb(nextReportEventSec*1000, &eventReport );
+}
+
+static void eventReport(void) {
+  if (remainingSec == 0){
+    powerClusterSendReport();
+  }
+  setTimer();
+}
+
 static void readBatteryVolt(void) {
 	ADCCON3 = 0x0F;
 	while (!(ADCCON1 & 0x80));
@@ -100,12 +137,12 @@ static void readBatteryVolt(void) {
         } else if (batteryVoltage <23){
           batteryPercRemaining=0;
         } else {
-          batteryPercRemaining = (batteryVoltage-23)*20;
+          batteryPercRemaining = (v-230)*2;
         }
 
 }
 
-void powerClusterSendReport(uint8 endpoint, afAddrType_t * dstAddr, uint8 * segNum){
+void powerClusterSendReport(){
   powerClusterCheckBattery();
   zclReportCmd_t *pReportCmd;
   
@@ -119,9 +156,9 @@ void powerClusterSendReport(uint8 endpoint, afAddrType_t * dstAddr, uint8 * segN
     pReportCmd->attrList[1].dataType = ZCL_DATATYPE_UINT8;
     pReportCmd->attrList[1].attrData = (void *)(&batteryPercRemaining);    
 
-    zcl_SendReportCmd( endpoint, dstAddr,
+    zcl_SendReportCmd( reportEndpoint, &reportDstAddr,
                        ZCL_CLUSTER_ID_GEN_POWER_CFG,
-                       pReportCmd, ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, (*segNum)++ );
+                       pReportCmd, ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, reportSeqNum++ );
   }
 
   osal_mem_free( pReportCmd );

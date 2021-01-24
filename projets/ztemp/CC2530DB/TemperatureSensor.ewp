@@ -6288,16 +6288,16 @@
                 </option>
                 <option>
                     <name>CCOptLevel</name>
-                    <state>0</state>
+                    <state>3</state>
                 </option>
                 <option>
                     <name>CCOptStrategy</name>
                     <version>0</version>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CCOptLevelSlave</name>
-                    <state>0</state>
+                    <state>3</state>
                 </option>
                 <option>
                     <name>CompilerMisraRules04</name>
@@ -6343,12 +6343,12 @@
                 <option>
                     <name>CCAllowList2</name>
                     <version>0</version>
-                    <state>0000000</state>
+                    <state>1111110</state>
                 </option>
                 <option>
                     <name>CCOptStrategySlave</name>
                     <version>0</version>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
             </data>
         </settings>
@@ -7439,9 +7439,6 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\Components\osal\include\OSAL_PwrMgr.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Components\osal\include\osal_task.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\Components\osal\include\OSAL_Tasks.h</name>
@@ -9034,6 +9031,9 @@
             <name>$PROJ_DIR$\..\..\..\Components\stack\af\AF.h</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\..\..\Components\osal\include\osal_task.h</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\..\..\Components\stack\zcl\zcl.c</name>
         </file>
         <file>
@@ -9062,18 +9062,6 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\Components\ha\zcl_ha.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Components\stack\zcl\zcl_ota.c</name>
-            <excluded>
-                <configuration>EndDevice_DH112</configuration>
-            </excluded>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Components\stack\zcl\zcl_ota.h</name>
-            <excluded>
-                <configuration>EndDevice_DH112</configuration>
-            </excluded>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\Components\stack\zcl\zclReadAttributeFn.c</name>
@@ -9111,6 +9099,9 @@
     </group>
     <group>
         <name>Tools</name>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\Tools\f8w2530.xcl</name>
+        </file>
         <file>
             <name>$PROJ_DIR$\..\Configuration\f8wEndev.cfg</name>
         </file>

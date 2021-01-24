@@ -6,7 +6,6 @@
 
 void DS18B20_init(uint8 taskid);
 void readTemperature(void);
-void startReadSyncronus(void);
 void finalizeReadTemp(void);
 void setReportDest(uint8 endpoint, afAddrType_t * dstAddr, uint8 * segNum);
 
