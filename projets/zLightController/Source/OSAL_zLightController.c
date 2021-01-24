@@ -30,7 +30,7 @@
   #include "aps_frag.h"
 #endif
 
-#include "TemperatureSensor.h"
+#include "zLightController.h"
 
 /*********************************************************************
  * GLOBAL VARIABLES
@@ -50,7 +50,7 @@ const pTaskEventHandlerFn tasksArr[] = {
   ZDNwkMgr_event_loop,
 #endif
   zcl_event_loop,
-  temperatureSensorEventLoop
+  zLightControllerEventLoop
 };
 
 const uint8 tasksCnt = sizeof( tasksArr ) / sizeof( tasksArr[0] );
@@ -88,7 +88,7 @@ void osalInitTasks( void )
   ZDNwkMgr_Init( taskID++ );
 #endif
   zcl_Init( taskID++ );
-  temperatureSensorInit( taskID );
+  zLightControllerInit( taskID );
 }
 
 /*********************************************************************

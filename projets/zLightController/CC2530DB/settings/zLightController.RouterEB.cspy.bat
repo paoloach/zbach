@@ -25,7 +25,7 @@ if not "%~1" == "" goto debugFile
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\pachd\OneDrive\Documents\projects\zbach\projets\zLightController\CC2530DB\settings\zLightController.EndDeviceEB.general.xcl" --backend -f "C:\Users\pachd\OneDrive\Documents\projects\zbach\projets\zLightController\CC2530DB\settings\zLightController.EndDeviceEB.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\pachd\OneDrive\Documents\projects\zbach\projets\zLightController\CC2530DB\settings\zLightController.RouterEB.general.xcl" --backend -f "C:\Users\pachd\OneDrive\Documents\projects\zbach\projets\zLightController\CC2530DB\settings\zLightController.RouterEB.driver.xcl" 
 
 @echo off 
 goto end 
@@ -34,7 +34,7 @@ goto end
 
 @echo on 
 
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\pachd\OneDrive\Documents\projects\zbach\projets\zLightController\CC2530DB\settings\zLightController.EndDeviceEB.general.xcl" "--debug_file=%~1" --backend -f "C:\Users\pachd\OneDrive\Documents\projects\zbach\projets\zLightController\CC2530DB\settings\zLightController.EndDeviceEB.driver.xcl" 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\pachd\OneDrive\Documents\projects\zbach\projets\zLightController\CC2530DB\settings\zLightController.RouterEB.general.xcl" "--debug_file=%~1" --backend -f "C:\Users\pachd\OneDrive\Documents\projects\zbach\projets\zLightController\CC2530DB\settings\zLightController.RouterEB.driver.xcl" 
 
 @echo off 
 :end

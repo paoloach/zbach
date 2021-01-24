@@ -6501,16 +6501,10 @@
                 <name>$PROJ_DIR$\..\Source\clusters\ClusterData.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\..\..\clusters\ClusterHumidityRelativeMeasurement.c</name>
-            </file>
-            <file>
                 <name>$PROJ_DIR$\..\..\..\clusters\ClusterIdentify.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\clusters\ClusterPower.c</name>
-            </file>
-            <file>
-                <name>$PROJ_DIR$\..\..\..\clusters\ClusterTemperatureMeasurement.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\clusters\report.h</name>
@@ -6534,21 +6528,6 @@
     </group>
     <group>
         <name>external</name>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Components\external\dht112.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Components\external\dht112_I2C.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Components\external\dht112_SingleWire.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Components\external\DS18B20.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Components\external\DS18B20.h</name>
-        </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\Components\external\EventManager.c</name>
         </file>
@@ -7081,10 +7060,7 @@
             <name>$PROJ_DIR$\..\Configuration\f8wZCL.cfg</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Configuration\params-DHT12.cfg</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Configuration\params-DS18B20.cfg</name>
+            <name>$PROJ_DIR$\..\Configuration\params.cfg</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\Configuration\pins.cfg</name>
