@@ -9,6 +9,7 @@
 #include "zcl_general.h"
 
 #include "ClusterOnOff.h"
+#include "ClusterOSALEvents.h"
 #include "onboard.h"
 #include "regs.h"    
 

@@ -6927,19 +6927,19 @@
                     <name>$PROJ_DIR$\..\..\..\clusters\ClusterBasic.h</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\..\clusters\ClusterHumidityRelativeMeasurement.h</name>
+                    <name>$PROJ_DIR$\..\..\..\clusters\ClusterIdentify.h</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\..\clusters\ClusterIdentify.h</name>
+                    <name>$PROJ_DIR$\..\..\..\clusters\ClusterOccupancySensing.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\clusters\ClusterOnOff.h</name>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\..\..\clusters\ClusterOSALEvents.h</name>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\..\..\clusters\ClusterPower.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\..\clusters\ClusterTemperatureMeasurement.h</name>
                 </file>
             </group>
             <file>
@@ -6950,6 +6950,12 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\clusters\ClusterIdentify.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\clusters\ClusterOccupancySensing.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\clusters\ClusterOnOff.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\clusters\ClusterPower.c</name>

@@ -589,6 +589,18 @@ typedef struct
   zclReport_t attrList[];    // attribute report list
 } zclReportCmd_t;
 
+typedef struct
+{
+  uint8       numAttr;       // number of reports in the list
+  zclReport_t attrList[1];    // attribute report list
+} zclReportCmd1_t;
+
+typedef struct
+{
+  uint8       numAttr;       // number of reports in the list
+  zclReport_t attrList[2];    // attribute report list
+} zclReportCmd2_t;
+
 // Default Response Command format
 typedef struct
 {

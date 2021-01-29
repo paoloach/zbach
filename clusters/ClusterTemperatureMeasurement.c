@@ -26,6 +26,7 @@ RESOURCES:
 int16 minTemperatureValue=-10;
 int16 maxTemperatureValue=80;
 uint16 toleranceTemperature=10;
+static zclReportCmd1_t reportCmd;
 
 extern byte deviceTaskId;
 extern devStates_t devState;
@@ -71,18 +72,13 @@ void newTemperature(uint16 event) {
 }
 
 void sendReport(void){
-  zclReportCmd_t *pReportCmd;
 
-  pReportCmd = osal_mem_alloc( sizeof(zclReportCmd_t) + sizeof(zclReport_t) );
-  if ( pReportCmd != NULL ) {
-    pReportCmd->numAttr = 1;
-    pReportCmd->attrList[0].attrID = ATTRID_TEMPERATURE_MEASURE_VALUE;
-    pReportCmd->attrList[0].dataType = ZCL_DATATYPE_INT16;
-    pReportCmd->attrList[0].attrData = (void *)(&temp);
+  reportCmd.numAttr = 1;
+  reportCmd.attrList[0].attrID = ATTRID_TEMPERATURE_MEASURE_VALUE;
+  reportCmd.attrList[0].dataType = ZCL_DATATYPE_INT16;
+  reportCmd.attrList[0].attrData = (void *)(&temp);
 
-    zcl_SendReportCmd( reportEndpoint, &reportDstAddr,
-                       ZCL_CLUSTER_ID_MS_TEMPERATURE_MEASUREMENT,
-                       pReportCmd, ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, reportSeqNum++ );
-    osal_mem_free( pReportCmd );
-  }
+  zcl_SendReportCmd( reportEndpoint, &reportDstAddr,
+                     ZCL_CLUSTER_ID_MS_TEMPERATURE_MEASUREMENT,
+                     (zclReportCmd_t*)&reportCmd, ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, reportSeqNum++ );
 }
