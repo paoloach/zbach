@@ -5,11 +5,9 @@
 
 void blinkLedInit(void);
 
-void blinkLedstart(byte taskid);
+void blinkLedstart(void);
 
-void blinkLedEnd(byte taskid);
-
-void blinkLedAction(byte taskid);
+void blinkLedEnd(void);
 
 void setBlinkCounter(byte blinkCount);
 

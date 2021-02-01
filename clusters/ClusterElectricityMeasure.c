@@ -13,8 +13,10 @@
 
 #include "zcl.h"
 #include "ClusterElectricityMeasure.h"
-#include "CS5463.h"
+#include "ElectricityMeasureData.h"
+#include "report.h"
 
+static void electricityMeasureClusterSendReport(void);	
 
 extern uint8 connected;
 
@@ -24,6 +26,14 @@ static uint16 frequencyMult=1;
 static uint16 frequencyDiv=1;
 static uint32 powerMult=1;
 static uint32 powerDivisor=1;
+uint16 istantaneusCurrent;
+uint16 RMSVolt;
+uint16 RMSCurrent;
+uint16 peakCurrent;
+int16 activePower;
+int16 istantaneusReactivePower;
+uint16 apparentPower;
+int8 powerFactor;
 
 /*
   From the schematic, the voltage is divided by 2000 first to send to cs5463
@@ -55,13 +65,16 @@ static uint16 acCurrentDiv=1;
 static uint16 acPowerMult=1;
 static uint16 acPowerDiv=1;
 
-static uint16 tmp;
-
 static uint16 averageRmsVolrPeriod;
+static zclReportCmd8_t reportCmd;
+
+#ifndef ELECTRICTY_MEASURE_REPORT_TIME
+ #define ELECTRICTY_MEASURE_REPORT_TIME 10
+#endif
 
 
 void electricityMeasureClusterReadAttributeInit(void){
-  CS5463_Init();
+   osal_start_reload_timer_cb((uint32)ELECTRICTY_MEASURE_REPORT_TIME*1000, &electricityMeasureClusterSendReport); 
 }
 
 
@@ -126,106 +139,76 @@ void electricityMeasureClusterReadAttribute(zclAttrRec_t * attribute){
 		break;
 		
 	case ATTRID_ELECTRICITY_MEASURE_LINE_CURRENT:
-		tmp = getCS5463RegisterValue(IstantaneusCurrent) >> 8;
 		attribute->dataType = ZCL_DATATYPE_UINT16;
-		attribute->dataPtr = (void *)&tmp;
+		attribute->dataPtr = (void *)&istantaneusCurrent;
 		break;
 	case ATTRID_ELECTRICITY_MEASURE_RMS_VOLT:
-		tmp = getCS5463RegisterValue(RMSVolt) >> 8;
 		attribute->dataType = ZCL_DATATYPE_UINT16;
-		attribute->dataPtr = (void *)&tmp;
+		attribute->dataPtr = (void *)&RMSVolt;
 		break;
 	case ATTRID_ELECTRICITY_MEASURE_RMS_CURRENT:
-		tmp = getCS5463RegisterValue(RMSCurrent) >> 8;
 		attribute->dataType = ZCL_DATATYPE_UINT16;
-		attribute->dataPtr = (void *)&tmp;
+		attribute->dataPtr = (void *)&RMSCurrent;
 		break;
 	case ATTRID_ELECTRICITY_MEASURE_RMS_CURRENT_MAX:
-		tmp = getCS5463RegisterValue(PeakCurrent) >> 8;
 		attribute->dataType = ZCL_DATATYPE_UINT16;
-		attribute->dataPtr = (void *)&tmp;
+		attribute->dataPtr = (void *)&peakCurrent;
 		break;
 	case ATTRID_ELECTRICITY_MEASURE_ACTIVE_POWER:
-		tmp = getCS5463RegisterValue(ActivePower) >> 8;
 		attribute->dataType = ZCL_DATATYPE_INT16;
-		attribute->dataPtr = (void *)&tmp;
+		attribute->dataPtr = (void *)&activePower;
 		break;
 	case ATTRID_ELECTRICITY_MEASURE_REACTIVE_POWER:
-		tmp = getCS5463RegisterValue(IstantaneusReactivePower) >> 8;
 		attribute->dataType = ZCL_DATATYPE_INT16;
-		attribute->dataPtr = (void *)&tmp;
+		attribute->dataPtr = (void *)&istantaneusReactivePower;
 		break;
 	case ATTRID_ELECTRICITY_MEASURE_APPARENT_POWER:
-		tmp = getCS5463RegisterValue(ApparentPower) >> 8;
 		attribute->dataType = ZCL_DATATYPE_UINT16;
-		attribute->dataPtr = (void *)&tmp;
+		attribute->dataPtr = (void *)&apparentPower;
 		break;
 	case ATTRID_ELECTRICITY_MEASURE_POWER_FACTOR:
-		tmp = getCS5463RegisterValue(PowerFactor) >> 8;
 		attribute->dataType = ZCL_DATATYPE_INT8;
-		attribute->dataPtr = (void *)&tmp;
+		attribute->dataPtr = (void *)&powerFactor;
 		break;
 	default:
 		attribute->status = ZCL_STATUS_UNSUPPORTED_ATTRIBUTE;
 	}
 }
 
-void electricityMeasureClusterSendReport(uint8 endpoint, afAddrType_t * dstAddr, uint8 * segNum) {
+void electricityMeasureClusterSendReport(void) {
   if (connected){
-    uint16 lineCurrent;
-    uint16 rmsVolt;
-    uint16 rmsCurrent;
-    uint16 rmsCurrentMax;
-    uint16 activePower;
-    uint16 reactivePower;
-    uint16 apparentPower;
-    uint16 powerFactor; 
-    
-    zclReportCmd_t * pReportCmd = osal_mem_alloc( sizeof(zclReportCmd_t) + 8*sizeof(zclReport_t) );
-    if ( pReportCmd != NULL ) {
-      pReportCmd->numAttr = 8;
-      pReportCmd->attrList[0].attrID = ATTRID_ELECTRICITY_MEASURE_LINE_CURRENT;
-      lineCurrent = getCS5463RegisterValue(IstantaneusCurrent) >> 8;
-      pReportCmd->attrList[0].dataType = ZCL_DATATYPE_UINT16;
-      pReportCmd->attrList[0].attrData = (void *)&lineCurrent;
-      pReportCmd->attrList[1].attrID = ATTRID_ELECTRICITY_MEASURE_RMS_VOLT;
-      rmsVolt = getCS5463RegisterValue(RMSVolt) >> 8;
-      pReportCmd->attrList[1].dataType = ZCL_DATATYPE_UINT16;
-      pReportCmd->attrList[1].attrData = (void *)&rmsVolt;
-      pReportCmd->attrList[2].attrID = ATTRID_ELECTRICITY_MEASURE_RMS_CURRENT;
-      rmsCurrent = getCS5463RegisterValue(RMSCurrent) >> 8;
-      pReportCmd->attrList[2].dataType = ZCL_DATATYPE_UINT16;
-      pReportCmd->attrList[2].attrData = (void *)&rmsCurrent;
-      pReportCmd->attrList[3].attrID = ATTRID_ELECTRICITY_MEASURE_RMS_CURRENT_MAX;
-      rmsCurrentMax = getCS5463RegisterValue(PeakCurrent) >> 8;
-      pReportCmd->attrList[3].dataType = ZCL_DATATYPE_UINT16;
-      pReportCmd->attrList[3].attrData = (void *)&rmsCurrentMax;
-      pReportCmd->attrList[4].attrID = ATTRID_ELECTRICITY_MEASURE_ACTIVE_POWER;
-      activePower = getCS5463RegisterValue(ActivePower) >> 8;
-      if (activePower == 0xFFFF)
-          activePower=0;
-      pReportCmd->attrList[4].dataType = ZCL_DATATYPE_INT16;
-      pReportCmd->attrList[4].attrData = (void *)&activePower;
-      pReportCmd->attrList[5].attrID = ATTRID_ELECTRICITY_MEASURE_REACTIVE_POWER;
-      reactivePower = getCS5463RegisterValue(IstantaneusReactivePower) >> 8;
-      pReportCmd->attrList[5].dataType = ZCL_DATATYPE_INT16;
-      pReportCmd->attrList[5].attrData = (void *)&reactivePower;
-      pReportCmd->attrList[6].attrID = ATTRID_ELECTRICITY_MEASURE_APPARENT_POWER;
-      apparentPower = getCS5463RegisterValue(ApparentPower) >> 8;
-      pReportCmd->attrList[6].dataType = ZCL_DATATYPE_UINT16;
-      pReportCmd->attrList[6].attrData = (void *)&apparentPower;
-      pReportCmd->attrList[7].attrID = ATTRID_ELECTRICITY_MEASURE_POWER_FACTOR;
-      powerFactor = getCS5463RegisterValue(PowerFactor) >> 8;
-      pReportCmd->attrList[7].dataType = ZCL_DATATYPE_INT8;
-      pReportCmd->attrList[7].attrData = (void *)&powerFactor;
+      reportCmd.numAttr = 8;
+      reportCmd.attrList[0].attrID = ATTRID_ELECTRICITY_MEASURE_LINE_CURRENT;
+      reportCmd.attrList[0].dataType = ZCL_DATATYPE_UINT16;
+      reportCmd.attrList[0].attrData = (void *)&istantaneusCurrent;
+      reportCmd.attrList[1].attrID = ATTRID_ELECTRICITY_MEASURE_RMS_VOLT;
+      reportCmd.attrList[1].dataType = ZCL_DATATYPE_UINT16;
+      reportCmd.attrList[1].attrData = (void *)&RMSVolt;
+      reportCmd.attrList[2].attrID = ATTRID_ELECTRICITY_MEASURE_RMS_CURRENT;
+      reportCmd.attrList[2].dataType = ZCL_DATATYPE_UINT16;
+      reportCmd.attrList[2].attrData = (void *)&RMSCurrent;
+      reportCmd.attrList[3].attrID = ATTRID_ELECTRICITY_MEASURE_RMS_CURRENT_MAX;
+      reportCmd.attrList[3].dataType = ZCL_DATATYPE_UINT16;
+      reportCmd.attrList[3].attrData = (void *)&peakCurrent;
+      reportCmd.attrList[4].attrID = ATTRID_ELECTRICITY_MEASURE_ACTIVE_POWER;
+      reportCmd.attrList[4].dataType = ZCL_DATATYPE_INT16;
+      reportCmd.attrList[4].attrData = (void *)&activePower;
+      reportCmd.attrList[5].attrID = ATTRID_ELECTRICITY_MEASURE_REACTIVE_POWER;
+      reportCmd.attrList[5].dataType = ZCL_DATATYPE_INT16;
+      reportCmd.attrList[5].attrData = (void *)&istantaneusReactivePower;
+      reportCmd.attrList[6].attrID = ATTRID_ELECTRICITY_MEASURE_APPARENT_POWER;
+      reportCmd.attrList[6].dataType = ZCL_DATATYPE_UINT16;
+      reportCmd.attrList[6].attrData = (void *)&apparentPower;
+      reportCmd.attrList[7].attrID = ATTRID_ELECTRICITY_MEASURE_POWER_FACTOR;
+      reportCmd.attrList[7].dataType = ZCL_DATATYPE_INT8;
+      reportCmd.attrList[7].attrData = (void *)&powerFactor;
       
 
-      zcl_SendReportCmd( endpoint, dstAddr,
+      zcl_SendReportCmd( reportEndpoint, &reportDstAddr,
                          ZCL_CLUSTER_ID_HA_ELECTRICAL_MEASUREMENT,
-                         pReportCmd, ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, (*segNum)++ );
+                        (zclReportCmd_t *)&reportCmd, ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, reportSeqNum++ );
       
-      osal_mem_free( pReportCmd );
-    }
+    
   }
 
 }

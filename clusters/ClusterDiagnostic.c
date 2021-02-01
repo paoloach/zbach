@@ -8,7 +8,7 @@
 #include "ClusterDiagnostic.h"
 
 #define MAX_TIMEOUT_SEC 30
-#define REPORT_TIME 60
+#define REPORT_TIME 300
 
 static uint16 remainingSec=REPORT_TIME;
 static void setTimer(void);
