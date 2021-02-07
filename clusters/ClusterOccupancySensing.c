@@ -32,22 +32,19 @@ void occupancySensingReadAttribute(zclAttrRec_t * statusRec) {
   
 }
 
+static zclReportCmd1_t reportCmd;
 
 void occupancySensingClusterSendReport(uint8 endpoint, afAddrType_t * dstAddr, uint8 * segNum){
   if (connected){
-    zclReportCmd_t * pReportCmd = osal_mem_alloc( sizeof(zclReportCmd_t) + sizeof(zclReport_t) );
-    if ( pReportCmd != NULL ) {
-      pReportCmd->numAttr = 1;
-      pReportCmd->attrList[0].attrID = ATTRID_OCCUPANCY_OCCUPANCY;
-      pReportCmd->attrList[0].dataType = ZCL_DATATYPE_BITMAP8;
-      pReportCmd->attrList[0].attrData = (void *)(&occupancy);
+      reportCmd.numAttr = 1;
+      reportCmd.attrList[0].attrID = ATTRID_OCCUPANCY_OCCUPANCY;
+      reportCmd.attrList[0].dataType = ZCL_DATATYPE_BITMAP8;
+      reportCmd.attrList[0].attrData = (void *)(&occupancy);
 
       zcl_SendReportCmd( endpoint, dstAddr,
                          ZCL_CLUSTER_ID_MS_OCCUPANCY_SENSING,
-                         pReportCmd, ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, (*segNum)++ );
+                         (zclReportCmd_t *)&reportCmd, ZCL_FRAME_SERVER_CLIENT_DIR, FALSE, (*segNum)++ );
       
-      osal_mem_free( pReportCmd );
-    }
   }
 
 }

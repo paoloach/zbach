@@ -93,6 +93,12 @@ extern "C"
    * Set a timer that reloads itself.
    */
   extern uint8 osal_start_reload_timer( uint8 taskID, uint16 event_id, uint32 timeout_value );
+  
+    
+   /*
+   * Set a Timer with bit event
+   */
+  extern uint8 osal_start_reload_timer_cb(uint32 timeout_value, void (* callback)(void) );
 
   /*
    * Stop a Timer

@@ -32,6 +32,5 @@ void onOffClusterReadAttribute(zclAttrRec_t *);
 void onOffClusterWriteAttribute(ZclWriteAttribute_t *);
 
 ZStatus_t processOnOffClusterServerCommands(zclIncoming_t *pInMsg);
-void onOffClusterSendReport(uint8 endpoint, afAddrType_t * dstAddr, uint8 * segNum); 
 
 #endif

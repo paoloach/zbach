@@ -9,28 +9,34 @@
 #include "zcl_general.h"
 
 #include "ClusterOnOff.h"
+#include "ClusterOSALEvents.h"
 #include "onboard.h"
 #include "regs.h"    
+#include "report.h"
+
+#define MAX_TIMEOUT_SEC 30
+#define REPORT_POLL_TIME_SEC 300
 
 extern uint8 connected;
 
 static uint8  onOffValue = LIGHT_ON;
 static uint16 onTime=0;
-static uint8 lastEndpoint;
-static afAddrType_t * lastDstAddr;
-static uint8 * lastSegNum=NULL; 
+static zclReportCmd2_t reportCmd;
+static uint16 remainingSec=REPORT_POLL_TIME_SEC;
 
+
+static void eventReport(void);
+static void setTimer(void);
 
 static void setIOStatus(void);
-
-
-
+void onOffClusterSendReport(void);
 
 
 void onOffInit(void) {
   DIR(ON_OFF_PORT, ON_OFF_PIN)=1;
   FUNCTION_SEL(ON_OFF_PORT,   ON_OFF_PIN)=0;
   PORT(ON_OFF_PORT, ON_OFF_PIN)=0;
+  setTimer();
 }
 
 void onOffClusterReadAttribute(zclAttrRec_t * attribute) {
@@ -76,13 +82,15 @@ void onOffClusterWriteAttribute(ZclWriteAttribute_t * writeAttribute) {
 
 void setIOStatus(void){
   if ( onOffValue  == LIGHT_ON ){
-      PORT(ON_OFF_PORT, ON_OFF_PIN)=0;
-  } else {
       PORT(ON_OFF_PORT, ON_OFF_PIN)=1;
+      PORT(LED_BLINK_PORT, LED_BLINK_PIN)=1;
+  } else {
+      PORT(ON_OFF_PORT, ON_OFF_PIN)=0;
+      PORT(LED_BLINK_PORT, LED_BLINK_PIN)=0;
   }
   
-  if (connected && lastSegNum != NULL){
-    onOffClusterSendReport(lastEndpoint, lastDstAddr, lastSegNum);
+  if (connected ){
+    onOffClusterSendReport();
   }
 }
 
@@ -114,25 +122,39 @@ ZStatus_t processOnOffClusterServerCommands(zclIncoming_t *pInMsg) {
 	return ZSuccess;
 }
 
-void onOffClusterSendReport(uint8 endpoint, afAddrType_t * dstAddr, uint8 * segNum) {
-  if (connected){
-    lastEndpoint = endpoint;
-    lastDstAddr = dstAddr;
-    lastSegNum = segNum;
-    
-    zclReportCmd_t * pReportCmd = osal_mem_alloc( sizeof(zclReportCmd_t) + sizeof(zclReport_t) );
-    if ( pReportCmd != NULL ) {
-      pReportCmd->numAttr = 1;
-      pReportCmd->attrList[0].attrID = ATTRID_ON_OFF;
-      pReportCmd->attrList[0].dataType = ZCL_DATATYPE_BOOLEAN;
-      pReportCmd->attrList[0].attrData = (void *)&onOffValue;
+static void setTimer(void) {
+  
+  uint16 nextReportEventSec;
+  if (remainingSec==0){
+    remainingSec = REPORT_POLL_TIME_SEC;
+  }
+  if (remainingSec > MAX_TIMEOUT_SEC){
+    nextReportEventSec = MAX_TIMEOUT_SEC;
+  } else {
+    nextReportEventSec = remainingSec;
+  }
+  remainingSec -= nextReportEventSec;
+  osal_start_timerEx_cb(nextReportEventSec*1000, &eventReport );
+}
 
-      zcl_SendReportCmd( endpoint, dstAddr,
-                         ZCL_CLUSTER_ID_GEN_ON_OFF,
-                         pReportCmd, ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, (*segNum)++ );
-      
-      osal_mem_free( pReportCmd );
-    }
+static void eventReport(void) {
+  if (remainingSec == 0){
+    onOffClusterSendReport();
+  }
+  setTimer();
+}
+
+
+void onOffClusterSendReport(void) {
+  if (connected){
+      reportCmd.numAttr = 1;
+      reportCmd.attrList[0].attrID = ATTRID_ON_OFF;
+      reportCmd.attrList[0].dataType = ZCL_DATATYPE_BOOLEAN;
+      reportCmd.attrList[0].attrData = (void *)&onOffValue;
+
+      zcl_SendReportCmd( reportEndpoint, &reportDstAddr,
+                       ZCL_CLUSTER_ID_GEN_ON_OFF,
+                       (zclReportCmd_t *)&reportCmd, ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, reportSeqNum++ );
   }
 
 }

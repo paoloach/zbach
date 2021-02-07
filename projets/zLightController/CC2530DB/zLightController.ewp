@@ -279,7 +279,7 @@
                 </option>
                 <option>
                     <name>OGChipConfigPath</name>
-                    <state>$TOOLKIT_DIR$\config\devices\Texas Instruments\CC2530F256.i51</state>
+                    <state>C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\8051\bin\..\config\devices\Texas Instruments\CC25xx\3x\CC2530F256.i51</state>
                 </option>
             </data>
         </settings>
@@ -483,14 +483,19 @@
                 </option>
                 <option>
                     <name>Compiler Extra Options Edit</name>
-                    <state>-f $PROJ_DIR$\..\..\..\Tools\f8wRouter.cfg</state>
-                    <state>-f $PROJ_DIR$\..\..\..\Tools\f8wConfig.cfg</state>
-                    <state>-f $PROJ_DIR$\..\..\..\Tools\f8wZCL.cfg</state>
+                    <state>-f $PROJ_DIR$\..\Configuration\f8wEndev.cfg</state>
+                    <state>-f $PROJ_DIR$\..\Configuration\f8wConfig.cfg</state>
+                    <state>-f $PROJ_DIR$\..\Configuration\f8wZCL.cfg</state>
+                    <state>-f $PROJ_DIR$\..\Configuration\pins.cfg</state>
+                    <state>-f $PROJ_DIR$\..\Configuration\params.cfg</state>
                 </option>
                 <option>
                     <name>CCIncludePath2</name>
                     <state>$PROJ_DIR$</state>
                     <state>$PROJ_DIR$\..\Source</state>
+                    <state>$PROJ_DIR$\..\..\..</state>
+                    <state>$PROJ_DIR$\..\..\..\clusters</state>
+                    <state>$PROJ_DIR$\..\..\..\Components\external</state>
                     <state>$PROJ_DIR$\..\..\..\Components\ha</state>
                     <state>$PROJ_DIR$\..\..\..\Components\zmain</state>
                     <state>$PROJ_DIR$\..\..\..\Components\hal\include</state>
@@ -1678,7 +1683,7 @@
                 </option>
                 <option>
                     <name>CCOptLevel</name>
-                    <state>0</state>
+                    <state>3</state>
                 </option>
                 <option>
                     <name>CCOptStrategy</name>
@@ -1687,7 +1692,7 @@
                 </option>
                 <option>
                     <name>CCOptLevelSlave</name>
-                    <state>0</state>
+                    <state>3</state>
                 </option>
                 <option>
                     <name>CompilerMisraRules04</name>
@@ -1733,7 +1738,7 @@
                 <option>
                     <name>CCAllowList2</name>
                     <version>0</version>
-                    <state>0000000</state>
+                    <state>1111110</state>
                 </option>
                 <option>
                     <name>CCOptStrategySlave</name>
@@ -6922,19 +6927,19 @@
                     <name>$PROJ_DIR$\..\..\..\clusters\ClusterBasic.h</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\..\clusters\ClusterHumidityRelativeMeasurement.h</name>
+                    <name>$PROJ_DIR$\..\..\..\clusters\ClusterIdentify.h</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\..\clusters\ClusterIdentify.h</name>
+                    <name>$PROJ_DIR$\..\..\..\clusters\ClusterOccupancySensing.h</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\clusters\ClusterOnOff.h</name>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\..\..\clusters\ClusterOSALEvents.h</name>
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\..\..\clusters\ClusterPower.h</name>
-                </file>
-                <file>
-                    <name>$PROJ_DIR$\..\..\..\clusters\ClusterTemperatureMeasurement.h</name>
                 </file>
             </group>
             <file>
@@ -6944,20 +6949,16 @@
                 <name>$PROJ_DIR$\..\Source\clusters\ClusterData.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\..\..\clusters\ClusterHumidityRelativeMeasurement.c</name>
-                <excluded>
-                    <configuration>EndDeviceEB</configuration>
-                    <configuration>EndDevice-DS18B20</configuration>
-                </excluded>
-            </file>
-            <file>
                 <name>$PROJ_DIR$\..\..\..\clusters\ClusterIdentify.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\..\..\clusters\ClusterPower.c</name>
+                <name>$PROJ_DIR$\..\..\..\clusters\ClusterOccupancySensing.c</name>
             </file>
             <file>
-                <name>$PROJ_DIR$\..\..\..\clusters\ClusterTemperatureMeasurement.c</name>
+                <name>$PROJ_DIR$\..\..\..\clusters\ClusterOnOff.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\..\..\clusters\ClusterPower.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\clusters\report.h</name>
@@ -6981,38 +6982,6 @@
     </group>
     <group>
         <name>external</name>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Components\external\dht112.h</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Components\external\dht112_I2C.c</name>
-            <excluded>
-                <configuration>EndDeviceEB</configuration>
-                <configuration>EndDevicePA</configuration>
-                <configuration>RouterPA</configuration>
-                <configuration>EndDevice_DH112</configuration>
-                <configuration>EndDevice-DS18B20</configuration>
-            </excluded>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Components\external\dht112_SingleWire.c</name>
-            <excluded>
-                <configuration>EndDeviceEB</configuration>
-                <configuration>EndDevice-DS18B20</configuration>
-            </excluded>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Components\external\DS18B20.c</name>
-            <excluded>
-                <configuration>EndDevice_DH112</configuration>
-            </excluded>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Components\external\DS18B20.h</name>
-            <excluded>
-                <configuration>EndDevice_DH112</configuration>
-            </excluded>
-        </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\Components\external\EventManager.c</name>
         </file>
@@ -9109,10 +9078,7 @@
             <name>$PROJ_DIR$\..\Configuration\f8wZCL.cfg</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Configuration\params-DHT12.cfg</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Configuration\params-DS18B20.cfg</name>
+            <name>$PROJ_DIR$\..\Configuration\params.cfg</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\Configuration\pins.cfg</name>

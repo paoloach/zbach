@@ -31,10 +31,11 @@
 
 #include "onboard.h"
 
-#include "clusters/ClusterIdentify.h"
-#include "clusters/ClusterBasic.h"
-#include "clusters/ClusterTemperatureMeasurement.h"
-#include "clusters/ClusterPower.h"
+#include "ClusterIdentify.h"
+#include "ClusterBasic.h"
+#include "ClusterTemperatureMeasurement.h"
+#include "ClusterPower.h"
+#include "ClusterDiagnostic.h"
 #include "EventManager.h"
 
 
@@ -95,6 +96,7 @@ void temperatureSensorInit( byte task_id ){
 #ifdef DHT12        
         addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_MS_RELATIVE_HUMIDITY,humidityRelativeClusterReadAttribute);
 #endif
+        addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_HA_DIAGNOSTIC,clusterDiagnosticReadAttribute);
   	zcl_registerForMsg( deviceTaskId );
         eventManagerInit();  
   	EA=1;
@@ -102,6 +104,7 @@ void temperatureSensorInit( byte task_id ){
 #ifdef DHT12        
         clusterHumidityMeasurementeInit();
 #endif        
+        clusterDiagnosticInit(deviceTaskId);
 	powerClusterInit(deviceTaskId);
  	identifyInit(deviceTaskId);
 	ZMacSetTransmitPower(TX_PWR_PLUS_19);

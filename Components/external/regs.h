@@ -3,6 +3,61 @@
 #define __REGS__H__
 
 #include "ioCC2530.h"
+
+
+__sfr __no_init volatile union {
+	struct {
+		unsigned char T1_mode: 2;
+		unsigned char T1_div: 2;
+		unsigned char T1_CTL_RESERVED: 4;
+	};
+} @ 0xE4;
+
+__sfr __no_init volatile union {
+	struct {
+		unsigned char T1_CH0IF: 1;
+		unsigned char T1_CH1IF: 1;
+                unsigned char T1_CH2IF: 1;
+                unsigned char T1_CH3IF: 1;
+                unsigned char T1_CH4IF: 1;
+                unsigned char T1_OVFIF: 1;
+	};
+} @ 0xAF;
+
+__sfr __no_init volatile union {
+	struct {
+		unsigned char T1_CH0_CAP: 2;
+		unsigned char T1_CH0_MODE: 1;
+                unsigned char T1_CH0_CMP: 3;
+                unsigned char T1_CH0_IM: 1;
+                unsigned char T1_CH0_RFIRQ: 1;
+	};
+} @ 0xE5;
+
+__sfr __no_init volatile union {
+	struct {
+		unsigned char T1_CH1_CAP: 2;
+		unsigned char T1_CH1_MODE: 1;
+                unsigned char T1_CH1_CMP: 3;
+                unsigned char T1_CH1_IM: 1;
+                unsigned char T1_CH1_RFIRQ: 1;
+	};
+} @ 0xE6;
+
+__sfr __no_init volatile union {
+	struct {
+		unsigned char T2_CH2_CAP: 2;
+		unsigned char T2_CH2_MODE: 1;
+                unsigned char T2_CH2_CMP: 3;
+                unsigned char T2_CH2_IM: 1;
+                unsigned char T2_CH2_RFIRQ: 1;
+	};
+} @ 0xE7;
+
+
+
+
+
 __sfr __no_init volatile union {
 	struct {
 		unsigned char T3_mode: 2;

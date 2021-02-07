@@ -8,6 +8,6 @@
 
 void electricityMeasureClusterReadAttribute(zclAttrRec_t *);
 void electricityMeasureClusterReadAttributeInit(void);
-void electricityMeasureClusterSendReport(uint8 endpoint, afAddrType_t * dstAddr, uint8 * segNum);		
+	
 
 #endif

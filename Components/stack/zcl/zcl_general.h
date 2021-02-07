@@ -730,7 +730,55 @@ extern "C"
 #define ATTRID_TEMPERATURE_TOLERANCE			3
   
   
+/**********************************************************/
+/*** Diagnostic Cluster Attributes ***/
+/**********************************************************/ 
+/*        HARDWARE                                        */  
+#define ATTRID_DIAGNOSTIC_NUMBER_OF_RESET		0
+#define ATTRID_DIAGNOSTIC_PERSISTEN_MEMORY_WRITE        1
+
+/*      CUSTOM SOFTWARE                                   */  
+#define ATTRID_DIAGNOSTIC_HEAP_ALLOCATED                0x200
+#define ATTRID_DIAGNOSTIC_HEAP_FREE                     0x201  
+#define ATTRID_DIAGNOSTIC_HEAP_BLOCK_FREE               0x202  
   
+ /*    STACK/NETWORK                                     */
+  
+  
+#define ATTRID_DIAGNOSTIC_MAC_RX_B_CAST                 0x100
+#define ATTRID_DIAGNOSTIC_MAC_TX_B_CAST                 0x101
+#define ATTRID_DIAGNOSTIC_MAC_RX_U_CAST                 0x102
+#define ATTRID_DIAGNOSTIC_MAC_TX_U_CAST                 0x103
+#define ATTRID_DIAGNOSTIC_MAX_TX_U_CAST_RETRY           0x104  
+#define ATTRID_DIAGNOSTIC_MAX_TX_U_CAST_FAIL            0x105  
+#define ATTRID_DIAGNOSTIC_APS_RX_B_CAST                 0x106
+#define ATTRID_DIAGNOSTIC_APS_TX_B_CAST                 0x107  
+#define ATTRID_DIAGNOSTIC_APS_RX_U_CAST                 0x108  
+#define ATTRID_DIAGNOSTIC_APS_TX_U_CAST_SUCCESS         0x109        
+#define ATTRID_DIAGNOSTIC_APS_TX_U_CAST_RETRY           0x10A  
+#define ATTRID_DIAGNOSTIC_APS_TX_U_CAST_FAIL            0x10B  
+#define ATTRID_DIAGNOSTIC_ROUTE_DISC_INITIATED          0x10C  
+#define ATTRID_DIAGNOSTIC_NEIGHBOR_ADDED                0x10D  
+#define ATTRID_DIAGNOSTIC_NEIGHBOR_REMOVED              0X10E  
+#define ATTRID_DIAGNOSTIC_NEIGHBOR_STALE                0X10F  
+#define ATTRID_DIAGNOSTIC_JOIN_INDICATION               0X110  
+#define ATTRID_DIAGNOSTIC_CHILD_MOVED                   0X111  
+#define ATTRID_DIAGNOSTIC_NWKFCFAILURE                  0X112  
+#define ATTRID_DIAGNOSTIC_APSFCFAILURE                  0X113  
+#define ATTRID_DIAGNOSTIC_APSUNAUTHORIZED_KEY           0X114  
+#define ATTRID_DIAGNOSTIC_NWK_DECRIPTION_FAILURES       0X115  
+#define ATTRID_DIAGNOSTIC_APS_DECRIPTION_FAILURES       0X116  
+#define ATTRID_DIAGNOSTIC_PACKET_BUFFER_ALLOCATE_FAILURES 0X117  
+#define ATTRID_DIAGNOSTIC_RELAYED_U_CAST                0X118  
+#define ATTRID_DIAGNOSTIC_PHYTO_MAC_QUEUE_LIMIT_REACHED 0X119  
+#define ATTRID_DIAGNOSTIC_PACKET_VALIDATE_DROP_COUNT    0X11A  
+#define ATTRID_DIAGNOSTIC_AVERAGE_MAC_RETRY_PER_APS_MESSAGE_SENT 0X11B  
+#define ATTRID_DIAGNOSTIC_LAST_MSG_LQI                  0X11C  
+#define ATTRID_DIAGNOSTIC_LAST_MSG_RSSI                 0X11D  
+
+
+
+
   
 /*** Application Indexes ***/
 

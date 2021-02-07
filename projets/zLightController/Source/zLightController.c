@@ -31,28 +31,20 @@
 
 #include "onboard.h"
 
-#include "clusters/ClusterIdentify.h"
-#include "clusters/ClusterBasic.h"
-#include "clusters/ClusterTemperatureMeasurement.h"
-#include "clusters/ClusterPower.h"
+#include "ClusterOSALEvents.h"
+#include "ClusterIdentify.h"
+#include "ClusterBasic.h"
+#include "ClusterOnOff.h"
+#include "ClusterOccupancySensing.h"
+#include "ClusterPower.h"
 #include "EventManager.h"
-
-
-#ifdef DHT12
-#include "clusters/ClusterHumidityRelativeMeasurement.h"
-#endif
 #include "ledBlink.h"
-#ifdef DHT12
-#include "dht112.h"
-#endif
-#ifdef DS18B20
-#include "DS18B20.h"
-#endif
+
 	  
 
 byte deviceTaskId;
 
-extern SimpleDescriptionFormat_t temperatureSimpleDesc;
+extern SimpleDescriptionFormat_t zControlerLightSimpleDesc;
 
 void User_Process_Pool(void);
 
@@ -82,38 +74,34 @@ uint8  connected=false;
 uint32 switch1DownStart;
 
 void zLightControllerInit( byte task_id ){
- 	deviceTaskId = task_id;
-   	zcl_registerPlugin( ZCL_CLUSTER_ID_GEN_BASIC,  ZCL_CLUSTER_ID_GEN_MULTISTATE_VALUE_BASIC,    handleClusterCommands );
+  deviceTaskId = task_id;
+  zcl_registerPlugin( ZCL_CLUSTER_ID_GEN_BASIC,  ZCL_CLUSTER_ID_GEN_MULTISTATE_VALUE_BASIC,    handleClusterCommands );
+
+  zclHA_Init( &zControlerLightSimpleDesc );
+  addReadAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterReadAttribute);
+  addWriteAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterWriteAttribute);
+  addReadAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterReadAttribute);
+  addWriteAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterWriteAttribute);
+  addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_GEN_POWER_CFG,powerClusterReadAttribute);
+  addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_GEN_ON_OFF,onOffClusterReadAttribute);
+  addWriteAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_ON_OFF,onOffClusterWriteAttribute);
+  addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_MS_OCCUPANCY_SENSING,occupancySensingReadAttribute);
   
-	zclHA_Init( &temperatureSimpleDesc );
-	addReadAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterReadAttribute);
-	addWriteAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterWriteAttribute);
-	addReadAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterReadAttribute);
-	addWriteAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterWriteAttribute);
-	addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_GEN_POWER_CFG,powerClusterReadAttribute);
-	addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_MS_TEMPERATURE_MEASUREMENT,temperatureClusterReadAttribute);
-#ifdef DHT12        
-        addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_MS_RELATIVE_HUMIDITY,humidityRelativeClusterReadAttribute);
-#endif
-  	zcl_registerForMsg( deviceTaskId );
-        eventManagerInit();  
-  	EA=1;
-  	clusterTemperatureMeasurementeInit();
-#ifdef DHT12        
-        clusterHumidityMeasurementeInit();
-#endif        
-	powerClusterInit(deviceTaskId);
- 	identifyInit(deviceTaskId);
-	ZMacSetTransmitPower(TX_PWR_PLUS_19);
+  
+  
+  zcl_registerForMsg( deviceTaskId );
+  eventManagerInit();  
+  EA=1;
+
+  powerClusterInit(deviceTaskId);
+  identifyInit(deviceTaskId);
+  clusterOccupancyInit();  
+  onOffInit();
+  
+  ZMacSetTransmitPower(TX_PWR_PLUS_2);
 	//ZMacSetTransmitPower(POWER);
   blinkLedInit(deviceTaskId);
   blinkLedstart();
-#ifdef DHT12
-  dht112_init(deviceTaskId);
-#endif
-#ifdef DS18B20  
-  DS18B20_init(deviceTaskId);
-#endif
   setRegisteredKeysTaskID(deviceTaskId);
   addEventCB(SWITCH1_UP_EVT_BIT, switch1Up);
   addEventCB(SWITCH1_DOWN_EVT_BIT, switch1Down);

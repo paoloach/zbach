@@ -34,6 +34,7 @@
 
 #include "ledBlink.h"
 #include "Events.h"	  
+#include "bl0937.h"
 
 void User_Process_Pool(void);
 	 
@@ -52,12 +53,10 @@ static uint8 processInDiscRspCmd( zclIncomingMsg_t *pInMsg );
 static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg );
 
 static void initReport(void);
-static void nextReportEvent(void);
-static void eventReport(void);
-uint16 reportSecond = DEFAULT_REPORT_SEC;
-uint16 reportSecondCounter;
 uint8 reportSeqNum;
 afAddrType_t reportDstAddr;
+uint8  reportEndpoint;
+
 uint8 connected=false;
 
 void zSmartSocketInit( byte task_id ){
@@ -82,44 +81,22 @@ void zSmartSocketInit( byte task_id ){
   powerClusterInit(zProxSensorTaskID);
   identifyInit(zProxSensorTaskID);
   electricityMeasureClusterReadAttributeInit();
-  ZMacSetTransmitPower(TX_PWR_PLUS_1);
+  ZMacSetTransmitPower(POWER);
   blinkLedInit();
-  blinkLedstart(zProxSensorTaskID);
+  blinkLedstart();
   onOffInit();
+#ifdef BL0937
+  BL0937_init();
+#endif
 
 }
 
 static void initReport(void){
-  reportSecondCounter = reportSecond;
+  reportEndpoint = ENDPOINT;
   reportDstAddr.addrMode = afAddr16Bit;
-  reportDstAddr.endPoint = 0;
+  reportDstAddr.endPoint = ENDPOINT;
   reportDstAddr.addr.shortAddr = 0;
-  nextReportEvent();
-}
-
-void nextReportEvent(void) {
-  uint16 nextReportEventSec = 10;
-  if (reportSecondCounter < 10)
-    nextReportEventSec = reportSecondCounter;
-  
-  reportSecondCounter -= nextReportEventSec;
-  osal_start_timerEx( zProxSensorTaskID, REPORT_EVT, nextReportEventSec*1000 );	
-}
-
-static void eventReport(void) {
-  if (reportSecondCounter <= 0){
-    if (connected){
-      reportDstAddr.panId=_NIB.nodeDepth;
-      reportDstAddr.endPoint=ENDPOINT;
-  #if !defined RTR_NWK   
-      powerClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
-  #endif    
-      onOffClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
-      electricityMeasureClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
-    }
-    reportSecondCounter=reportSecond;
-  }
-  nextReportEvent();
+  reportDstAddr.panId=_NIB.nodeDepth;
 }
 
 /*********************************************************************
@@ -164,7 +141,7 @@ uint16 zSmartSocketEventLoop( uint8 task_id, uint16 events ){
                                     connected=false;
                                     break;
                                   case DEV_END_DEVICE:
-                                    blinkLedEnd(task_id);
+                                    blinkLedEnd();
                                     initReport();
                                     connected=true;
                                     break;
@@ -194,21 +171,6 @@ uint16 zSmartSocketEventLoop( uint8 task_id, uint16 events ){
     	return (events ^ SYS_EVENT_MSG);
 	}
 	
-	if ( events & IDENTIFY_TIMEOUT_EVT ) {
-		return identifyLoop(events);
-	}
-	
-  if ( events & FAST_BLINK ) {
-          blinkLedAction(zProxSensorTaskID);
-          return events ^ FAST_BLINK;
-  }
-
-
-  if (events & REPORT_EVT){
-    eventReport();
-    events = events ^ REPORT_EVT;
-  }
-
   return 0;
 }
 

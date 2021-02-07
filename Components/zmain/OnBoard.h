@@ -211,6 +211,7 @@ extern uint8 aExtendedAddress[8];
 /* The following Heap sizes are setup for typical TI sample applications,
  * and should be adjusted to your systems requirements.
  */
+/*
 #if !defined INT_HEAP_LEN
 #if defined RTR_NWK
   #define INT_HEAP_LEN  3072
@@ -223,19 +224,14 @@ extern uint8 aExtendedAddress[8];
 #else
 #define MAXMEMHEAP 3900
 #endif
-#define KEY_CHANGE_SHIFT_IDX 1
-#define KEY_CHANGE_KEYS_IDX  2
+*/
+
 
 // Initialization levels
 #define OB_COLD  0
 #define OB_WARM  1
 #define OB_READY 2
 
-#ifdef LCD_SUPPORTED
-  #define BUZZER_OFF  0
-  #define BUZZER_ON   1
-  #define BUZZER_BLIP 2
-#endif
 
 typedef struct
 {
