@@ -107,7 +107,7 @@ void temperatureSensorInit( byte task_id ){
         clusterDiagnosticInit(deviceTaskId);
 	powerClusterInit(deviceTaskId);
  	identifyInit(deviceTaskId);
-	ZMacSetTransmitPower(TX_PWR_PLUS_19);
+	ZMacSetTransmitPower(TX_PWR_PLUS_2);
 	//ZMacSetTransmitPower(POWER);
   blinkLedInit(deviceTaskId);
   blinkLedstart();

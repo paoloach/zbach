@@ -4384,6 +4384,12 @@
         <file>
             <name>$PROJ_DIR$\..\..\..\Components\external\dht112_SingleWire.c</name>
         </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\Components\external\EventManager.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\Components\external\EventManager.h</name>
+        </file>
     </group>
     <group>
         <name>HAL</name>
@@ -4895,19 +4901,28 @@
             <name>$PROJ_DIR$\..\..\..\Tools\f8w2530.xcl</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wConfig.cfg</name>
+            <name>$PROJ_DIR$\..\Configuration\f8wConfig.cfg</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wCoord.cfg</name>
+            <name>$PROJ_DIR$\..\Configuration\f8wEndev.cfg</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wEndev.cfg</name>
+            <name>$PROJ_DIR$\..\Configuration\f8wRouter.cfg</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wRouter.cfg</name>
+            <name>$PROJ_DIR$\..\Configuration\f8wZCL.cfg</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wZCL.cfg</name>
+            <name>$PROJ_DIR$\..\Configuration\params-DHT12.cfg</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Configuration\params-DS18B20.cfg</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Configuration\params.cfg</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Configuration\pins.cfg</name>
         </file>
     </group>
     <group>

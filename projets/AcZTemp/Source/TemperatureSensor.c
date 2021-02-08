@@ -33,6 +33,9 @@
 #include "clusters/ClusterBasic.h"
 #include "clusters/ClusterTemperatureMeasurement.h"
 #include "clusters/ClusterPower.h"
+#include "EventManager.h"
+#include "Report.h"
+
 #ifdef DHT12
 #include "clusters/ClusterHumidityRelativeMeasurement.h"
 #endif
@@ -40,7 +43,7 @@
 #include "dht112.h"
 	  
 
-
+void User_Process_Pool(void);
 	 
 byte temperatureSensorTaskID;
 extern SimpleDescriptionFormat_t temperatureSimpleDesc;
@@ -57,81 +60,60 @@ static uint8 processInDiscRspCmd( zclIncomingMsg_t *pInMsg );
 static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg );
 
 static void initReport(void);
-static void nextReportEvent(void);
-static void eventReport(void);
-#define DEFAULT_REPORT_SEC      300
 uint16 reportSecond = DEFAULT_REPORT_SEC;
 uint16 reportSecondCounter;
 uint8 reportSeqNum;
 afAddrType_t reportDstAddr;
-
-
-
+uint8  reportEndpoint;
+devStates_t prevState;
 
 
 void temperatureSensorInit( byte task_id ){
- 	temperatureSensorTaskID = task_id;
+    temperatureSensorTaskID = task_id;
+  eventManagerInit();
+    zcl_registerPlugin( ZCL_CLUSTER_ID_GEN_BASIC,  ZCL_CLUSTER_ID_GEN_MULTISTATE_VALUE_BASIC,    handleClusterCommands );
 
-   	zcl_registerPlugin( ZCL_CLUSTER_ID_GEN_BASIC,  ZCL_CLUSTER_ID_GEN_MULTISTATE_VALUE_BASIC,    handleClusterCommands );
-  
-	zclHA_Init( &temperatureSimpleDesc );
-	addReadAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterReadAttribute);
-	addWriteAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterWriteAttribute);
-	addReadAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterReadAttribute);
-	addWriteAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterWriteAttribute);
-	addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_GEN_POWER_CFG,powerClusterReadAttribute);
-	addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_MS_TEMPERATURE_MEASUREMENT,temperatureClusterReadAttribute);
+    zclHA_Init( &temperatureSimpleDesc );
+    addReadAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterReadAttribute);
+    addWriteAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterWriteAttribute);
+    addReadAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterReadAttribute);
+    addWriteAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterWriteAttribute);
+    addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_GEN_POWER_CFG,powerClusterReadAttribute);
+    addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_MS_TEMPERATURE_MEASUREMENT,temperatureClusterReadAttribute);
 #ifdef DHT12        
-        addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_MS_RELATIVE_HUMIDITY,humidityRelativeClusterReadAttribute);
+    addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_MS_RELATIVE_HUMIDITY,humidityRelativeClusterReadAttribute);
 #endif
-  	zcl_registerForMsg( temperatureSensorTaskID );
-  
-  	EA=1;
-  	clusterTemperatureMeasurementeInit();
-#ifdef DHT12        
-        clusterHumidityMeasurementeInit();
-#endif        
-	powerClusterInit(temperatureSensorTaskID);
- 	identifyInit(temperatureSensorTaskID);
-	ZMacSetTransmitPower(TX_PWR_PLUS_19);
-	//ZMacSetTransmitPower(POWER);
-  blinkLedInit();
-  blinkLedstart(temperatureSensorTaskID);
+    zcl_registerForMsg( temperatureSensorTaskID );
 
+    EA=1;
+    clusterTemperatureMeasurementeInit();
+#ifdef DHT12        
+    clusterHumidityMeasurementeInit();
+#endif        
+    powerClusterInit(temperatureSensorTaskID);
+    identifyInit(temperatureSensorTaskID);
+    ZMacSetTransmitPower(POWER);
+  blinkLedInit(temperatureSensorTaskID);
+  blinkLedstart();
+
+#ifdef DHT12
+  dht112_init(temperatureSensorTaskID);
+#endif
+#ifdef DS18B20  
+  DS18B20_init(temperatureSensorTaskID);
+#endif
+  
 }
 
 static void initReport(void){
+  reportEndpoint = ENDPOINT;
   reportSecondCounter = reportSecond;
   reportDstAddr.addrMode = afAddr16Bit;
-  reportDstAddr.endPoint = 0;
+  reportDstAddr.endPoint = ENDPOINT;
   reportDstAddr.addr.shortAddr = 0;
-  nextReportEvent();
+  reportDstAddr.panId=_NIB.nodeDepth;
 }
 
-void nextReportEvent(void) {
-  uint16 nextReportEventSec = 10;
-  if (reportSecondCounter < 10)
-    nextReportEventSec = reportSecondCounter;
-  
-  reportSecondCounter -= nextReportEventSec;
-  osal_start_timerEx( temperatureSensorTaskID, REPORT_EVT, nextReportEventSec*1000 );	
-}
-
-static void eventReport(void) {
-  if (reportSecondCounter <= 0){
-    reportDstAddr.panId=_NIB.nodeDepth;
-    reportDstAddr.endPoint=ENDPOINT;
-    temperatureClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
-#if !defined RTR_NWK   
-    powerClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
-#endif    
-#ifdef DHT12
-    humidityRelativeClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
-#endif
-    reportSecondCounter=reportSecond;
-  }
-  nextReportEvent();
-  }
 
 /*********************************************************************
  * @fn          zclSample_event_loop
@@ -143,7 +125,11 @@ static void eventReport(void) {
  * @return      none
  */
 uint16 temperatureSensorEventLoop( uint8 task_id, uint16 events ){
-	afIncomingMSGPacket_t *MSGpkt;
+  if (handleEvent(&events)){
+    return events;
+  };
+  
+  afIncomingMSGPacket_t *MSGpkt;
 	devStates_t zclSampleSw_NwkState;
   
 	(void)task_id;  // Intentionally unreferenced parameter
@@ -156,40 +142,44 @@ uint16 temperatureSensorEventLoop( uint8 task_id, uint16 events ){
                                   break;
 				case ZDO_STATE_CHANGE:
                                   zclSampleSw_NwkState = (devStates_t)(MSGpkt->hdr.status);
-                                    
-                                  switch(zclSampleSw_NwkState){
-                                  case DEV_NWK_DISC:
-                                    setBlinkCounter(0);
-                                    break;
-                                  case DEV_NWK_JOINING:
-                                    setBlinkCounter(1);
-                                    break;
-                                  case DEV_NWK_REJOIN:
-                                    setBlinkCounter(2);
-                                    break;
-                                  case DEV_END_DEVICE_UNAUTH:
-                                    setBlinkCounter(3);
-                                    break;
-                                  case DEV_END_DEVICE:
-                                    blinkLedEnd(task_id);
-                                    initReport();
-                                    break;
-                                  case DEV_ROUTER:
-                                    setBlinkCounter(5);
-                                    break;
-                                  case DEV_COORD_STARTING:
-                                    setBlinkCounter(6);
-                                    break;
-                                  case DEV_ZB_COORD:
-                                    setBlinkCounter(7);
-                                    break;
-                                  case DEV_NWK_ORPHAN:
-                                    setBlinkCounter(8);
-                                    break;
-                                  }
+                                  if(prevState !=   zclSampleSw_NwkState){
+                                      switch(zclSampleSw_NwkState){
+                                        case DEV_NWK_DISC:
+                                          setBlinkCounter(0);
+                                          break;
+                                        case DEV_NWK_JOINING:
+                                          setBlinkCounter(1);
+                                          break;
+                                        case DEV_NWK_REJOIN:
+                                          setBlinkCounter(2);
+                                          break;
+                                        case DEV_END_DEVICE_UNAUTH:
+                                          setBlinkCounter(3);
+                                          break;
+                                        case DEV_END_DEVICE:
+                                          blinkLedEnd();
+                                          initReport();
+                                          break;
+                                        case DEV_ROUTER:
+                                          blinkLedEnd();
+                                          initReport();
+                                          break;
+                                        case DEV_COORD_STARTING:
+                                          setBlinkCounter(6);
+                                          break;
+                                        case DEV_ZB_COORD:
+                                          setBlinkCounter(7);
+                                          break;
+                                        case DEV_NWK_ORPHAN:
+                                          setBlinkCounter(8);
+                                          break;
+                                        }
+                                      prevState = zclSampleSw_NwkState;
+                                      }
+                                      break;
+                                  default:
                                   break;
-                                default:
-                                  break;
+                                  
       		}
 
         osal_msg_deallocate( (uint8 *)MSGpkt );
@@ -198,23 +188,6 @@ uint16 temperatureSensorEventLoop( uint8 task_id, uint16 events ){
     	return (events ^ SYS_EVENT_MSG);
 	}
 	
-	if ( events & IDENTIFY_TIMEOUT_EVT ) {
-		return identifyLoop(events);
-	}
-	
-  if ( events & FAST_BLINK ) {
-          blinkLedAction(temperatureSensorTaskID);
-          return events ^ FAST_BLINK;
-  }
-
-
-  if ( events & READ_TEMP_MASK ) {
-    return readTemperatureLoop(events);
-  }
-  if (events & REPORT_EVT){
-    eventReport();
-    events = events ^ REPORT_EVT;
-  }
 
   return 0;
 }
@@ -413,6 +386,9 @@ static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg ){
 }
 
 
+void User_Process_Pool(void) {
+  
+}
 
 /****************************************************************************
 ****************************************************************************/

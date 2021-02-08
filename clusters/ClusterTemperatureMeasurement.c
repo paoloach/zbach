@@ -32,11 +32,14 @@ extern byte deviceTaskId;
 extern devStates_t devState;
 extern int16 temp;
 
-static void newTemperature(uint16 );
-static void sendReport(void);
+static void sendReport(uint16 event);
 
 void clusterTemperatureMeasurementeInit(void) {
-  addEventCB(NEW_TEMP_BIT, &newTemperature);
+  reportCmd.numAttr = 1;
+  reportCmd.attrList[0].attrID = ATTRID_TEMPERATURE_MEASURE_VALUE;
+  reportCmd.attrList[0].dataType = ZCL_DATATYPE_INT16;
+  reportCmd.attrList[0].attrData = (void *)(&temp);
+  addEventCB(NEW_TEMP_BIT, &sendReport);
 }
 
 void temperatureClusterReadAttribute(zclAttrRec_t * statusRec) {
@@ -67,17 +70,8 @@ void temperatureClusterReadAttribute(zclAttrRec_t * statusRec) {
 	}
 }
 
-void newTemperature(uint16 event) {
-  sendReport();
-}
 
-void sendReport(void){
-
-  reportCmd.numAttr = 1;
-  reportCmd.attrList[0].attrID = ATTRID_TEMPERATURE_MEASURE_VALUE;
-  reportCmd.attrList[0].dataType = ZCL_DATATYPE_INT16;
-  reportCmd.attrList[0].attrData = (void *)(&temp);
-
+void sendReport(uint16 event){
   zcl_SendReportCmd( reportEndpoint, &reportDstAddr,
                      ZCL_CLUSTER_ID_MS_TEMPERATURE_MEASUREMENT,
                      (zclReportCmd_t*)&reportCmd, ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, reportSeqNum++ );

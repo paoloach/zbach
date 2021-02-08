@@ -16,10 +16,8 @@
 #include "zcl.h"
 #include "ClusterOSALEvents.h"
 
-uint16 readHumidityLoop(uint16 events);
 void clusterHumidityMeasurementeInit(void);
 void humidityRelativeClusterReadAttribute(zclAttrRec_t *);
-void humidityRelativeClusterSendReport(uint8 endpoint, afAddrType_t * dstAddr, uint8 * segNum); 
 
 
 #endif

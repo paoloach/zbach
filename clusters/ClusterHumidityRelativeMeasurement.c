@@ -24,14 +24,17 @@ RESOURCES:
 const int16 minHumidityValue=0;
 const int16 maxHumidityValue=80;
 const uint16 toleranceHumidity=10;
-
 extern byte zProxSensorTaskID;
 
-static void sendReport(void);
-static void newHumidity(uint16 );
+static void sendReport(uint16);
+static zclReportCmd1_t reportCmd;
 
 void clusterHumidityMeasurementeInit(void) {
-  addEventCB(NEW_HUMIDITY_BIT, &newHumidity);
+  reportCmd.numAttr = 1;
+  reportCmd.attrList[0].attrID = ATTRID_HUMIDITY_RELATIVE_MEASURE_VALUE;
+  reportCmd.attrList[0].dataType = ZCL_DATATYPE_UINT16;
+  reportCmd.attrList[0].attrData = (void *)(&humidity);
+  addEventCB(NEW_HUMIDITY_BIT, &sendReport);
 }
 
 void humidityRelativeClusterReadAttribute(zclAttrRec_t * statusRec) {
@@ -62,32 +65,11 @@ void humidityRelativeClusterReadAttribute(zclAttrRec_t * statusRec) {
 	}
 }
 
-uint16 readHumidityLoop(uint16 events) {
-  return events;
-}
-
-
-void newHumidity(uint16 events ){
-  sendReport();
-}
-
-
-void sendReport(void){
-  zclReportCmd_t *pReportCmd;
+void sendReport(uint16 event){
   if (humidity == 0xFFFF)
     return;
-  pReportCmd = osal_mem_alloc( sizeof(zclReportCmd_t) + sizeof(zclReport_t) );
-  if ( pReportCmd != NULL ) {
-    pReportCmd->numAttr = 1;
-    pReportCmd->attrList[0].attrID = ATTRID_HUMIDITY_RELATIVE_MEASURE_VALUE;
-    pReportCmd->attrList[0].dataType = ZCL_DATATYPE_UINT16;
-    pReportCmd->attrList[0].attrData = (void *)(&humidity);
-
-    zcl_SendReportCmd( reportEndpoint, &reportDstAddr,
+  zcl_SendReportCmd( reportEndpoint, &reportDstAddr,
                        ZCL_CLUSTER_ID_MS_RELATIVE_HUMIDITY,
-                       pReportCmd, ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, reportSeqNum++ );
+                       (zclReportCmd_t *)&reportCmd, ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, reportSeqNum++ );
     
-    osal_mem_free( pReportCmd );
-  }
-
 }

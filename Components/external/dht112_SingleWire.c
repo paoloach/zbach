@@ -11,7 +11,6 @@
 #include "EventManager.h"
 #include "dht112.h"
 
-#define TIME_READ_ms 30*1000
 #define DEFAULT_READ_PERIOD_MINUTES 5
 
 #ifndef READ_PERIOD_MINUTES
@@ -19,7 +18,6 @@
 #endif
 
 #define DHT_INIT_TIME_ms 1500
-#define READ_PERIOD_MAX_COUNTER 2*READ_PERIOD_MINUTES
 #define START_READ_PERIOD_ms 200
 #define STARTING_DELAY_ms 5000
 #define STABILING_DELAY_ms 3000
@@ -44,7 +42,6 @@ enum Status {
 };
 
 static enum Status status=START; 
-static uint8 readPeriodCounter;
 
 static enum Status waitAction(void);
 static enum Status readStartAction(void);
@@ -95,27 +92,18 @@ void dht112_loop(void) {
 
 static enum Status startAction() {
   DHT112_POWER=1;
-   readPeriodCounter=0;  
-   osal_start_timerEx_cb(DHT_INIT_TIME_ms, &dht112_loop );
-   return READ_START;
+  osal_start_timerEx_cb(DHT_INIT_TIME_ms, &dht112_loop );
+  return READ_START;
 }
 
 static enum Status waitAction() {
-  readPeriodCounter++;
-  if (readPeriodCounter >= READ_PERIOD_MAX_COUNTER){
-    readPeriodCounter=0;
-    osal_start_timerEx_cb(STARTING_DELAY_ms, &dht112_loop );
-    return START;
-  } else {
-    osal_start_timerEx_cb(TIME_READ_ms, &dht112_loop );
-    return WAIT;
-  }
-	
+  osal_start_timerEx_cb(READ_PERIOD_MINUTES*6000, &dht112_loop );
+  return START;
 }
 
 static enum Status readStartAction() {
   SDA_ON;
-  osal_start_timerEx_cb(START_READ_PERIOD_ms, &dht112_loop );
+  osal_start_timerEx_cb(STABILING_DELAY_ms, &dht112_loop );
   return READ;
 }
 
@@ -124,11 +112,8 @@ static enum Status readStartAction() {
 static enum Status readAction() {
   halIntState_t intState;
   HAL_ENTER_CRITICAL_SECTION( intState );
-    enum Status ret = internalReadAction();
+  enum Status ret = internalReadAction();
   HAL_EXIT_CRITICAL_SECTION( intState );
-  if (status == WAIT){
-    osal_start_timerEx_cb(TIME_READ_ms, &dht112_loop );
-   }
   return ret;
 }
 
@@ -181,7 +166,7 @@ static enum Status internalReadAction(void){
   
   humidity = (uint16)data[0]*100 + data[1];
   temp = (uint16)data[2]*100 + data[3];
-  DHT112_POWER=0;
+  DHT112_POWER=1;
   osal_start_timerEx_cb(STARTING_DELAY_ms, &dht112_loop );
   osal_set_event_bit( taskId,  NEW_TEMP_BIT );
   osal_set_event_bit( taskId,  NEW_HUMIDITY_BIT );
@@ -213,10 +198,10 @@ static bool read8Bit(uint8 * data) {
 
 static enum Status resetAction() {
   SDA_OFF; 
-  osal_start_timerEx_cb(TIME_READ_ms, &dht112_loop );
+  osal_start_timerEx_cb(1000, &dht112_loop );
   temp=0xFFFF;
   humidity=0xFFFF;
-  DHT112_POWER=0;
+  DHT112_POWER=1;
    return WAIT;
 }
 

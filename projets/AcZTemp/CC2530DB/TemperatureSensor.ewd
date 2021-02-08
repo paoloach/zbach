@@ -198,7 +198,7 @@
                 </option>
                 <option>
                     <name>ChipconEraseFlash</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>ChipconRetainMemory</name>
@@ -244,7 +244,7 @@
                 </option>
                 <option>
                     <name>ChipconFlashLockInfo</name>
-                    <state>&lt;page size info. missing&gt;</state>
+                    <state>Page size info is missing</state>
                 </option>
                 <option>
                     <name>ChipconBootLock</name>
@@ -926,7 +926,7 @@
                 </option>
                 <option>
                     <name>ChipconEraseFlash</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>ChipconRetainMemory</name>

@@ -12,7 +12,7 @@
         <ByteLimit>50</ByteLimit>
     </Stack>
     <DebugChecksum>
-        <Checksum>1608077708</Checksum>
+        <Checksum>1445061362</Checksum>
     </DebugChecksum>
     <CallStack>
         <ShowArgs>0</ShowArgs>
@@ -80,6 +80,11 @@
         <LoggingEnabled>_ 0</LoggingEnabled>
         <LogFile>_ ""</LogFile>
     </TermIOLog>
+    <LogFile>
+        <LoggingEnabled>_ 0</LoggingEnabled>
+        <LogFile>_ ""</LogFile>
+        <Category>_ 0</Category>
+    </LogFile>
     <Breakpoints>
         <Bp0>_ "STD_CODE" "{$PROJ_DIR$\..\..\..\Components\external\CS5463.c}.94.3" 0 0 0 0 "" 0 ""</Bp0>
         <Count>1</Count>
@@ -88,11 +93,6 @@
         <StopTimersOnHalt>0</StopTimersOnHalt>
         <LeaveTargetRunning>1</LeaveTargetRunning>
     </ChipconEmu>
-    <LogFile>
-        <LoggingEnabled>_ 0</LoggingEnabled>
-        <LogFile>_ ""</LogFile>
-        <Category>_ 0</Category>
-    </LogFile>
     <Aliases>
         <Count>0</Count>
         <SuppressDialog>0</SuppressDialog>

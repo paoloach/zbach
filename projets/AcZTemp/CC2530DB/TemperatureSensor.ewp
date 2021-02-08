@@ -279,7 +279,7 @@
                 </option>
                 <option>
                     <name>OGChipConfigPath</name>
-                    <state>$TOOLKIT_DIR$\config\devices\Texas Instruments\CC2530F256.i51</state>
+                    <state>C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\8051\bin\..\config\devices\Texas Instruments\CC25xx\3x\CC2530F256.i51</state>
                 </option>
             </data>
         </settings>
@@ -483,14 +483,19 @@
                 </option>
                 <option>
                     <name>Compiler Extra Options Edit</name>
-                    <state>-f $PROJ_DIR$\..\..\..\Tools\f8wRouter.cfg</state>
-                    <state>-f $PROJ_DIR$\..\..\..\Tools\f8wConfig.cfg</state>
-                    <state>-f $PROJ_DIR$\..\..\..\Tools\f8wZCL.cfg</state>
+                    <state>-f $PROJ_DIR$\..\Configuration\f8wRouter.cfg</state>
+                    <state>-f $PROJ_DIR$\..\Configuration\f8wConfig.cfg</state>
+                    <state>-f $PROJ_DIR$\..\Configuration\f8wZCL.cfg</state>
+                    <state>-f $PROJ_DIR$\..\Configuration\pins.cfg</state>
+                    <state>-f $PROJ_DIR$\..\Configuration\params-DHT12.cfg</state>
                 </option>
                 <option>
                     <name>CCIncludePath2</name>
                     <state>$PROJ_DIR$</state>
                     <state>$PROJ_DIR$\..\Source</state>
+                    <state>$PROJ_DIR$\..\..\..</state>
+                    <state>$PROJ_DIR$\..\..\..\clusters</state>
+                    <state>$PROJ_DIR$\..\..\..\Components\external</state>
                     <state>$PROJ_DIR$\..\..\..\Components\ha</state>
                     <state>$PROJ_DIR$\..\..\..\Components\zmain</state>
                     <state>$PROJ_DIR$\..\..\..\Components\hal\include</state>
@@ -1081,9 +1086,9 @@
                 </option>
                 <option>
                     <name>Linker Extra Options Edit</name>
-                    <state>-C $PROJ_DIR$\..\..\..\Libraries\Router-Pro.lib</state>
-                    <state>-C $PROJ_DIR$\..\..\..\Libraries\Security.lib</state>
-                    <state>-C $PROJ_DIR$\..\..\..\Libraries\TIMAC-CC2530.lib</state>
+                    <state>-C $PROJ_DIR$\..\..\..\lib\Router-Pro.lib</state>
+                    <state>-C $PROJ_DIR$\..\..\..\lib\Security.lib</state>
+                    <state>-C $PROJ_DIR$\..\..\..\lib\TIMAC-CC2530.lib</state>
                 </option>
                 <option>
                     <name>CrcAlign</name>
@@ -1643,9 +1648,11 @@
                 </option>
                 <option>
                     <name>Compiler Extra Options Edit</name>
-                    <state>-f $PROJ_DIR$\..\..\..\Tools\f8wEndev.cfg</state>
-                    <state>-f $PROJ_DIR$\..\..\..\Tools\f8wConfig.cfg</state>
-                    <state>-f $PROJ_DIR$\..\..\..\Tools\f8wZCL.cfg</state>
+                    <state>-f $PROJ_DIR$\..\Configuration\f8wEndev.cfg</state>
+                    <state>-f $PROJ_DIR$\..\Configuration\f8wConfig.cfg</state>
+                    <state>-f $PROJ_DIR$\..\Configuration\f8wZCL.cfg</state>
+                    <state>-f $PROJ_DIR$\..\Configuration\pins.cfg</state>
+                    <state>-f $PROJ_DIR$\..\Configuration\params-DHT12.cfg</state>
                 </option>
                 <option>
                     <name>CCIncludePath2</name>
@@ -4682,9 +4689,6 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\clusters\ClusterHumidityRelativeMeasurement.c</name>
-                <excluded>
-                    <configuration>EndDeviceEB</configuration>
-                </excluded>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\clusters\ClusterIdentify.c</name>
@@ -4720,6 +4724,7 @@
         <file>
             <name>$PROJ_DIR$\..\..\..\Components\external\dht112_I2C.c</name>
             <excluded>
+                <configuration>RouterEB</configuration>
                 <configuration>EndDeviceEB</configuration>
                 <configuration>EndDevicePA</configuration>
                 <configuration>RouterPA</configuration>
@@ -4727,9 +4732,12 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\Components\external\dht112_SingleWire.c</name>
-            <excluded>
-                <configuration>EndDeviceEB</configuration>
-            </excluded>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\Components\external\EventManager.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\Components\external\EventManager.h</name>
         </file>
     </group>
     <group>
@@ -4920,6 +4928,7 @@
         <file>
             <name>$PROJ_DIR$\..\..\..\libSources\network.c</name>
             <excluded>
+                <configuration>RouterEB</configuration>
                 <configuration>EndDeviceEB</configuration>
             </excluded>
         </file>
@@ -6186,31 +6195,28 @@
             <name>$PROJ_DIR$\..\..\..\Tools\f8w2530.xcl</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wConfig.cfg</name>
+            <name>$PROJ_DIR$\..\Configuration\f8wConfig.cfg</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wCoord.cfg</name>
-            <excluded>
-                <configuration>EndDeviceEB</configuration>
-                <configuration>EndDevicePA</configuration>
-                <configuration>RouterPA</configuration>
-            </excluded>
+            <name>$PROJ_DIR$\..\Configuration\f8wEndev.cfg</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wEndev.cfg</name>
-            <excluded>
-                <configuration>RouterPA</configuration>
-            </excluded>
+            <name>$PROJ_DIR$\..\Configuration\f8wRouter.cfg</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wRouter.cfg</name>
-            <excluded>
-                <configuration>EndDeviceEB</configuration>
-                <configuration>EndDevicePA</configuration>
-            </excluded>
+            <name>$PROJ_DIR$\..\Configuration\f8wZCL.cfg</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wZCL.cfg</name>
+            <name>$PROJ_DIR$\..\Configuration\params-DHT12.cfg</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Configuration\params-DS18B20.cfg</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Configuration\params.cfg</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Configuration\pins.cfg</name>
         </file>
     </group>
     <group>
