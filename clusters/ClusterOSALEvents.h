@@ -9,8 +9,6 @@
 #ifndef __CLUSTER_OSAL_EVENTS__H__
 #define __CLUSTER_OSAL_EVENTS__H__
 
-#define CLUSTER_EVENT
-
 #define NEW_HUMIDITY_BIT         1
 #define NEW_TEMP_BIT             2
 

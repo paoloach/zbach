@@ -120,6 +120,7 @@ typedef uint32  uint24;
  */
 
 #define SYS_EVENT_MSG               0x8000  // A message is waiting event
+#define SYS_EVENT_MSG_BIT           15    
 
 /*********************************************************************
  * Global Generic System Messages

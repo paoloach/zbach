@@ -316,8 +316,7 @@ void zcl_Init( uint8 task_id )
  *
  * @return      unprocessed events
  */
-uint16 zcl_event_loop( uint8 task_id, uint16 events )
-{
+uint16 zcl_event_loop( uint8 task_id, uint16 events ){
   uint8 *msgPtr;
 
   (void)task_id;  // Intentionally unreferenced parameter
@@ -325,24 +324,19 @@ uint16 zcl_event_loop( uint8 task_id, uint16 events )
   if ( events & SYS_EVENT_MSG )
   {
     msgPtr = osal_msg_receive( zcl_TaskID );
-    while ( msgPtr != NULL )
-    {
+    while ( msgPtr != NULL ) {
       uint8 dealloc = TRUE;
 
-      if ( *msgPtr == AF_INCOMING_MSG_CMD )
-      {
+      if ( *msgPtr == AF_INCOMING_MSG_CMD ) {
         zcl_ProcessMessageMSG( (afIncomingMSGPacket_t *)msgPtr );
-      }
-      else if ( zcl_RegisteredMsgTaskID != TASK_NO_TASK )
-      {
+      } else if ( zcl_RegisteredMsgTaskID != TASK_NO_TASK ) {
         // send it to another task to process.
         osal_msg_send( zcl_RegisteredMsgTaskID, msgPtr );
         dealloc = FALSE;
       }
 
       // Release the memory
-      if ( dealloc )
-      {
+      if ( dealloc )  {
         osal_msg_deallocate( msgPtr );
       }
 
@@ -680,11 +674,14 @@ static uint8 zcl_DeviceOperational( uint8 srcEP, uint16 clusterID, uint8 frameTy
  *
  * @return  ZSuccess if OK
  */
+#define MAX_MSG_BUFFER 20
+static uint8 sendCmdMsgBuffer[MAX_MSG_BUFFER];
+
 ZStatus_t zcl_SendCommand( uint8 srcEP, afAddrType_t *destAddr, uint16 clusterID, uint8 cmd, uint8 specific, uint8 direction, uint8 disableDefaultRsp,
 						  uint16 manuCode, uint8 seqNum, uint16 cmdFormatLen, uint8 *cmdFormat ){
 	endPointDesc_t *epDesc;
 	zclFrameHdr_t hdr;
-	uint8 *msgBuf;
+	uint8  * msgBuf;
 	uint16 msgLen;
 	uint8 *pBuf;
 	uint8 options;
@@ -735,17 +732,23 @@ ZStatus_t zcl_SendCommand( uint8 srcEP, afAddrType_t *destAddr, uint16 clusterID
 	msgLen = zclCalcHdrSize( &hdr );
 	msgLen += cmdFormatLen;
 
-	msgBuf = zcl_mem_alloc( msgLen );
-	if (msgBuf == NULL){
+        if(msgLen < MAX_MSG_BUFFER){
+          msgBuf=sendCmdMsgBuffer;
+        } else {  
+	  msgBuf = zcl_mem_alloc( msgLen );
+	  if (msgBuf == NULL){
 		return ZMemError;
-	}
+	  }
+        }
 	pBuf = zclBuildHdr( &hdr, msgBuf );
 
 	// Fill in the command frame
    	zcl_memcpy( pBuf, cmdFormat, cmdFormatLen );
 
 	status = AF_DataRequest( destAddr, epDesc, clusterID, msgLen, msgBuf, &zcl_TransID, options, AF_DEFAULT_RADIUS );
-	zcl_mem_free ( msgBuf );
+        if(msgLen >= MAX_MSG_BUFFER){
+          zcl_mem_free ( msgBuf );
+        }
 	return status;
 }
 

@@ -8090,6 +8090,9 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\clusters\ClusterDiagnostic.c</name>
+                <excluded>
+                    <configuration>EndDevice-DS18B20</configuration>
+                </excluded>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\..\..\clusters\ClusterHumidityRelativeMeasurement.c</name>
@@ -10552,9 +10555,6 @@
     <group>
         <name>Services</name>
         <file>
-            <name>$PROJ_DIR$\..\Configuration\f8wConfig.cfg</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\..\..\Components\services\saddr\saddr.c</name>
         </file>
         <file>
@@ -10565,6 +10565,9 @@
         <name>Tools</name>
         <file>
             <name>$PROJ_DIR$\..\..\..\Tools\f8w2530.xcl</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Configuration\f8wConfig.cfg</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\Configuration\f8wEndev.cfg</name>

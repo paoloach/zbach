@@ -1,0 +1,369 @@
+APS_AddDupRej:
+R3:R2-> short address
+R1-> ApsCounter
+
+
+struct s1 {
+  uint16 shortAddress;
+  uint8 apsCounter;
+  uint8 zgApscDupRejTimeoutCount;
+  struct s1 * next;
+}
+
+static struct s1 * val1;
+
+void APS_AddDupRej(uint8 ApsCounter, uint16 shortAddress){
+	uint16 r2=0;
+	if (*val1 != 0){
+	r2++;
+	struct s1 * iter = val;
+	while (*iter != null){
+	   r2++;
+	   if (iter->a3 == 0){
+		 break;
+	   }
+	   iter = iter->next;
+	}
+	}
+	if (r2 >= zgApsMinDupRejTableSize){
+		return;
+	}
+	struct s1 * newElement = osal_mem_alloc(sizeof(struct s1);
+	if (s1 == NULL){
+	   return;
+	}
+	s1->shortAddress = shortAddress;
+	s1->apsCounter = apsCounter;
+	s1->zgApscDupRejTimeoutCount = zgApscDupRejTimeoutCount;
+	s1->next = NULL;
+	if(*val1 == NULL){
+	   if((_NIB.CapabilityFlags & 0x04) == 0){
+		   uint32 clock = osal_GetSystemClock();
+		   APS_lastDupTime = clock;
+	   }
+	} else {
+	   s1->next = val;
+	   val=next;
+	}
+	if((_NIB.CapabilityFlags & 0x04) == 0){
+		return;
+	}
+	if (osal_get_timeoutEx(APS_TaskID, 8) != ){
+		return;
+	};
+	osal_start_reload_timer(APS_TaskID, 8, zgApscDupRejTimeoutInc);
+    
+}
+
+
+ 0032BB  74 F2           MOV   A,#0xF2
+ 0032BD  12 03 98        LCALL ?BANKED_ENTER_XDATA
+ 0032C0  8A 0A           MOV   V2,R2
+ 0032C2  8B 0B           MOV   V3,R3
+ 0032C4  E9              MOV   A,R1
+ 0032C5  FE              MOV   R6,A
+ R6 -> ApsCounter
+ V3:V2 -> short address
+ R3:R2->index1
+ 0032C6  7A 00           MOV   R2,#0x00
+ 0032C8  7B 00           MOV   R3,#0x00
+ 0032CA  90 0D 6A        MOV   DPTR,#0x0D6A // Segment part22, used by APS_AddDupRej, APS_MaintainDupRejTable, APS_event_loop
+
+
+ 0032CD  12 27 2D        LCALL 0x272D // V1:V0 value of *0D6A
+ 
+ if (*0x0D6A != 0){
+ 0032D0  90 0D 6A        MOV   DPTR,#0x0D6A
+ 0032D3  12 52 7F        LCALL 0x527F (R1:R0 = @DPTR, Func2 -> Z if *0x0D6A == 0)
+ 0032D6  60 1E           JZ    0x32F6
+ 
+ 
+	 0032D8  0A              INC   R2
+	 0032D9  85 08 82        MOV   DPL,V0
+	 0032DC  85 09 83        MOV   DPH,V1
+	 0032DF  A3              INC   DPTR
+	 0032E0  A3              INC   DPTR
+	 0032E1  A3              INC   DPTR
+	 0032E2  A3              INC   DPTR
+	 0032E3  12 52 7F        LCALL 0x527F (R1:R0 = @DPTR, Func2 -> Z if *(*0x0D6A+4) == 0)
+	 0032E6  60 0E           JZ    0x32F6
+	 0032E8  0A              INC   R2
+	 0032E9  EA              MOV   A,R2
+	 0032EA  70 01           JNZ   0x32ED
+	 0032EC  0B              INC   R3
+	 0032ED  88 08           MOV   V0,R0
+	 0032EF  89 09           MOV   V1,R1
+	 0032F1  E8              MOV   A,R0
+	 0032F2  45 09           ORL   A,V1
+	 0032F4  70 E3           JNZ   0x32D9
+ 
+ }
+ 
+ 
+ if (index1 < zgApsMinDupRejTableSize){
+ 0032F6  90 0F 96        MOV   DPTR,#0x0F96 (zgApsMinDupRejTableSize)
+ 0032F9  12 5C 54        LCALL 0x5C54  // R1:R0 = @DPTR
+ 0032FC  C3              CLR   C
+ 0032FD  EA              MOV   A,R2
+ 0032FE  98              SUBB  A,R0
+ 0032FF  EB              MOV   A,R3
+ 003300  99              SUBB  A,R1
+ 003301  40 03           JC    0x3306
+ 003303  02 33 AA        LJMP  0x33AA
+ 
+ 
+	 003306  7A 06           MOV   R2,#0x06
+	 003308  7B 00           MOV   R3,#0x00
+	 00330A  12 0F 1C        LCALL osal_mem_alloc::?relay  //mem_alloc(6)
+	 00330D  8A 0C           MOV   V4,R2
+	 00330F  8B 0D           MOV   V5,R3
+     // R1:R0 = V5:V4 -> allocated 6 bytes		
+
+	 if (V5:V4 == NULL){
+		 return
+		 003311  A8 0C           MOV   R0,V4
+		 003313  A9 0D           MOV   R1,V5
+		 003315  E8              MOV   A,R0
+		 003316  49              ORL   A,R1
+		 003317  70 03           JNZ   0x331C
+		 003319  02 33 AA        LJMP  0x33AA
+	 }
+	 
+	 *V54 = low(shortAddress)
+     *V54+1 = high(shortAddress)	 
+	 00331C  88 82           MOV   DPL,R0
+	 00331E  89 83           MOV   DPH,R1
+	 003320  E5 0A           MOV   A,V2
+	 003322  F0              MOVX  @DPTR,A
+	 003323  A3              INC   DPTR
+	 003324  E5 0B           MOV   A,V3
+	 003326  F0              MOVX  @DPTR,A
+	 
+	 
+     *V54+2 = ApsCounter		
+	 003327  EE              MOV   A,R6
+	 003328  88 82           MOV   DPL,R0
+	 00332A  89 83           MOV   DPH,R1
+	 00332C  A3              INC   DPTR
+	 00332D  A3              INC   DPTR
+	 00332E  F0              MOVX  @DPTR,A
+
+
+
+
+	 00332F  90 0F 95        MOV   DPTR,#0x0F95 zgApscDupRejTimeoutCount
+	 003332  12 42 E3        LCALL 0x42E3 // A=*0F95, DPTR= V54
+	 003335  A3              INC   DPTR
+	 003336  A3              INC   DPTR
+	 003337  12 44 37        LCALL 0x4437 // *(V54+3) = zgApscDupRejTimeoutCount, DPTR=V54+4
+	 00333A  E4              CLR   A
+	 00333B  F0              MOVX  @DPTR,A  // *(V54+4) = 0
+	 00333C  A3              INC   DPTR
+	 00333D  F0              MOVX  @DPTR,A  // *(V54+5) = 0
+	 
+	 if (*0D6A != 0){
+		 00333E  90 0D 6A        MOV   DPTR,#0x0D6A
+		 003341  12 4D 6A        LCALL 0x4D6A
+		 003344  60 0F           JZ    0x3355
+		 003346  85 08 82        MOV   DPL,V0
+		 003349  85 09 83        MOV   DPH,V1
+		 00334C  A3              INC   DPTR
+		 00334D  A3              INC   DPTR
+		 00334E  A3              INC   DPTR
+		 00334F  A3              INC   DPTR
+		 003350  12 4E 6D        LCALL 0x4E6D
+		 003353  80 1F           SJMP  0x3374
+	 } else {
+	 // *0D6A == 0
+		 003355  90 0D 6A        MOV   DPTR,#0x0D6A 
+		 003358  12 4E 6D        LCALL 0x4E6D // *0D6A= V54
+		 
+		 
+		 if (bit 3 of _NIB.CapabilityFlags == 0){
+		 00335B  90 0D AC        MOV   DPTR,#0x0DAC = _NIB+0x0E =_NIB.CapabilityFlags
+		 00335E  E0              MOVX  A,@DPTR
+		 00335F  A2 E3           MOV   C,A.3
+		 003361  40 11           JC    0x3374
+		     *macRadioTurnOffPower = osal_GetSystemClock:();
+			 003363  12 10 06        LCALL osal_GetSystemClock::?relay
+			 003366  EA              MOV   A,R2
+			 003367  F8              MOV   R0,A
+			 003368  EB              MOV   A,R3
+			 003369  F9              MOV   R1,A
+			 00336A  EC              MOV   A,R4
+			 00336B  FA              MOV   R2,A
+			 00336C  ED              MOV   A,R5
+			 00336D  FB              MOV   R3,A
+			 00336E  90 0D 6C        MOV   DPTR,#0x0D6C (APS_lastDupTime)
+			 003371  12 0A A8        LCALL ?XSTORE_R0123
+	}
+
+    if (bit 3 of _NIB.CapabilityFlags == 0){	
+	   
+  	 003374  90 0D AC        MOV   DPTR,#0x0DAC
+	 003377  E0              MOVX  A,@DPTR
+	 003378  A2 E3           MOV   C,A.3
+	    return
+		00337A  50 2E           JNC   0x33AA
+	 }
+	 
+	 00337C  7A 08           MOV   R2,#0x08
+	 00337E  7B 00           MOV   R3,#0x00
+	 003380  90 0D 4F        MOV   DPTR,#0x0D4F (APS_TaskID)
+	 003383  E0              MOVX  A,@DPTR
+	 003384  F9              MOV   R1,A
+	 003385  12 0F F4        LCALL osal_get_timeoutEx::?relay R5432 = osal_get_timeoutEx(APS_TaskID, 8)
+	 003388  EA              MOV   A,R2
+	 003389  4B              ORL   A,R3
+	 00338A  4C              ORL   A,R4
+	 00338B  4D              ORL   A,R5
+	 if (R5432 != 0){
+	 return
+	 }
+	 00338C  70 1C           JNZ   0x33AA
+	 
+	 
+	 00338E  90 0F 93        MOV   DPTR,#0x0F93 (zgApscDupRejTimeoutInc
+	 003391  12 6C C0        LCALL 0x6CC0 // V4:V3:V2:V1 = (uint32)(zgApscDupRejTimeoutInc)
+	 003394  78 08           MOV   R0,#0x08
+	 003396  12 08 50        LCALL ?PUSH_XSTACK_I_FOUR
+	 003399  7A 08           MOV   R2,#0x08
+	 00339B  7B 00           MOV   R3,#0x00
+	 00339D  90 0D 4F        MOV   DPTR,#0x0D4F (APS_TaskID)
+	 0033A0  E0              MOVX  A,@DPTR
+	 0033A1  F9              MOV   R1,A
+	 0033A2  12 0F E2        LCALL osal_start_reload_timer::?relay  (osal_start_reload_timer(APS_TaskID, 0008, zgApscDupRejTimeoutInc);
+	 0033A5  74 04           MOV   A,#0x04
+	 0033A7  12 08 1A        LCALL ?DEALLOC_XSTACK8
+} 
+ 0033AA  02 27 38        LJMP  0x2738
+
+
+Func1: 
+V1:V0 = @DPTR
+ 00272D  E0              MOVX  A,@DPTR
+ 00272E  F5 08           MOV   V0,A
+ 002730  A3              INC   DPTR
+ 002731  E0              MOVX  A,@DPTR
+ 002732  F5 09           MOV   V1,A
+ 002734  22              RET
+ 
+
+
+// @DPTR=R1:R0
+ 0036DE  E8              MOV   A,R0
+ 0036DF  F0              MOVX  @DPTR,A
+ 0036E0  A3              INC   DPTR
+ 0036E1  E9              MOV   A,R1
+ 0036E2  F0              MOVX  @DPTR,A
+ 0036E3  22              RET
+
+
+
+Func3 
+R1:A = R1:R0 = @DPTR
+ 0042B7  12 5C 5C        LCALL 0x5C5C (Func4)
+ 0042BA  E8              MOV   A,R0
+ 0042BB  22              RET
+ 
+
+A=@DPTR, DPTR=R1:R0 
+ 0042E3  E0              MOVX  A,@DPTR
+ 0042E4  88 82           MOV   DPL,R0
+ 0042E6  89 83           MOV   DPH,R1
+ 0042E8  22              RET
+ 
+ // @(DPTR+1)=A, DPTR=R1:R0+4
+ 004437  A3              INC   DPTR
+ 004438  12 44 3C        LCALL 0x443C
+ 00443B  22              RET
+
+// @DPTR=A, DPTR=R1:R0+4
+ 00443C  12 61 1C        LCALL 0x611C
+ 00443F  A3              INC   DPTR
+ 004440  A3              INC   DPTR
+ 004441  A3              INC   DPTR
+ 004442  22              RET
+ 
+ 
+ 
+Func5: 
+A:R0 = @DPTR 
+ 004472  E0              MOVX  A,@DPTR
+ 004473  F8              MOV   R0,A
+ 004474  A3              INC   DPTR
+ 004475  E0              MOVX  A,@DPTR
+ 004476  22              RET
+
+
+// R3:R2 = *DPTR, check if R3==R2==0
+ 004D6A  12 4D 76        LCALL 0x4D76
+ 004D6D  EA              MOV   A,R2
+ 004D6E  4B              ORL   A,R3
+ 004D6F  22              RET
+
+
+
+
+ 004D70  A3              INC   DPTR
+ 004D71  A3              INC   DPTR
+ 004D72  A3              INC   DPTR
+ 004D73  A3              INC   DPTR
+ 004D74  A3              INC   DPTR
+ 004D75  A3              INC   DPTR
+// R3:R2 = *DPTR
+ 004D76  E0              MOVX  A,@DPTR
+ 004D77  FA              MOV   R2,A
+ 004D78  A3              INC   DPTR
+ 004D79  E0              MOVX  A,@DPTR
+ 004D7A  FB              MOV   R3,A
+ 004D7B  22              RET
+
+// @DPTR=R1:R0
+ 004E6D  12 36 DE        LCALL 0x36DE
+ 004E70  22              RET
+
+
+ 
+Func2:
+R1:R0 = @DPTR
+Z = R1 or R2
+ 00527F  12 42 B7        LCALL 0x42B7 (Func3)
+ 005282  49              ORL   A,R1
+ 005283  22              RET
+
+
+R1:R0 = @DPTR
+ 005C54  12 5C 58        LCALL 0x5C58
+ 005C57  22              RET
+
+R1:R0 = @DPTR
+ 005C58  12 5C 5C        LCALL 0x5C5C
+ 005C5B  22              RET
+
+Func4 
+R1:R0 = @DPTR
+ 005C5C  12 44 72        LCALL 0x4472 (Func5)
+ 005C5F  F9              MOV   R1,A
+ 005C60  22              RET
+
+
+// @DPTR=A, DPTR=R1:R0+1
+ 00611C  F0              MOVX  @DPTR,A
+ 00611D  88 82           MOV   DPL,R0
+ 00611F  89 83           MOV   DPH,R1
+ 006121  A3              INC   DPTR
+ 006122  22              RET
+
+// V1:V0 = @DPTR
+// V3:V2=0
+ 006CC0  E0              MOVX  A,@DPTR
+ 006CC1  F5 08           MOV   V0,A
+ 006CC3  A3              INC   DPTR
+ 006CC4  E0              MOVX  A,@DPTR
+ 006CC5  F5 09           MOV   V1,A
+ 006CC7  E4              CLR   A
+ 006CC8  F5 0A           MOV   V2,A
+ 006CCA  F5 0B           MOV   V3,A
+ 006CCC  22              RET
+	 

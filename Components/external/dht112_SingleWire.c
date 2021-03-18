@@ -1,5 +1,6 @@
 
 #include <ioCC2530.h>
+#include <OnBoard.h>
 #include "comdef.h"
 #include "hal_types.h"
 #include "OSAL_Timers.h"
@@ -10,6 +11,7 @@
 #include "ClusterOSALEvents.h"
 #include "EventManager.h"
 #include "dht112.h"
+#include "lcd-SSD1306.h"
 
 #define DEFAULT_READ_PERIOD_MINUTES 5
 
@@ -37,6 +39,7 @@ enum Status {
         START,
 	WAIT,
 	READ_START,
+        DHT11_START,
         READ,
 	ERROR
 };
@@ -48,6 +51,7 @@ static enum Status readStartAction(void);
 static enum Status readAction(void);
 static enum Status resetAction(void);
 static enum Status startAction(void);
+static enum Status startDHT12(void);
 static bool read8Bit(uint8 * data);
 static enum Status internalReadAction(void);
 static void dht112_loop(void);
@@ -80,6 +84,9 @@ void dht112_loop(void) {
       case READ_START:
         status = readStartAction();
         break;
+      case DHT11_START:
+        status = startDHT12();
+        break;  
       case READ:
         status = readAction();
         break;
@@ -97,23 +104,51 @@ static enum Status startAction() {
 }
 
 static enum Status waitAction() {
-  osal_start_timerEx_cb(READ_PERIOD_MINUTES*6000, &dht112_loop );
+  //osal_start_timerEx_cb(READ_PERIOD_MINUTES*6000, &dht112_loop );
+  osal_start_timerEx_cb(10000, &dht112_loop );
   return START;
 }
 
 static enum Status readStartAction() {
   SDA_ON;
   osal_start_timerEx_cb(STABILING_DELAY_ms, &dht112_loop );
+  return DHT11_START;
+}
+
+
+static enum Status startDHT12() {
+  SDA_ON;
+  SDA=0;
+  osal_start_timerEx_cb(START_READ_PERIOD_ms, &dht112_loop );
   return READ;
 }
 
 
-
 static enum Status readAction() {
-  halIntState_t intState;
-  HAL_ENTER_CRITICAL_SECTION( intState );
+  static uint16 readCount;
+  uint8_t buffer[20];
   enum Status ret = internalReadAction();
-  HAL_EXIT_CRITICAL_SECTION( intState );
+  setCursor(0,27);
+  clean(0,18, DISPLAY_WIDTH, 27);
+  drawText("Temp: ");
+  if (ret == ERROR){
+    drawText("ERROR");
+  } else {
+    _itoa(temp/100, buffer, 10);
+    drawText((char*)buffer);
+    drawText(".");
+    _itoa(temp%100, buffer, 10);
+    drawText((char*)buffer);
+    drawText(", humidity: ");
+    _itoa(humidity/100, buffer, 10);
+    drawText((char *)buffer);
+    drawText(".");
+    _itoa(temp%100, buffer, 10);
+    drawText((char*)buffer);
+    drawText("%");
+  }
+  display();
+  readCount++;
   return ret;
 }
 
@@ -122,7 +157,7 @@ static enum Status internalReadAction(void){
   uint8 data[5];
   T3CTL=0;
   T3_mode = 0x00;
-  T3_div = 4; 
+  T3_div = 4; // 1 cycle 0.5 uS
   SDA_OFF;
   T3CCTL0 = 0;
   T3CCTL1 = 0;

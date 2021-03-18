@@ -1,5 +1,8 @@
 <?xml version="1.0"?>
 <settings>
+    <DebugChecksum>
+        <Checksum>925848781</Checksum>
+    </DebugChecksum>
     <Stack>
         <FillEnabled>0</FillEnabled>
         <OverflowWarningsEnabled>1</OverflowWarningsEnabled>
@@ -11,73 +14,18 @@
         <LimitSize>0</LimitSize>
         <ByteLimit>50</ByteLimit>
     </Stack>
-    <DebugChecksum>
-        <Checksum>2715371806</Checksum>
-    </DebugChecksum>
     <CallStack>
         <ShowArgs>0</ShowArgs>
     </CallStack>
     <Disassembly>
         <MixedMode>1</MixedMode>
     </Disassembly>
-    <CodeCoverage>
-        <Enabled>_ 0</Enabled>
-    </CodeCoverage>
-    <DriverProfiling>
-        <Enabled>0</Enabled>
-        <Mode>1</Mode>
-        <Graph>0</Graph>
-        <Symbiont>0</Symbiont>
-        <Exclusions />
-    </DriverProfiling>
-    <CallStackLog>
-        <Enabled>0</Enabled>
-    </CallStackLog>
-    <CallStackStripe>
-        <ShowTiming>1</ShowTiming>
-    </CallStackStripe>
-    <InterruptLog>
-        <LogEnabled>0</LogEnabled>
-        <GraphEnabled>0</GraphEnabled>
-        <ShowTimeLog>1</ShowTimeLog>
-        <SumEnabled>0</SumEnabled>
-        <ShowTimeSum>1</ShowTimeSum>
-        <SumSortOrder>0</SumSortOrder>
-    </InterruptLog>
-    <DataLog>
-        <LogEnabled>0</LogEnabled>
-        <GraphEnabled>0</GraphEnabled>
-        <ShowTimeLog>1</ShowTimeLog>
-        <SumEnabled>0</SumEnabled>
-        <ShowTimeSum>1</ShowTimeSum>
-    </DataLog>
-    <Breakpoints2>
-        <Count>0</Count>
-    </Breakpoints2>
-    <Interrupts>
-        <Enabled>1</Enabled>
-    </Interrupts>
-    <MemoryMap>
-        <Enabled>0</Enabled>
-        <Base>0</Base>
-        <UseAuto>0</UseAuto>
-        <TypeViolation>1</TypeViolation>
-        <UnspecRange>1</UnspecRange>
-        <ActionState>1</ActionState>
-    </MemoryMap>
-    <Trace1>
-        <Enabled>0</Enabled>
-        <ShowSource>1</ShowSource>
-    </Trace1>
-    <Simulator>
-        <Freq>50000000</Freq>
-        <FreqHi>0</FreqHi>
-    </Simulator>
+    <TermIOLog>
+        <LoggingEnabled>_ 0</LoggingEnabled>
+        <LogFile>_ ""</LogFile>
+    </TermIOLog>
     <Breakpoints>
-        <Bp0>_ "STD_CODE" "LogicalCode:0x184E9" 0 0 0 0 "" 0 ""</Bp0>
-        <Bp1>_ "STD_CODE" "{C:\Users\pachd\OneDrive\Documents\projects\zbach\clusters\ClusterTemperatureMeasurement.c}.75.3" 1 0 0 0 "" 0 ""</Bp1>
-        <Bp2>_ "STD_CODE" "{$PROJ_DIR$\..\..\..\Components\external\dht112_SingleWire.c}.167.3" 1 0 0 0 "" 0 ""</Bp2>
-        <Count>3</Count>
+        <Count>0</Count>
     </Breakpoints>
     <ChipconEmu>
         <StopTimersOnHalt>0</StopTimersOnHalt>
@@ -88,10 +36,6 @@
         <LogFile>_ ""</LogFile>
         <Category>_ 0</Category>
     </LogFile>
-    <TermIOLog>
-        <LoggingEnabled>_ 0</LoggingEnabled>
-        <LogFile>_ ""</LogFile>
-    </TermIOLog>
     <Aliases>
         <Count>0</Count>
         <SuppressDialog>0</SuppressDialog>

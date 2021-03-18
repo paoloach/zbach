@@ -20,6 +20,7 @@
 #include "OSAL.h"
 #include "OSAL_Timers.h"
 #include "hal_timer.h"
+#include "lcd-SSD1306.h"
 
 /*********************************************************************
  * MACROS
@@ -34,7 +35,7 @@
  */
 
 struct TimerRec {
-  uint32 timeout;
+  int32 timeout;
   uint16 eventFlag;
   uint8  taskId;
   uint32 reloadTimeout;
@@ -45,11 +46,9 @@ struct TimerRec {
  * GLOBAL VARIABLES
  */
 
-#define MAXELEMENTS 10
+#define MAXELEMENTS 20
 static struct TimerRec timerRec[MAXELEMENTS];
 static struct TimerRec * end = timerRec+MAXELEMENTS;
-
-static 	halIntState_t intState;
 
 /*********************************************************************
  * EXTERNAL VARIABLES
@@ -131,6 +130,7 @@ struct TimerRec * osalAddTimer( uint8 task_id, uint16 event_flag, uint32 timeout
 			iter->eventFlag = event_flag;
 			iter->timeout = timeout;
 			iter->reloadTimeout = 0;
+                        iter->callback=NULL;
 			return iter;
 		} else {
 			return NULL;
@@ -141,13 +141,30 @@ struct TimerRec * osalAddTimer( uint8 task_id, uint16 event_flag, uint32 timeout
 
 struct TimerRec * osalAddTimer_cb(uint32 timeout_value, void (* callback)(void) ){
   struct TimerRec * iter;
+  
+  
+      setCursor(50,63);
+      clean(50,54,60 ,63);
+      drawText("1");
+      display();
  
   iter = osalFindTimerCb(callback);
   if(iter != NULL){
     iter->timeout = timeout_value;
+
+      setCursor(50,63);
+      clean(50,54,60 ,63);
+      drawText("0");
+      display();    
+
     return iter;
   } else {
+    
     iter = getFreeElement();
+      setCursor(50,63);
+      clean(50,54,60 ,63);
+      drawText("0");
+      display();  
     if ( iter ) {
       iter->taskId = -1;
       iter->eventFlag = 0;
@@ -211,6 +228,7 @@ struct TimerRec *  osalFindTimerCb( void (* callback)(void) ){
  */
 uint8 osal_start_timerEx( uint8 taskID, uint16 event_id, uint32 timeout_value ){
   struct TimerRec * iter;
+  halIntState_t intState;
   HAL_ENTER_CRITICAL_SECTION( intState );  // Hold off interrupts.
 
   iter = osalAddTimer( taskID, event_id, timeout_value );
@@ -235,13 +253,25 @@ uint8 osal_start_timerEx( uint8 taskID, uint16 event_id, uint32 timeout_value ){
  * @return  SUCCESS, or NO_TIMER_AVAIL.
  */
 uint8 osal_start_timerEx_cb(uint32 timeout_value, void (* callback)(void) ){
+      setCursor(40,63);
+      clean(40,54,50 ,63);
+      drawText("1");
+      display();
+      
   struct TimerRec * iter;
+  halIntState_t intState;
   HAL_ENTER_CRITICAL_SECTION( intState );  // Hold off interrupts.
  
   iter = osalAddTimer_cb(timeout_value, callback);
  
   HAL_EXIT_CRITICAL_SECTION( intState );   // Re-enable interrupts.
 
+  
+      setCursor(40,63);
+      clean(40,54,50 ,63);
+      drawText("0");
+      display();
+  
  return ( (iter != NULL) ? SUCCESS : NO_TIMER_AVAIL );
 }
 /*********************************************************************
@@ -260,7 +290,8 @@ uint8 osal_start_timerEx_cb(uint32 timeout_value, void (* callback)(void) ){
  * @return  SUCCESS, or NO_TIMER_AVAIL.
  */
 uint8 osal_start_reload_timer( uint8 taskID, uint16 event_id, uint32 timeout_value ){
-	struct TimerRec * iter;
+        halIntState_t intState;	
+        struct TimerRec * iter;
 	HAL_ENTER_CRITICAL_SECTION( intState );  // Hold off interrupts.
 
 	// Add timer
@@ -275,6 +306,7 @@ uint8 osal_start_reload_timer( uint8 taskID, uint16 event_id, uint32 timeout_val
 }
 
 uint8 osal_start_reload_timer_cb(uint32 timeout_value, void (* callback)(void) ){
+  halIntState_t intState;
   struct TimerRec * iter;
   HAL_ENTER_CRITICAL_SECTION( intState );  // Hold off interrupts.
  
@@ -304,6 +336,7 @@ uint8 osal_start_reload_timer_cb(uint32 timeout_value, void (* callback)(void) )
  * @return  SUCCESS or INVALID_EVENT_ID
  */
 uint8 osal_stop_timerEx( uint8 task_id, uint16 event_id ){
+        halIntState_t intState;
 	struct TimerRec * iter;
  	HAL_ENTER_CRITICAL_SECTION( intState );  // Hold off interrupts.
 
@@ -322,6 +355,7 @@ uint8 osal_stop_timerEx( uint8 task_id, uint16 event_id ){
 
 uint8 osal_stop_timerEx_cb(  void (* callback)(void)  ){
   struct TimerRec * iter;
+  halIntState_t intState;
   HAL_ENTER_CRITICAL_SECTION( intState );  // Hold off interrupts.
 
   iter = timerRec;	
@@ -350,8 +384,9 @@ uint8 osal_stop_timerEx_cb(  void (* callback)(void)  ){
 uint32 osal_get_timeoutEx( uint8 task_id, uint16 event_id ){
 	struct TimerRec * iter;
  	uint32 rtrn = 0;
-
- 	HAL_ENTER_CRITICAL_SECTION( intState );  // Hold off interrupts.
+        halIntState_t intState;
+ 	
+        HAL_ENTER_CRITICAL_SECTION( intState );  // Hold off interrupts.
 
  	iter = osalFindTimer( task_id, event_id );
 
@@ -376,7 +411,7 @@ uint32 osal_get_timeoutEx( uint8 task_id, uint16 event_id ){
 uint8 osal_timer_num_active( void ){
 	struct TimerRec * iter;
 	uint8 numTimers = 0;
-
+        halIntState_t intState;
  	HAL_ENTER_CRITICAL_SECTION( intState );  // Hold off interrupts.
 
 	iter = timerRec;	
@@ -401,9 +436,13 @@ uint8 osal_timer_num_active( void ){
  * @return  none
  *********************************************************************/
 void osalTimerUpdate( uint32 updateTime ){
+  halIntState_t intState;
   struct TimerRec * iter;
   iter = timerRec;
-
+      setCursor(10,63);
+      clean(10,54,20 ,63);
+      drawText("1");
+      display();
   HAL_ENTER_CRITICAL_SECTION( intState );  
   osal_systemClock += updateTime;
   HAL_EXIT_CRITICAL_SECTION( intState );   
@@ -414,17 +453,22 @@ void osalTimerUpdate( uint32 updateTime ){
     if (iter->eventFlag == 0 && iter->callback == NULL)
             continue;
     HAL_ENTER_CRITICAL_SECTION( intState );  
-    if (iter->timeout > updateTime) {
-      iter->timeout -= updateTime;
-    } else {
+    iter->timeout -= updateTime;
+    if (iter->timeout <= 0){
       iter->timeout=0;
-    }
-    if (iter->timeout == 0){
       callback = NULL;
       if (iter->callback){
         callback = iter->callback;
       } else {
+        setCursor(20,63);
+        clean(20,54,30 ,63);
+        drawText("1");
+        display();
         osal_set_event( iter->taskId, iter->eventFlag );
+        setCursor(20,63);
+        clean(20,54,30 ,63);
+        drawText("0");
+        display();
       }
       if (iter->reloadTimeout){
         iter->timeout = iter->reloadTimeout;
@@ -433,13 +477,25 @@ void osalTimerUpdate( uint32 updateTime ){
         iter->callback=NULL;
       }
       if (callback != NULL){
+          setCursor(30,63);
+          clean(30,54,40 ,63);
+          drawText("1");
+          display();
         HAL_EXIT_CRITICAL_SECTION( intState );   
         callback();
         HAL_ENTER_CRITICAL_SECTION( intState ); 
+          setCursor(30,63);
+          clean(30,54,40 ,63);
+          drawText("0");
+          display();
       }
     }
     HAL_EXIT_CRITICAL_SECTION( intState );   
   }
+      setCursor(10,63);
+      clean(10,54,20 ,63);
+      drawText("0");
+      display();
 }
 
 #ifdef POWER_SAVING

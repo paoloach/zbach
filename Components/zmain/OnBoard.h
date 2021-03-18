@@ -140,17 +140,6 @@ extern uint8 aExtendedAddress[8];
 #define SW_BYPASS_NV    HAL_KEY_SW_5  // Bypass Network layer NV restore
 #define SW_BYPASS_START HAL_KEY_SW_1  // Bypass Network initialization
 
-// LCD Support Defintions
-#ifdef LCD_SUPPORTED
-  #if !defined DEBUG
-    #define DEBUG  0
-  #endif
-  #if LCD_SUPPORTED==DEBUG
-    #define SERIAL_DEBUG_SUPPORTED  // Serial-debug
-  #endif
-#else // No LCD support
-  #undef SERIAL_DEBUG_SUPPORTED  // No serial-debug
-#endif
 
 /* Serial Port Definitions */
 #if defined (ZAPP_P1)
@@ -207,24 +196,6 @@ extern uint8 aExtendedAddress[8];
 #else
 #error Check compiler compatibility.
 #endif
-
-/* The following Heap sizes are setup for typical TI sample applications,
- * and should be adjusted to your systems requirements.
- */
-/*
-#if !defined INT_HEAP_LEN
-#if defined RTR_NWK
-  #define INT_HEAP_LEN  3072
-#else
-  #define INT_HEAP_LEN  2048
-#endif
-#endif
-#if defined RTR_NWK
-#define MAXMEMHEAP 3000
-#else
-#define MAXMEMHEAP 3900
-#endif
-*/
 
 
 // Initialization levels

@@ -98,8 +98,7 @@ void zLightControllerInit( byte task_id ){
   clusterOccupancyInit();  
   onOffInit();
   
-  ZMacSetTransmitPower(TX_PWR_PLUS_2);
-	//ZMacSetTransmitPower(POWER);
+  ZMacSetTransmitPower(POWER);
   blinkLedInit(deviceTaskId);
   blinkLedstart();
   setRegisteredKeysTaskID(deviceTaskId);
@@ -405,6 +404,7 @@ static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg ){
 
 
 void User_Process_Pool(void){
+  clusterOccupancySensingLoop();
 }
 
 

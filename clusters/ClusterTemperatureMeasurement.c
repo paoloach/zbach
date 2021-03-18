@@ -26,19 +26,27 @@ RESOURCES:
 int16 minTemperatureValue=-10;
 int16 maxTemperatureValue=80;
 uint16 toleranceTemperature=10;
-static zclReportCmd1_t reportCmd;
 
 extern byte deviceTaskId;
 extern devStates_t devState;
 extern int16 temp;
+static uint16 prevTemp;
+static uint8 reportCounter=0;
 
 static void sendReport(uint16 event);
 
+struct TemperatureReport {
+  uint16 id;
+  uint8  type;
+  uint16 value;
+};
+
+struct TemperatureReport tempReport;
+
 void clusterTemperatureMeasurementeInit(void) {
-  reportCmd.numAttr = 1;
-  reportCmd.attrList[0].attrID = ATTRID_TEMPERATURE_MEASURE_VALUE;
-  reportCmd.attrList[0].dataType = ZCL_DATATYPE_INT16;
-  reportCmd.attrList[0].attrData = (void *)(&temp);
+  tempReport.id = ATTRID_TEMPERATURE_MEASURE_VALUE;
+  tempReport.type = ZCL_DATATYPE_INT16;
+    
   addEventCB(NEW_TEMP_BIT, &sendReport);
 }
 
@@ -72,7 +80,15 @@ void temperatureClusterReadAttribute(zclAttrRec_t * statusRec) {
 
 
 void sendReport(uint16 event){
-  zcl_SendReportCmd( reportEndpoint, &reportDstAddr,
-                     ZCL_CLUSTER_ID_MS_TEMPERATURE_MEASUREMENT,
-                     (zclReportCmd_t*)&reportCmd, ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, reportSeqNum++ );
+  if (reportCounter > 10 || prevTemp != temp){
+    reportCounter=0;
+    tempReport.value = temp;
+  
+    zcl_SendCommand( reportEndpoint,  &reportDstAddr, ZCL_CLUSTER_ID_MS_TEMPERATURE_MEASUREMENT, ZCL_CMD_REPORT, FALSE,
+                              ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, 0, reportSeqNum++, 5, (uint8*)&tempReport );
+  }
+  reportCounter++;
+  prevTemp  = temp;
+  
+
 }

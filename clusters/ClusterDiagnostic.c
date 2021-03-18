@@ -27,7 +27,7 @@ void clusterDiagnosticInit(byte appId) {
 
 
 static void setTimer(void) {
-  
+  return;
   uint16 nextReportEventSec;
   if (remainingSec==0){
     remainingSec = REPORT_TIME;

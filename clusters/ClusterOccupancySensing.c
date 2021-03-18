@@ -4,12 +4,15 @@
 #include "ClusterOccupancySensing.h"
 
 #include "regs.h"
+#include "report.h"
 
 static uint8 occupancy=0;
 static uint8 type=OCCUPANCY_TYPE_PIR;
+static zclReportCmd1_t reportCmd;
 extern uint8 connected;
 
-static void sendBindMessage(uint8 endpoint);
+static void sendBindMessage(void);
+static void occupancySensingClusterSendReport(void); 
 
 void occupancySensingReadAttribute(zclAttrRec_t * statusRec) {
   if (statusRec == NULL){
@@ -32,28 +35,22 @@ void occupancySensingReadAttribute(zclAttrRec_t * statusRec) {
   
 }
 
-static zclReportCmd1_t reportCmd;
 
-void occupancySensingClusterSendReport(uint8 endpoint, afAddrType_t * dstAddr, uint8 * segNum){
+void occupancySensingClusterSendReport(void){
   if (connected){
-      reportCmd.numAttr = 1;
-      reportCmd.attrList[0].attrID = ATTRID_OCCUPANCY_OCCUPANCY;
-      reportCmd.attrList[0].dataType = ZCL_DATATYPE_BITMAP8;
-      reportCmd.attrList[0].attrData = (void *)(&occupancy);
-
-      zcl_SendReportCmd( endpoint, dstAddr,
-                         ZCL_CLUSTER_ID_MS_OCCUPANCY_SENSING,
-                         (zclReportCmd_t *)&reportCmd, ZCL_FRAME_SERVER_CLIENT_DIR, FALSE, (*segNum)++ );
+        zcl_SendReportCmd( reportEndpoint, &reportDstAddr,
+                       ZCL_CLUSTER_ID_MS_OCCUPANCY_SENSING,
+                       (zclReportCmd_t *)&reportCmd, ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, reportSeqNum++ );
       
   }
 
 }
 
-void static sendBindMessage(uint8 endpoint){
+void static sendBindMessage(){
   BindingEntry_t * bindEntry;
   uint8 index=0;
   while(index < 10) {
-    bindEntry = bindFind(endpoint, ZCL_CLUSTER_ID_GEN_ON_OFF,index);
+    bindEntry = bindFind(reportEndpoint, ZCL_CLUSTER_ID_GEN_ON_OFF,index);
     if (bindEntry == NULL){
       break;
     }
@@ -72,26 +69,32 @@ void static sendBindMessage(uint8 endpoint){
       } else {
         cmd = COMMAND_OFF;
       }
-      zcl_SendCommand(endpoint, &onOffSendaddr, ZCL_CLUSTER_ID_GEN_ON_OFF,cmd, TRUE, ZCL_FRAME_CLIENT_SERVER_DIR, TRUE, 0, 0, 0,NULL);
+      zcl_SendCommand(reportEndpoint, &onOffSendaddr, ZCL_CLUSTER_ID_GEN_ON_OFF,cmd, TRUE, ZCL_FRAME_CLIENT_SERVER_DIR, TRUE, 0, 0, 0,NULL);
     }
     index++;
   }
 }
 
 void clusterOccupancyInit(void) {
-  P1SEL &=0xFB;
-  DIR1_2 = 0;
+  DIR(PIR_PORT, PIR_PIN)=0;
+  FUNCTION_SEL(PIR_PORT, PIR_PIN)=0;
+  reportCmd.numAttr = 1;
+  reportCmd.attrList[0].attrID = ATTRID_OCCUPANCY_OCCUPANCY;
+  reportCmd.attrList[0].dataType = ZCL_DATATYPE_BITMAP8;
+  reportCmd.attrList[0].attrData = (void *)(&occupancy);
+  
+  osal_start_reload_timer_cb((uint32)DEFAULT_REPORT_SEC*1000, &occupancySensingClusterSendReport );  
 }
 
-void clusterOccupancySensingLoop(uint8 endpoint, afAddrType_t * dstAddr, uint8 * segNum) {
+void clusterOccupancySensingLoop() {
   uint8 oldOccupancy = occupancy;
-  if (P1_2==0){
+  if (PORT(PIR_PORT, PIR_PIN)==0){
     occupancy=0;
   } else {
     occupancy=1;
   }
   if (oldOccupancy != occupancy){
-    occupancySensingClusterSendReport(endpoint, dstAddr, segNum);
-    sendBindMessage(endpoint);
+    occupancySensingClusterSendReport();
+    sendBindMessage();
   }
 }

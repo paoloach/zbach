@@ -13,14 +13,11 @@
 #include "DS18B20.h"
 
 
-#define DEFAULT_READ_PERIOD_MINUTES 5
+#define DEFAULT_READ_PERIOD_SECONDS 60
 
-#ifndef READ_PERIOD_MINUTES
-#define READ_PERIOD_MINUTES DEFAULT_READ_PERIOD_MINUTES
+#ifndef READ_PERIOD_SECONDS
+#define READ_PERIOD_SECONDS DEFAULT_READ_PERIOD_SECONDS
 #endif
-
-#define READ_PERIOD_MAX_COUNTER 2*READ_PERIOD_MINUTES
-
 
 #define DS18B20_POWER  PORT(DS18B20_POWER_PORT, DS18B20_POWER_PIN)
 #define DATA_LOW  DIR(DS18B20_DATA_PORT, DS18B20_DATA_PIN)=1;PORT(DS18B20_DATA_PORT, DS18B20_DATA_PIN)=0;
@@ -28,14 +25,13 @@
 #define DATA PORT(DS18B20_DATA_PORT, DS18B20_DATA_PIN)
 
 int16 temp=0;
-
-static uint8 readWaitCounter=0;
 static uint8 taskId;
 
 static uint8 reset(void);
 static void write(unsigned char byte);
 static uint8  read(void);
 static void waitRead(void);
+static void powerOn(void);
 
 
 void DS18B20_init(uint8 deviceTaskId) {
@@ -46,26 +42,28 @@ void DS18B20_init(uint8 deviceTaskId) {
   DIR(DS18B20_POWER_PORT, DS18B20_POWER_PIN)=1;
   DIR(DS18B20_DATA_PORT, DS18B20_DATA_PIN)=1;
 
-  DS18B20_POWER=0;
+  DS18B20_POWER=1;
   PORT(DS18B20_DATA_PORT, DS18B20_DATA_PIN)=0;
   readTemperature();
 }
 
 
 void waitRead(void) {
-  if (readWaitCounter==0){
-    readTemperature();
-    readWaitCounter = READ_PERIOD_MAX_COUNTER;
-  } else {
-    readWaitCounter--;
-     osal_start_timerEx_cb(30000,&waitRead );
-  }
+  osal_pwrmgr_task_state(taskId, PWRMGR_CONSERVE);
+  osal_start_timerEx_cb((uint32)READ_PERIOD_SECONDS*1000,&powerOn );
+}
+
+
+static void powerOn(void) {
+  DS18B20_POWER=1;
+  osal_start_timerEx_cb(200,&readTemperature );
+  osal_pwrmgr_task_state(taskId, PWRMGR_HOLD);
 }
 
 void readTemperature(void) {
+  osal_pwrmgr_task_state(taskId, PWRMGR_HOLD);
   DS18B20_POWER=1;
   DATA_HIGH;
-  osal_pwrmgr_task_state(taskId, PWRMGR_HOLD);
 
   T3CTL = 0x04 | 0xA0; //Clear counter. interrupt disable. Compare mode. 4us at cycle
   T3CCTL0 = 0x4; // compare mode
@@ -78,7 +76,6 @@ void readTemperature(void) {
   if (reset()==0){
     DS18B20_POWER=0; 
     waitRead();
-    osal_pwrmgr_task_state(taskId, PWRMGR_CONSERVE);
     return;
   }
 
@@ -113,9 +110,7 @@ void finalizeReadTemp(void){
   
   osal_set_event_bit( taskId,  NEW_TEMP_BIT );
   waitRead();
-  osal_pwrmgr_task_state(taskId, PWRMGR_CONSERVE);
-  
-}
+ }
 
 
 uint8 reset() {

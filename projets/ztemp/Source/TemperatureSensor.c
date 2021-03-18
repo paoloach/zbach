@@ -35,7 +35,6 @@
 #include "ClusterBasic.h"
 #include "ClusterTemperatureMeasurement.h"
 #include "ClusterPower.h"
-#include "ClusterDiagnostic.h"
 #include "EventManager.h"
 
 
@@ -72,7 +71,11 @@ static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg );
 static void initReport(void);
 static void switch1Down(uint16 event);
 static void switch1Up(uint16 event);
-
+static void sysEvent(uint16 event);
+static void stateChange(devStates_t newState);
+#ifdef WDT_IN_PM1
+ static void resetWatchDog(void);
+#endif
 
 uint16 reportSecond = DEFAULT_REPORT_SEC;
 uint16 reportSecondCounter;
@@ -83,33 +86,31 @@ uint8  connected=false;
 uint32 switch1DownStart;
 
 void temperatureSensorInit( byte task_id ){
- 	deviceTaskId = task_id;
-   	zcl_registerPlugin( ZCL_CLUSTER_ID_GEN_BASIC,  ZCL_CLUSTER_ID_GEN_MULTISTATE_VALUE_BASIC,    handleClusterCommands );
+  deviceTaskId = task_id;
+  zcl_registerPlugin( ZCL_CLUSTER_ID_GEN_BASIC,  ZCL_CLUSTER_ID_GEN_MULTISTATE_VALUE_BASIC,    handleClusterCommands );
   
-	zclHA_Init( &temperatureSimpleDesc );
-	addReadAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterReadAttribute);
-	addWriteAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterWriteAttribute);
-	addReadAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterReadAttribute);
-	addWriteAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterWriteAttribute);
-	addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_GEN_POWER_CFG,powerClusterReadAttribute);
-	addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_MS_TEMPERATURE_MEASUREMENT,temperatureClusterReadAttribute);
+  zclHA_Init( &temperatureSimpleDesc );
+  addReadAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterReadAttribute);
+  addWriteAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_BASIC,basicClusterWriteAttribute);
+  addReadAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterReadAttribute);
+  addWriteAttributeFn(ENDPOINT, ZCL_CLUSTER_ID_GEN_IDENTIFY,identifyClusterWriteAttribute);
+  addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_GEN_POWER_CFG,powerClusterReadAttribute);
+  addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_MS_TEMPERATURE_MEASUREMENT,temperatureClusterReadAttribute);
 #ifdef DHT12        
-        addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_MS_RELATIVE_HUMIDITY,humidityRelativeClusterReadAttribute);
+  addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_MS_RELATIVE_HUMIDITY,humidityRelativeClusterReadAttribute);
 #endif
-        addReadAttributeFn(ENDPOINT,ZCL_CLUSTER_ID_HA_DIAGNOSTIC,clusterDiagnosticReadAttribute);
-  	zcl_registerForMsg( deviceTaskId );
-        eventManagerInit();  
-  	EA=1;
-  	clusterTemperatureMeasurementeInit();
+  zcl_registerForMsg( deviceTaskId );
+  eventManagerInit();  
+  EA=1;
+  clusterTemperatureMeasurementeInit();
 #ifdef DHT12        
-        clusterHumidityMeasurementeInit();
+  clusterHumidityMeasurementeInit();
 #endif        
-        clusterDiagnosticInit(deviceTaskId);
-	powerClusterInit(deviceTaskId);
- 	identifyInit(deviceTaskId);
-	ZMacSetTransmitPower(TX_PWR_PLUS_2);
-	//ZMacSetTransmitPower(POWER);
+  powerClusterInit(deviceTaskId);
+  identifyInit(deviceTaskId);
+  ZMacSetTransmitPower(POWER);
   blinkLedInit(deviceTaskId);
+  
   blinkLedstart();
 #ifdef DHT12
   dht112_init(deviceTaskId);
@@ -120,6 +121,8 @@ void temperatureSensorInit( byte task_id ){
   setRegisteredKeysTaskID(deviceTaskId);
   addEventCB(SWITCH1_UP_EVT_BIT, switch1Up);
   addEventCB(SWITCH1_DOWN_EVT_BIT, switch1Down);
+  addEventCB(SYS_EVENT_MSG_BIT, sysEvent);
+
 }
 
 static void initReport(void){
@@ -143,85 +146,70 @@ static void switch1Up(uint16 event){
     }
   }
 }
-/*********************************************************************
- * @fn          zclSample_event_loop
- *
- * @brief       Event Loop Processor for zclGeneral.
- *
- * @param       none
- *
- * @return      none
- */
+
+static void stateChange(devStates_t newState) {
+ switch(newState){
+  case DEV_NWK_DISC:
+    connected=false;
+    setBlinkCounter(0);
+    break;
+  case DEV_NWK_JOINING:
+    connected=false;
+    setBlinkCounter(1);
+    break;
+  case DEV_NWK_REJOIN:
+    connected=false;
+    setBlinkCounter(2);
+    break;
+  case DEV_END_DEVICE_UNAUTH:
+    connected=false;
+    setBlinkCounter(3);
+    break;
+  case DEV_END_DEVICE:
+    connected=true;
+    blinkLedEnd();
+    initReport();
+    break;
+  case DEV_ROUTER:
+    connected=true;
+    setBlinkCounter(5);
+    break;
+  case DEV_COORD_STARTING:
+    connected=false;
+    setBlinkCounter(6);
+    break;
+  case DEV_ZB_COORD:
+    connected=true;
+    setBlinkCounter(7);
+    break;
+  case DEV_NWK_ORPHAN:
+    connected=false;
+    setBlinkCounter(8);
+    break;
+  }
+}
+
+static void sysEvent(uint16 event) {
+  afIncomingMSGPacket_t * MSGpkt;
+  while ( (MSGpkt = (afIncomingMSGPacket_t *)osal_msg_receive( deviceTaskId )) )  {
+    switch ( MSGpkt->hdr.event ) {
+      case ZCL_INCOMING_MSG:
+        // Incoming ZCL Foundation command/response messages
+        processIncomingMsh( (zclIncomingMsg_t *)MSGpkt );
+        break;
+      case ZDO_STATE_CHANGE:
+        stateChange((devStates_t)(MSGpkt->hdr.status));
+        break;
+      default:
+        break;
+    }
+   osal_msg_deallocate( (uint8 *)MSGpkt );
+   }
+}
+
 uint16 temperatureSensorEventLoop( uint8 task_id, uint16 events ){
-  if (handleEvent(&events)){
-    return events;
-  };
-  
-  
-      afIncomingMSGPacket_t *MSGpkt;
-	devStates_t zclSampleSw_NwkState;
-  
-	(void)task_id;  // Intentionally unreferenced parameter
-	if ( events & SYS_EVENT_MSG ){
-		while ( (MSGpkt = (afIncomingMSGPacket_t *)osal_msg_receive( deviceTaskId )) )  {
-			switch ( MSGpkt->hdr.event ) {
-				case ZCL_INCOMING_MSG:
-                                  // Incoming ZCL Foundation command/response messages
-                                  processIncomingMsh( (zclIncomingMsg_t *)MSGpkt );
-                                  break;
-				case ZDO_STATE_CHANGE:
-                                  zclSampleSw_NwkState = (devStates_t)(MSGpkt->hdr.status);
-                                    
-                                  switch(zclSampleSw_NwkState){
-                                  case DEV_NWK_DISC:
-                                    connected=false;
-                                    setBlinkCounter(0);
-                                    break;
-                                  case DEV_NWK_JOINING:
-                                    connected=false;
-                                    setBlinkCounter(1);
-                                    break;
-                                  case DEV_NWK_REJOIN:
-                                    connected=false;
-                                    setBlinkCounter(2);
-                                    break;
-                                  case DEV_END_DEVICE_UNAUTH:
-                                    connected=false;
-                                    setBlinkCounter(3);
-                                    break;
-                                  case DEV_END_DEVICE:
-                                    connected=true;
-                                    blinkLedEnd();
-                                    initReport();
-                                    break;
-                                  case DEV_ROUTER:
-                                    connected=true;
-                                    setBlinkCounter(5);
-                                    break;
-                                  case DEV_COORD_STARTING:
-                                    connected=false;
-                                    setBlinkCounter(6);
-                                    break;
-                                  case DEV_ZB_COORD:
-                                    connected=true;
-                                    setBlinkCounter(7);
-                                    break;
-                                  case DEV_NWK_ORPHAN:
-                                    connected=false;
-                                    setBlinkCounter(8);
-                                    break;
-                                  }
-                                  break;
-                                default:
-                                  break;
-      		}
-
-        osal_msg_deallocate( (uint8 *)MSGpkt );
-    	}
-
-    	return (events ^ SYS_EVENT_MSG);
-	}
-	
+  (void)task_id;  // Intentionally unreferenced parameter
+  handleEvent(&events);
   return 0;
 }
 

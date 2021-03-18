@@ -21,9 +21,8 @@
 #define OCCUPANCY_TYPE_PIR_AND_ULTRASONIC       2
 
 void clusterOccupancyInit(void);
-void clusterOccupancySensingLoop(uint8 endpoint, afAddrType_t * dstAddr, uint8 * segNum);
+void clusterOccupancySensingLoop(void);
 void occupancySensingResetCB( void );
 void occupancySensingReadAttribute(zclAttrRec_t *);
-void occupancySensingClusterSendReport(uint8 endpoint, afAddrType_t * dstAddr, uint8 * segNum); 
 
 #endif

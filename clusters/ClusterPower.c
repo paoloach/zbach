@@ -17,6 +17,16 @@
 #include "ClusterOSALEvents.h"
 #include "report.h"
 
+
+struct PowerReport {
+  uint16 id1;
+  uint8  type1;
+  uint8 batteryVoltage;
+  uint16 id2;
+  uint8  type2;
+  uint8 batteryRemain;
+};
+
 #if !defined RTR_NWK
  static void readBatteryVolt(void);
 #endif
@@ -32,19 +42,15 @@ extern NodePowerDescriptorFormat_t ZDO_Config_Power_Descriptor;
 
 #if !defined RTR_NWK
 static void powerClusterSendReport(void); 
-static zclReportCmd2_t reportCmd;
+static struct PowerReport reportCmd;
 #endif
 
 void powerClusterInit(byte appId) {
 #if !defined RTR_NWK
- 
-  reportCmd.numAttr = 2;
-  reportCmd.attrList[0].attrID = ATTRID_POWER_CFG_BATTERY_VOLTAGE;
-  reportCmd.attrList[0].dataType = ZCL_DATATYPE_UINT8;
-  reportCmd.attrList[0].attrData = (void *)(&batteryVoltage);
-  reportCmd.attrList[1].attrID = ATTRID_POWER_CFG_BATTERY_PERCENTAGE_REMAINING;
-  reportCmd.attrList[1].dataType = ZCL_DATATYPE_UINT8;
-  reportCmd.attrList[1].attrData = (void *)(&batteryPercRemaining);  
+  reportCmd.id1 = ATTRID_POWER_CFG_BATTERY_VOLTAGE;
+  reportCmd.id2 = ATTRID_POWER_CFG_BATTERY_PERCENTAGE_REMAINING;
+  reportCmd.type1=ZCL_DATATYPE_UINT8;
+  reportCmd.type2=ZCL_DATATYPE_UINT8;
 
   osal_start_reload_timer_cb((uint32)BATTERY_POLL_TIME_SEC*1000, &powerClusterSendReport );  
 #endif
@@ -128,10 +134,12 @@ static void readBatteryVolt(void) {
 void powerClusterSendReport(){
     powerClusterCheckBattery();
 
+    reportCmd.batteryVoltage = batteryVoltage;
+    reportCmd.batteryRemain = batteryPercRemaining;
 
-    zcl_SendReportCmd( reportEndpoint, &reportDstAddr,
-                       ZCL_CLUSTER_ID_GEN_POWER_CFG,
-                       (zclReportCmd_t *)&reportCmd, ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, reportSeqNum++ );
+   
+    zcl_SendCommand( reportEndpoint,  &reportDstAddr, ZCL_CLUSTER_ID_GEN_POWER_CFG, ZCL_CMD_REPORT, FALSE,
+                              ZCL_FRAME_SERVER_CLIENT_DIR, TRUE, 0, reportSeqNum++, 8, (uint8*)&reportCmd );
 }
 
 #endif

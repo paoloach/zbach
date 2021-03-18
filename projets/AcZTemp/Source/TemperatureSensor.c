@@ -35,12 +35,14 @@
 #include "clusters/ClusterPower.h"
 #include "EventManager.h"
 #include "Report.h"
+#include "lcd-SSD1306.h"
 
 #ifdef DHT12
 #include "clusters/ClusterHumidityRelativeMeasurement.h"
 #endif
 #include "ledBlink.h"
 #include "dht112.h"
+#include "lcd-SSD1306.h"
 	  
 
 void User_Process_Pool(void);
@@ -53,7 +55,9 @@ static void processIncomingMsh( zclIncomingMsg_t *msg );
 static uint8 processInReadRspCmd( zclIncomingMsg_t *pInMsg );
 static uint8 processInWriteRspCmd( zclIncomingMsg_t *pInMsg );
 static uint8 processInDefaultRspCmd( zclIncomingMsg_t *pInMsg );
-			   
+static void sysEvent(uint16 events);
+static void ZDOStateChange(devStates_t newState);
+
 #ifdef ZCL_DISCOVER
 static uint8 processInDiscRspCmd( zclIncomingMsg_t *pInMsg );
 #endif
@@ -102,8 +106,10 @@ void temperatureSensorInit( byte task_id ){
 #ifdef DS18B20  
   DS18B20_init(temperatureSensorTaskID);
 #endif
-  
+  addEventCB(SYS_EVENT_MSG_BIT,sysEvent);
+
 }
+
 
 static void initReport(void){
   reportEndpoint = ENDPOINT;
@@ -115,6 +121,85 @@ static void initReport(void){
 }
 
 
+void sysEvent(uint16 events){
+  afIncomingMSGPacket_t *MSGpkt;
+
+  while (true)  {
+    MSGpkt = (afIncomingMSGPacket_t *)osal_msg_receive( temperatureSensorTaskID ); 
+    if (MSGpkt == NULL){
+      return;
+    }
+    switch ( MSGpkt->hdr.event ) {
+      case ZCL_INCOMING_MSG:
+        // Incoming ZCL Foundation command/response messages
+        processIncomingMsh( (zclIncomingMsg_t *)MSGpkt );
+      break;
+      case ZDO_STATE_CHANGE:
+        ZDOStateChange((devStates_t)(MSGpkt->hdr.status));
+        break;
+      default:
+      break;
+    }
+    osal_msg_deallocate( (uint8 *)MSGpkt );
+  }
+
+}
+
+void ZDOStateChange(devStates_t newState){
+  if(prevState !=   newState){
+    char buffer[10];
+    setCursor(0, 54);
+    clean(0,45, DISPLAY_WIDTH, 54);
+    drawText("ID: ");
+    _itoa(_NIB.nwkDevAddress, (uint8_t*)buffer, 16);
+    drawText(buffer);
+    setCursor(0,9);
+    clean(0,0, DISPLAY_WIDTH, 9);
+    switch(newState){
+      case DEV_NWK_DISC:
+        drawText("NWK_DISCOVERING");
+        setBlinkCounter(0);
+        break;
+      case DEV_NWK_JOINING:
+        drawText("NWK_JOINING");
+        setBlinkCounter(1);
+        break;
+      case DEV_NWK_REJOIN:
+        drawText("NWK_REJOIN");
+        setBlinkCounter(2);
+        break;
+      case DEV_END_DEVICE_UNAUTH:
+        drawText("END_DEVICE_UNAUTH");
+        setBlinkCounter(3);
+        break;
+      case DEV_END_DEVICE:
+        drawText("END_DEVICE");
+        blinkLedEnd();
+        initReport();
+        break;
+      case DEV_ROUTER:
+        drawText("NWK_ROUTER");
+        blinkLedEnd();
+        initReport();
+        break;
+      case DEV_COORD_STARTING:
+        drawText("_COORD_STARTING");
+        setBlinkCounter(6);
+        break;
+      case DEV_ZB_COORD:
+        drawText("ZB_COORD");
+        setBlinkCounter(7);
+        break;
+      case DEV_NWK_ORPHAN:
+        drawText("NWK_ORPHAN");
+        setBlinkCounter(8);
+        break;
+      }
+  display();  
+  prevState = newState;
+  }
+}
+
 /*********************************************************************
  * @fn          zclSample_event_loop
  *
@@ -125,70 +210,7 @@ static void initReport(void){
  * @return      none
  */
 uint16 temperatureSensorEventLoop( uint8 task_id, uint16 events ){
-  if (handleEvent(&events)){
-    return events;
-  };
-  
-  afIncomingMSGPacket_t *MSGpkt;
-	devStates_t zclSampleSw_NwkState;
-  
-	(void)task_id;  // Intentionally unreferenced parameter
-	if ( events & SYS_EVENT_MSG ){
-		while ( (MSGpkt = (afIncomingMSGPacket_t *)osal_msg_receive( temperatureSensorTaskID )) )  {
-			switch ( MSGpkt->hdr.event ) {
-				case ZCL_INCOMING_MSG:
-                                  // Incoming ZCL Foundation command/response messages
-                                  processIncomingMsh( (zclIncomingMsg_t *)MSGpkt );
-                                  break;
-				case ZDO_STATE_CHANGE:
-                                  zclSampleSw_NwkState = (devStates_t)(MSGpkt->hdr.status);
-                                  if(prevState !=   zclSampleSw_NwkState){
-                                      switch(zclSampleSw_NwkState){
-                                        case DEV_NWK_DISC:
-                                          setBlinkCounter(0);
-                                          break;
-                                        case DEV_NWK_JOINING:
-                                          setBlinkCounter(1);
-                                          break;
-                                        case DEV_NWK_REJOIN:
-                                          setBlinkCounter(2);
-                                          break;
-                                        case DEV_END_DEVICE_UNAUTH:
-                                          setBlinkCounter(3);
-                                          break;
-                                        case DEV_END_DEVICE:
-                                          blinkLedEnd();
-                                          initReport();
-                                          break;
-                                        case DEV_ROUTER:
-                                          blinkLedEnd();
-                                          initReport();
-                                          break;
-                                        case DEV_COORD_STARTING:
-                                          setBlinkCounter(6);
-                                          break;
-                                        case DEV_ZB_COORD:
-                                          setBlinkCounter(7);
-                                          break;
-                                        case DEV_NWK_ORPHAN:
-                                          setBlinkCounter(8);
-                                          break;
-                                        }
-                                      prevState = zclSampleSw_NwkState;
-                                      }
-                                      break;
-                                  default:
-                                  break;
-                                  
-      		}
-
-        osal_msg_deallocate( (uint8 *)MSGpkt );
-    	}
-
-    	return (events ^ SYS_EVENT_MSG);
-	}
-	
-
+  handleEvent(&events);
   return 0;
 }
 
@@ -387,7 +409,6 @@ static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg ){
 
 
 void User_Process_Pool(void) {
-  
 }
 
 /****************************************************************************
