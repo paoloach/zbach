@@ -35,14 +35,16 @@
 #include "clusters/ClusterPower.h"
 #include "EventManager.h"
 #include "Report.h"
-#include "lcd-SSD1306.h"
 
 #ifdef DHT12
 #include "clusters/ClusterHumidityRelativeMeasurement.h"
 #endif
 #include "ledBlink.h"
 #include "dht112.h"
-#include "lcd-SSD1306.h"
+
+#ifdef DISPLAY
+#include "lcd.h"
+#endif
 	  
 
 void User_Process_Pool(void);
@@ -147,6 +149,7 @@ void sysEvent(uint16 events){
 
 void ZDOStateChange(devStates_t newState){
   if(prevState !=   newState){
+#ifdef DISPLAY
     char buffer[10];
     setCursor(0, 54);
     clean(0,45, DISPLAY_WIDTH, 54);
@@ -155,47 +158,68 @@ void ZDOStateChange(devStates_t newState){
     drawText(buffer);
     setCursor(0,9);
     clean(0,0, DISPLAY_WIDTH, 9);
+#endif
     switch(newState){
       case DEV_NWK_DISC:
-        drawText("NWK_DISCOVERING");
+#ifdef DISPLAY
+        drawText("DISCOVERING");
+#endif
         setBlinkCounter(0);
         break;
       case DEV_NWK_JOINING:
-        drawText("NWK_JOINING");
+#ifdef DISPLAY
+        drawText("JOINING");
+#endif
         setBlinkCounter(1);
         break;
       case DEV_NWK_REJOIN:
-        drawText("NWK_REJOIN");
+#ifdef DISPLAY
+        drawText("REJOIN");
+#endif
         setBlinkCounter(2);
         break;
       case DEV_END_DEVICE_UNAUTH:
+#ifdef DISPLAY
         drawText("END_DEVICE_UNAUTH");
+#endif        
         setBlinkCounter(3);
         break;
       case DEV_END_DEVICE:
-        drawText("END_DEVICE");
+#ifdef DISPLAY        
+        drawText("CONNECTED AS END DEVICE");
+#endif
         blinkLedEnd();
         initReport();
         break;
       case DEV_ROUTER:
-        drawText("NWK_ROUTER");
+#ifdef DISPLAY        
+        drawText("CONNECTED AS ROUTER");
+#endif
         blinkLedEnd();
         initReport();
         break;
       case DEV_COORD_STARTING:
-        drawText("_COORD_STARTING");
+#ifdef DISPLAY
+        drawText("STARTING AS COORDINATOR");
+#endif        
         setBlinkCounter(6);
         break;
       case DEV_ZB_COORD:
-        drawText("ZB_COORD");
+#ifdef DISPLAY        
+        drawText("COORDINATOR");
+#endif        
         setBlinkCounter(7);
         break;
       case DEV_NWK_ORPHAN:
-        drawText("NWK_ORPHAN");
+#ifdef DISPLAY        
+        drawText("ORPHAN");
+#endif
         setBlinkCounter(8);
         break;
       }
+#ifdef DISPLAY    
   display();  
+#endif  
   prevState = newState;
   }
 }

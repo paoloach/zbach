@@ -1,9 +1,14 @@
 #include <OSAL.h>
 #include <OSAL_Memory.h>
-#include "lcd-SSD1306.h"
+
+#include "lcd.h"
+
 #include "i2c.h"
 #include "font.h"
 #include "fonts/Font5x7Fixed.h"
+
+
+
 
 
 

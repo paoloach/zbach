@@ -5659,7 +5659,10 @@
             <name>$PROJ_DIR$\..\..\..\Components\external\lcd-SSD1306.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\Components\external\lcd-SSD1306.h</name>
+            <name>$PROJ_DIR$\..\..\..\Components\external\lcd.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\Components\external\regs.h</name>
         </file>
     </group>
     <group>

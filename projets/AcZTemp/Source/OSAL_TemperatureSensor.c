@@ -32,8 +32,9 @@
 
 #include "TemperatureSensor.h"
 
-#include "lcd-SSD1306.h"
-
+#ifdef DISPLAY
+#include "lcd.h"
+#endif
 
 /*********************************************************************
  * GLOBAL VARIABLES
@@ -75,8 +76,10 @@ uint16 *tasksEvents;
 void osalInitTasks( void )
 {
   uint8 taskID = 0;
-  
+
+#ifdef DISPLAY  
   initLcd();
+#endif  
   
   tasksEvents = (uint16 *)osal_mem_alloc( sizeof( uint16 ) * tasksCnt);
   osal_memset( tasksEvents, 0, (sizeof( uint16 ) * tasksCnt));

@@ -11,7 +11,9 @@
 #include "ClusterOSALEvents.h"
 #include "EventManager.h"
 #include "dht112.h"
-#include "lcd-SSD1306.h"
+#ifdef DISPLAY
+#include "lcd.h"
+#endif
 
 #define DEFAULT_READ_PERIOD_MINUTES 5
 
@@ -125,9 +127,9 @@ static enum Status startDHT12() {
 
 
 static enum Status readAction() {
-  static uint16 readCount;
-  uint8_t buffer[20];
   enum Status ret = internalReadAction();
+#ifdef DISPLAY  
+  uint8_t buffer[20];
   setCursor(0,27);
   clean(0,18, DISPLAY_WIDTH, 27);
   drawText("Temp: ");
@@ -148,7 +150,7 @@ static enum Status readAction() {
     drawText("%");
   }
   display();
-  readCount++;
+#endif
   return ret;
 }
 

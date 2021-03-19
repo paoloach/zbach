@@ -4960,30 +4960,7 @@
                 </option>
                 <option>
                     <name>CCDefines</name>
-                    <state>POWER=TX_PWR_PLUS_2</state>
-                    <state>HAL_LED=FALSE</state>
-                    <state>SECURE=1</state>
-                    <state>OSC32K_CRYSTAL_INSTALLED=FALSE</state>
-                    <state>HAL_KEY=FALSE</state>
-                    <state>HAL_BOARD_CC2530EB_REV17</state>
-                    <state>TC_LINKKEY_JOIN</state>
-                    <state>NV_INIT</state>
-                    <state>NV_RESTORE</state>
-                    <state>POWER_SAVING</state>
-                    <state>NWK_AUTO_POLL</state>
-                    <state>MULTICAST_ENABLED=FALSE</state>
-                    <state>ZCL_READ</state>
-                    <state>ZCL_WRITE</state>
-                    <state>ZCL_REPORT</state>
-                    <state>zZCL_EZMODE</state>
-                    <state>xZCL_BASIC</state>
-                    <state>xZCL_IDENTIFY</state>
-                    <state>xZCL_ON_OFF</state>
-                    <state>xZCL_SCENES</state>
-                    <state>xZCL_GROUPS</state>
-                    <state>xxZCL_LEVEL_CTRL</state>
-                    <state>xZCL_DIAGNOSTIC</state>
-                    <state>xFEATURE_SYSTEM_STATS</state>
+                    <state></state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -6098,7 +6075,10 @@
             <name>$PROJ_DIR$\..\..\..\Components\external\lcd-SSD1306.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\Components\external\lcd-SSD1306.h</name>
+            <name>$PROJ_DIR$\..\..\..\Components\external\lcd.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\Components\external\regs.h</name>
         </file>
     </group>
     <group>

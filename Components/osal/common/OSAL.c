@@ -54,6 +54,9 @@
 #include "OSAL_Clock.h"
 
 #include "OnBoard.h"
+#ifdef DISPLAY
+#include "lcd.h"
+#endif
 
 /* HAL */
 #include "hal_drivers.h"
@@ -66,6 +69,15 @@
 /*********************************************************************
  * MACROS
  */
+
+#ifdef DISPLAY
+#define STATUS(n)  setCursor(80,63);\
+   clean(80,54,90 ,63);\
+     drawText(n);\
+   display();
+#else
+#define STATUS(n)
+#endif
 
 /*********************************************************************
  * CONSTANTS
@@ -1148,11 +1160,15 @@ void osal_run_system( void )
 {
   uint8 idx = 0;
 
+  STATUS("1");
   osalTimeUpdate();
   
+  STATUS("2");  
+  
   Hal_ProcessPoll();
+  STATUS("3");
   User_Process_Pool();
-
+  STATUS("4");
   do {
     if (tasksEvents[idx])  // Task is highest priority that is ready.
     {
@@ -1162,6 +1178,7 @@ void osal_run_system( void )
 
   if (idx < tasksCnt)
   {
+    STATUS("5");
     uint16 events;
     halIntState_t intState;
 
@@ -1182,9 +1199,11 @@ void osal_run_system( void )
 #if defined( POWER_SAVING )
   else  // Complete pass through all task events with no activity?
   {
+    STATUS("6");
     osal_pwrmgr_powerconserve();  // Put the processor/system into sleep
   }
 #endif
+  STATUS("7");
 
   /* Yield in case cooperative scheduling is being used. */
 #if defined (configUSE_PREEMPTION) && (configUSE_PREEMPTION == 0)
@@ -1192,6 +1211,8 @@ void osal_run_system( void )
     osal_task_yield();
   }
 #endif
+  STATUS("8");
+
 }
 
 /*********************************************************************
