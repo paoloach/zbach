@@ -69,8 +69,6 @@ static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg );
 
 static void initReport(void);
 static const char * strStatus=NULL;;
-uint16 reportSecond = DEFAULT_REPORT_SEC;
-uint16 reportSecondCounter;
 uint8 reportSeqNum;
 afAddrType_t reportDstAddr;
 uint8  reportEndpoint;
@@ -118,8 +116,6 @@ void temperatureSensorInit( byte task_id ){
 
 
 static void initReport(void){
-  reportEndpoint = ENDPOINT;
-  reportSecondCounter = reportSecond;
   reportDstAddr.addrMode = afAddr16Bit;
   reportDstAddr.endPoint = ENDPOINT;
   reportDstAddr.addr.shortAddr = 0;

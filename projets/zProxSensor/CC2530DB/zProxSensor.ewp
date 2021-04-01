@@ -1467,20 +1467,7 @@
                 </option>
                 <option>
                     <name>CCDefines</name>
-                    <state>POWER=TX_PWR_PLUS_2</state>
-                    <state>HAL_LED=FALSE</state>
-                    <state>SECURE=1</state>
-                    <state>OSC32K_CRYSTAL_INSTALLED=FALSE</state>
-                    <state>HAL_KEY=FALSE</state>
-                    <state>HAL_BOARD_CC2530EB_REV17</state>
-                    <state>TC_LINKKEY_JOIN</state>
-                    <state>NV_INIT</state>
-                    <state>NV_RESTORE</state>
-                    <state>NWK_AUTO_POLL</state>
-                    <state>MULTICAST_ENABLED=FALSE</state>
-                    <state>ZCL_READ</state>
-                    <state>ZCL_WRITE</state>
-                    <state>ZCL_REPORT</state>
+                    <state></state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -1636,9 +1623,11 @@
                 </option>
                 <option>
                     <name>Compiler Extra Options Edit</name>
-                    <state>-f $PROJ_DIR$\..\..\..\Tools\f8wEndev.cfg</state>
-                    <state>-f $PROJ_DIR$\..\..\..\Tools\f8wConfig.cfg</state>
-                    <state>-f $PROJ_DIR$\..\..\..\Tools\f8wZCL.cfg</state>
+                    <state>-f $PROJ_DIR$\settings\f8wEndev.cfg</state>
+                    <state>-f $PROJ_DIR$\settings\f8wConfig.cfg</state>
+                    <state>-f $PROJ_DIR$\settings\f8wZCL.cfg</state>
+                    <state>-f $PROJ_DIR$\settings\pins.cfg</state>
+                    <state>-f $PROJ_DIR$\settings\zProxySensor.cfg</state>
                 </option>
                 <option>
                     <name>CCIncludePath2</name>
@@ -4700,7 +4689,37 @@
         </file>
     </group>
     <group>
+        <name>Configuration</name>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\Tools\f8w2530.xcl</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\settings\f8wConfig.cfg</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\settings\f8wEndev.cfg</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\settings\f8wRouter.cfg</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\settings\f8wZCL.cfg</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\settings\pin.cfg</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\settings\zProxySensor.cfg</name>
+        </file>
+    </group>
+    <group>
         <name>external</name>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\Components\external\EventManager.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\Components\external\EventManager.h</name>
+        </file>
     </group>
     <group>
         <name>HAL</name>
@@ -6149,39 +6168,6 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\Components\services\saddr\saddr.h</name>
-        </file>
-    </group>
-    <group>
-        <name>Tools</name>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8w2530.xcl</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wConfig.cfg</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wCoord.cfg</name>
-            <excluded>
-                <configuration>EndDeviceEB</configuration>
-                <configuration>EndDevicePA</configuration>
-                <configuration>RouterPA</configuration>
-            </excluded>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wEndev.cfg</name>
-            <excluded>
-                <configuration>RouterPA</configuration>
-            </excluded>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wRouter.cfg</name>
-            <excluded>
-                <configuration>EndDeviceEB</configuration>
-                <configuration>EndDevicePA</configuration>
-            </excluded>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wZCL.cfg</name>
         </file>
     </group>
     <group>

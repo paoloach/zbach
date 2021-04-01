@@ -4363,7 +4363,37 @@
         </file>
     </group>
     <group>
+        <name>Configuration</name>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\Tools\f8w2530.xcl</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\settings\f8wConfig.cfg</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\settings\f8wEndev.cfg</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\settings\f8wRouter.cfg</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\settings\f8wZCL.cfg</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\settings\pin.cfg</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\settings\zProxySensor.cfg</name>
+        </file>
+    </group>
+    <group>
         <name>external</name>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\Components\external\EventManager.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\..\..\Components\external\EventManager.h</name>
+        </file>
     </group>
     <group>
         <name>HAL</name>
@@ -4867,27 +4897,6 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\Components\services\saddr\saddr.h</name>
-        </file>
-    </group>
-    <group>
-        <name>Tools</name>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8w2530.xcl</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wConfig.cfg</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wCoord.cfg</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wEndev.cfg</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wRouter.cfg</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\Tools\f8wZCL.cfg</name>
         </file>
     </group>
     <group>

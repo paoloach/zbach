@@ -732,7 +732,7 @@
                     <item>startY</item>
                     <item>y</item>
                     <item>x</item>
-                    <item></item>
+                    <item />
                 </expressions>
                 <col-names>
                     <item>Expression</item>
