@@ -49,6 +49,8 @@
 #include "ZDProfile.h"
 #include "aps_frag.h"
 #include "rtg.h"
+#include "lcd.h"
+#include "OnBoard.h"
 
 #if defined ( MT_AF_CB_FUNC )
   #include "MT_AF.h"
@@ -351,6 +353,8 @@ void afReflectError( uint8 dstAddrMode, uint16 dstAddr, uint8 endPoint, uint8 tr
  *
  * @return      none
  */
+uint8_t incommingDataCounter;
+
 void afIncomingData( aps_FrameFormat_t *aff, zAddrType_t *SrcAddress, uint16 SrcPanId,
                      NLDE_Signal_t *sig, uint8 nwkSeqNum, uint8 SecurityUse,
                      uint32 timestamp, uint8 radius )
@@ -361,6 +365,9 @@ void afIncomingData( aps_FrameFormat_t *aff, zAddrType_t *SrcAddress, uint16 Src
   uint8 grpEp = APS_GROUPS_EP_NOT_FOUND;
 #endif
 
+  incommingDataCounter++;
+  
+  
   if ( ((aff->FrmCtrl & APS_DELIVERYMODE_MASK) == APS_FC_DM_GROUP) )
   {
 #if !defined ( APS_NO_GROUPS )

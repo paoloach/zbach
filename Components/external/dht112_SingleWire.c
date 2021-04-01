@@ -13,6 +13,8 @@
 #include "dht112.h"
 #ifdef DISPLAY
 #include "lcd.h"
+#include "fonts/FreeMono9pt7b.h"
+
 #endif
 
 #define DEFAULT_READ_PERIOD_MINUTES 5
@@ -31,7 +33,9 @@
 #define SDA_OFF  DIR(DHT112_SDA_PORT, DHT112_SDA_PIN)=0
 #define SDA_ON   DIR(DHT112_SDA_PORT, DHT112_SDA_PIN)=1
 
-
+#ifdef DISPLAY
+extern const GFXfont Font5x7Fixed;
+#endif
 
 int16 temp;
 uint16 humidity;
@@ -130,18 +134,22 @@ static enum Status readAction() {
   enum Status ret = internalReadAction();
 #ifdef DISPLAY  
   uint8_t buffer[20];
+  
+  setFont(&FreeMono9pt7b);
+  
   setCursor(0,27);
-  clean(0,18, DISPLAY_WIDTH, 27);
   drawText("Temp: ");
   if (ret == ERROR){
     drawText("ERROR");
   } else {
+    clean(0,27,DISPLAY_WIDTH, 80);
     _itoa(temp/100, buffer, 10);
     drawText((char*)buffer);
     drawText(".");
     _itoa(temp%100, buffer, 10);
     drawText((char*)buffer);
-    drawText(", humidity: ");
+    setCursor(0,50);
+    drawText("Hum: ");
     _itoa(humidity/100, buffer, 10);
     drawText((char *)buffer);
     drawText(".");
@@ -150,6 +158,7 @@ static enum Status readAction() {
     drawText("%");
   }
   display();
+  setFont(&Font5x7Fixed);
 #endif
   return ret;
 }

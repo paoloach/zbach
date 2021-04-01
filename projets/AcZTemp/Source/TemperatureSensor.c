@@ -59,6 +59,8 @@ static uint8 processInWriteRspCmd( zclIncomingMsg_t *pInMsg );
 static uint8 processInDefaultRspCmd( zclIncomingMsg_t *pInMsg );
 static void sysEvent(uint16 events);
 static void ZDOStateChange(devStates_t newState);
+static void newStatus(void);
+
 
 #ifdef ZCL_DISCOVER
 static uint8 processInDiscRspCmd( zclIncomingMsg_t *pInMsg );
@@ -66,12 +68,14 @@ static uint8 processInDiscRspCmd( zclIncomingMsg_t *pInMsg );
 static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg );
 
 static void initReport(void);
+static const char * strStatus=NULL;;
 uint16 reportSecond = DEFAULT_REPORT_SEC;
 uint16 reportSecondCounter;
 uint8 reportSeqNum;
 afAddrType_t reportDstAddr;
 uint8  reportEndpoint;
 devStates_t prevState;
+
 
 
 void temperatureSensorInit( byte task_id ){
@@ -109,7 +113,7 @@ void temperatureSensorInit( byte task_id ){
   DS18B20_init(temperatureSensorTaskID);
 #endif
   addEventCB(SYS_EVENT_MSG_BIT,sysEvent);
-
+  
 }
 
 
@@ -149,79 +153,57 @@ void sysEvent(uint16 events){
 
 void ZDOStateChange(devStates_t newState){
   if(prevState !=   newState){
-#ifdef DISPLAY
-    char buffer[10];
-    setCursor(0, 54);
-    clean(0,45, DISPLAY_WIDTH, 54);
-    drawText("ID: ");
-    _itoa(_NIB.nwkDevAddress, (uint8_t*)buffer, 16);
-    drawText(buffer);
-    setCursor(0,9);
-    clean(0,0, DISPLAY_WIDTH, 9);
-#endif
     switch(newState){
       case DEV_NWK_DISC:
-#ifdef DISPLAY
-        drawText("DISCOVERING");
-#endif
-        setBlinkCounter(0);
+        strStatus = "DISCOVERING";
         break;
       case DEV_NWK_JOINING:
-#ifdef DISPLAY
-        drawText("JOINING");
-#endif
-        setBlinkCounter(1);
+        strStatus = "JOINING";
         break;
       case DEV_NWK_REJOIN:
-#ifdef DISPLAY
-        drawText("REJOIN");
-#endif
-        setBlinkCounter(2);
+        strStatus = "REJOIN";
         break;
       case DEV_END_DEVICE_UNAUTH:
-#ifdef DISPLAY
-        drawText("END_DEVICE_UNAUTH");
-#endif        
-        setBlinkCounter(3);
+        strStatus = "END_DEVICE_UNAUTH";
         break;
       case DEV_END_DEVICE:
-#ifdef DISPLAY        
-        drawText("CONNECTED AS END DEVICE");
-#endif
-        blinkLedEnd();
+        strStatus = "CONNECTED: ";
         initReport();
         break;
       case DEV_ROUTER:
-#ifdef DISPLAY        
-        drawText("CONNECTED AS ROUTER");
-#endif
-        blinkLedEnd();
+        strStatus = "CONNECTED AS ROUTER";
         initReport();
         break;
       case DEV_COORD_STARTING:
-#ifdef DISPLAY
-        drawText("STARTING AS COORDINATOR");
-#endif        
-        setBlinkCounter(6);
+        strStatus = "CONNECTED AS COORDINATOR";
         break;
       case DEV_ZB_COORD:
-#ifdef DISPLAY        
-        drawText("COORDINATOR");
-#endif        
-        setBlinkCounter(7);
+        strStatus="COORDINATOR";
         break;
       case DEV_NWK_ORPHAN:
-#ifdef DISPLAY        
-        drawText("ORPHAN");
-#endif
-        setBlinkCounter(8);
+        strStatus="ORPHAN";
         break;
       }
-#ifdef DISPLAY    
-  display();  
-#endif  
   prevState = newState;
+  osal_start_timerEx_cb(1000, newStatus);
   }
+}
+
+static void newStatus(void) {
+#ifdef DISPLAY 
+    
+ //   clean(0,0,DISPLAY_WIDTH, 10);
+    char buffer[10];
+    setCursor(1,9);
+    drawText(strStatus);
+    if (prevState == DEV_END_DEVICE || prevState == DEV_ROUTER ){
+        _itoa(_NIB.nwkDevAddress, (uint8_t*)buffer, 16);
+        drawText(buffer);
+    }
+    
+    display();  
+#endif  
+
 }
 
 /*********************************************************************

@@ -15,6 +15,9 @@
 #define SWITCH1_UP_EVT_BIT        4
 #define SWITCH1_DOWN_EVT_BIT      5
 
+#define CONNECTED_BIT             6
+
+
 #define LEVEL_MOVEMENT           0x0002
 #define READ_BATTERY_LEVEL	 0x0020
 

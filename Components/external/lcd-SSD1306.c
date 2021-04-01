@@ -162,15 +162,22 @@ void display(void) {
 }
 
 void setCursor(uint8_t x, uint8_t y) {
-  cursorX = x;
-  cursorY = y;
+  cursorX = DISPLAY_WIDTH-x;
+  cursorY = DISPLAY_HEIGHT-y;
+}
+
+uint8_t getXCursor(void){
+  return cursorX;
+}
+uint8_t getYCursor(void){
+  return cursorY;
 }
 
 void setFont(const GFXfont * newFont) {
   font = newFont;
 }
 
-void drawText(char * text) {
+void drawText(const char * text) {
   uint8_t i=0;
   char c;
   while ( (c=text[i]) != 0){
@@ -187,26 +194,36 @@ void drawChar(char c) {
   uint8_t * bitmap = font->bitmap+glyph->bitmapOffset;
   
   
-  uint8_t  startX = cursorX+glyph->xOffset;
-  uint8_t  startY = cursorY+glyph->yOffset;
-  uint8_t  endX = startX +  glyph->width;
-  uint8_t  endY = startY +  glyph->height;
+  uint8_t  startX = cursorX-glyph->xOffset;
+  uint8_t  startY = cursorY-glyph->yOffset;
+  uint8_t  endXClean = startX -  glyph->xAdvance;
+  uint8_t  endY = startY -  glyph->height;
   
   
-  if (startX < lastMinX)
-    lastMinX=startX;
-  if (startY < lastMinY)
-    lastMinY = startY;
-  if (endX > lastMaxX)
-    lastMaxX=endX;
-  if (endY > lastMaxY)
-    lastMaxY = endY;
+  if (endXClean < lastMinX)
+    lastMinX=endXClean;
+  if (endY < lastMinY)
+    lastMinY = endY;
+  if (startX > lastMaxX)
+    lastMaxX=startX;
+  if (startY > lastMaxY)
+    lastMaxY = startY;
   
   uint8_t * bufferStart;
   uint8_t  bitWrite;
   uint8_t  bitRead  =0;
   uint8_t  bitFont = *bitmap;
   uint8_t x;
+  
+  
+  for(uint8_t y=startY-1; y >= endY; y--){
+    bufferStart = buffer + startX + DISPLAY_WIDTH*(y/8);
+    bitWrite = pow2[y & 0x07];
+    for (uint8_t x=startX-1; x >= endXClean; x--){
+      *bufferStart |= bitWrite;
+      bufferStart--;
+    }
+  }
 
   for (uint8_t y=0; y < glyph->height; y++){
     bufferStart = buffer + startX + DISPLAY_WIDTH*(startY/8);
@@ -224,35 +241,62 @@ void drawChar(char c) {
          bitFont=*bitmap;
          bitRead = 0;
        }
-       bufferStart++;
+       bufferStart--;
     }
-    for(; x < glyph->xAdvance; x++){
-      *bufferStart |= bitWrite;
-    }
-    startY++;
+    startY--;
   }
-  cursorX += glyph->xAdvance;
+  cursorX -= glyph->xAdvance;
 }
 
 void clean(uint8_t startX, uint8_t startY,uint8_t endX, uint8_t endY){
+   if (startX >= endX)
+    return;
+  if (startY >= endY)
+    return;
   
-  if (startX < lastMinX)
-    lastMinX=startX;
-  if (startY < lastMinY)
-    lastMinY = startY;
-  if (endX > lastMaxX)
-    lastMaxX=endX;
-  if (endY > lastMaxY)
-    lastMaxY = endY;
   
-    uint8_t * bufferIter;
-    uint8_t bitWrite;
-    for (uint16_t y=startY; y < endY; y++){
-      bufferIter = buffer + startX + DISPLAY_WIDTH*(y/8);
-      bitWrite = pow2[y & 0x07];
-      for(uint16_t x=startX; x < endX; x++){
-        *bufferIter |= bitWrite;
-        bufferIter++;
-      }
+  
+  if (startX <= DISPLAY_WIDTH){
+     startX = DISPLAY_WIDTH-startX;  
+  } else {
+    startX = DISPLAY_WIDTH;
+  }
+  if (startY <= DISPLAY_HEIGHT){
+     startY = DISPLAY_HEIGHT-startY;  
+  } else {
+    startY = DISPLAY_HEIGHT;
+  }
+
+  
+  if (endX <= DISPLAY_WIDTH){
+     endX = DISPLAY_WIDTH-endX;  
+  } else {
+    endX = DISPLAY_WIDTH;
+  }
+  if (endY <= DISPLAY_HEIGHT){
+     endY = DISPLAY_HEIGHT-endY;  
+  } else {
+    endY = DISPLAY_HEIGHT;
+  }
+
+  
+  if (endX < lastMinX)
+    lastMinX=endX;
+  if (endY < lastMinY)
+    lastMinY = endY;
+  if (startX > lastMaxX)
+    lastMaxX=startX;
+  if (startY > lastMaxY)
+    lastMaxY = startY;
+  
+  uint8_t * bufferIter;
+  uint8_t bitWrite;
+  for (int16_t y=startY-1; y >= endY; y--){
+    bufferIter = buffer + startX + DISPLAY_WIDTH*(y/8);
+    bitWrite = pow2[y & 0x07];
+    for(int16_t x=startX-1; x >= endX; x--){
+      *bufferIter |= bitWrite;
+      bufferIter--;
     }
+  }
 }

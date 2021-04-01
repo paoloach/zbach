@@ -54,9 +54,6 @@
 #include "OSAL_Clock.h"
 
 #include "OnBoard.h"
-#ifdef DISPLAY
-#include "lcd.h"
-#endif
 
 /* HAL */
 #include "hal_drivers.h"
@@ -70,7 +67,7 @@
  * MACROS
  */
 
-#ifdef DISPLAY
+#ifdef xDISPLAY
 #define STATUS(n)  setCursor(80,63);\
    clean(80,54,90 ,63);\
      drawText(n);\

@@ -230,6 +230,8 @@ APS_event_loop:
 			 002770  FB              MOV   R3,A
 			 002771  12 17 79        LCALL APSME_CmdPkt::?relay 
 		 }
+		 
+		 osal_msg_deallocate(msgPtr);
 		 002774  EE              MOV   A,R6
 		 002775  FA              MOV   R2,A
 		 002776  EF              MOV   A,R7
@@ -242,54 +244,83 @@ APS_event_loop:
 	 00277D  E5 09           MOV   A,V1
 	 00277F  64 80           XRL   A,#0x80
 	 002781  FB              MOV   R3,A
-	 002782  80 51           SJMP  0x27D5
+	 002782  80 51           SJMP  L3
  
- // END IF1
- 002784  EA              MOV   A,R2
- 002785  54 02           ANL   A,#0x02
- 002787  60 0C           JZ    0x2795
- 002789  90 0F 4B        MOV   DPTR,#0x0F4B
- 00278C  74 01           MOV   A,#0x01
- 00278E  F0              MOVX  @DPTR,A
- 00278F  EA              MOV   A,R2
- 002790  64 02           XRL   A,#0x02
- 002792  FA              MOV   R2,A
- 002790  64 02           XRL   A,#0x02
- 002792  FA              MOV   R2,A
- 002793  80 40           SJMP  0x27D5
- 002795  EA              MOV   A,R2
- 002796  54 04           ANL   A,#0x04
- 002798  60 09           JZ    0x27A3
- 00279A  12 16 8F        LCALL APS_EndDeviceBroadcastTimer::?relay
- 00279D  E5 08           MOV   A,V0
- 00279F  64 04           XRL   A,#0x04
- 0027A1  80 29           SJMP  0x27CC
- 0027A3  EA              MOV   A,R2
- 0027A4  54 08           ANL   A,#0x08
- 0027A6  60 29           JZ    0x27D1
- 0027A8  12 16 9B        LCALL APS_MaintainDupRejTable::?relay
- 0027AB  8B 0B           MOV   V3,R3
- 0027AD  EA              MOV   A,R2
- 0027AE  45 0B           ORL   A,V3
- 0027B0  70 16           JNZ   0x27C8
- 0027B1  16              DEC   @R0
- 0027B2  90 0D 17        MOV   DPTR,#0x0D17
- 0027B5  E4              CLR   A
- 0027B6  F0              MOVX  @DPTR,A
- 0027B7  A3              INC   DPTR
- 0027B8  F0              MOVX  @DPTR,A
- 0027B9  A3              INC   DPTR
- 0027BA  F0              MOVX  @DPTR,A
- 0027BB  A3              INC   DPTR
- 0027BC  F0              MOVX  @DPTR,A
- 0027BD  7A 08           MOV   R2,#0x08
- 0027BF  FB              MOV   R3,A
- 0027C0  90 0C FA        MOV   DPTR,#0x0CFA
- 0027C3  E0              MOVX  A,@DPTR
- 0027C4  F9              MOV   R1,A
- 0027C5  12 10 C5        LCALL osal_stop_timerEx::?relay
- 0027C8  E5 08           MOV   A,V0
- 
+ else {
+	 002784  EA              MOV   A,R2
+	 002785  54 02           ANL   A,#0x02
+	 002787  60 0C           JZ    0x2795
+	 002789  90 0F 4B        MOV   DPTR,#0x0F4B
+	 00278C  74 01           MOV   A,#0x01
+	 00278E  F0              MOVX  @DPTR,A
+	 00278F  EA              MOV   A,R2
+	 002790  64 02           XRL   A,#0x02
+	 002792  FA              MOV   R2,A
+	 002790  64 02           XRL   A,#0x02
+	 002792  FA              MOV   R2,A
+	 002793  80 40           SJMP  0x27D5
+	 002795  EA              MOV   A,R2
+	 002796  54 04           ANL   A,#0x04
+	 002798  60 09           JZ    0x27A3
+	 00279A  12 16 8F        LCALL APS_EndDeviceBroadcastTimer::?relay
+	 00279D  E5 08           MOV   A,V0
+	 00279F  64 04           XRL   A,#0x04
+	 0027A1  80 29           SJMP  0x27CC
+	 0027A3  EA              MOV   A,R2
+	 0027A4  54 08           ANL   A,#0x08
+	 0027A6  60 29           JZ    0x27D1
+	 0027A8  12 16 9B        LCALL APS_MaintainDupRejTable::?relay
+	 0027AB  8B 0B           MOV   V3,R3
+	 0027AD  EA              MOV   A,R2
+	 0027AE  45 0B           ORL   A,V3
+	 0027B0  70 16           JNZ   0x27C8
+	 0027B1  16              DEC   @R0
+	 0027B2  90 0D 17        MOV   DPTR,#0x0D17
+	 0027B5  E4              CLR   A
+	 0027B6  F0              MOVX  @DPTR,A
+	 0027B7  A3              INC   DPTR
+	 0027B8  F0              MOVX  @DPTR,A
+	 0027B9  A3              INC   DPTR
+	 0027BA  F0              MOVX  @DPTR,A
+	 0027BB  A3              INC   DPTR
+	 0027BC  F0              MOVX  @DPTR,A
+	 0027BD  7A 08           MOV   R2,#0x08
+	 0027BF  FB              MOV   R3,A
+	 0027C0  90 0C FA        MOV   DPTR,#0x0CFA
+	 0027C3  E0              MOVX  A,@DPTR
+	 0027C4  F9              MOV   R1,A
+	 0027C5  12 10 C5        LCALL osal_stop_timerEx::?relay
+	 0027C8  E5 08           MOV   A,V0
+
+	 0025E6  64 08           XRL   A,#0x08
+	 0025E8  FA              MOV   R2,A
+	 0025E9  AB 09           MOV   R3,V1
+	 0025EB  80 04           SJMP  L3
+	 0025ED  7A 00           MOV   R2,#0x00
+	 0025EF  7B 00           MOV   R3,#0x00
+
+     L3:
+	         02 2F 97        LJMP  0x2F97
+	         12 59 FA        LCALL 0x59FA
+	 0025F7  F5 0A           MOV   V2,A
+	 0025F9  78 0A           MOV   R0,#0x0A
+	 0025FB  22              RET
+APS_CmdInd:
+ 0025FC                  ---
+ 0025FD                  ---
+ 0025FE                  ---
+ 0025FF                  ---
+ 002600                  ---
+ 002601                  ---
+ 002602                  ---
+ 002603                  ---
+ 002604                  ---
+
+
+
+
+
+
  
  
   004AC3  EF              MOV   A,R7
