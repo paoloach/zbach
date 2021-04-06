@@ -257,14 +257,14 @@ void clean(uint8_t startX, uint8_t startY,uint8_t endX, uint8_t endY){
   
   
   if (startX <= DISPLAY_WIDTH){
-     startX = DISPLAY_WIDTH-startX;  
+     startX = DISPLAY_WIDTH-startX-1;  
   } else {
-    startX = DISPLAY_WIDTH;
+    startX = DISPLAY_WIDTH-1;
   }
   if (startY <= DISPLAY_HEIGHT){
-     startY = DISPLAY_HEIGHT-startY;  
+     startY = DISPLAY_HEIGHT-startY-1;  
   } else {
-    startY = DISPLAY_HEIGHT;
+    startY = DISPLAY_HEIGHT-1;
   }
 
   
@@ -291,10 +291,13 @@ void clean(uint8_t startX, uint8_t startY,uint8_t endX, uint8_t endY){
   
   uint8_t * bufferIter;
   uint8_t bitWrite;
-  for (int16_t y=startY-1; y >= endY; y--){
+  
+  
+  
+  for (int8_t y=startY; y >= endY; y--){
     bufferIter = buffer + startX + DISPLAY_WIDTH*(y/8);
     bitWrite = pow2[y & 0x07];
-    for(int16_t x=startX-1; x >= endX; x--){
+    for(int8_t x=startX; x >= endX; x--){
       *bufferIter |= bitWrite;
       bufferIter--;
     }
