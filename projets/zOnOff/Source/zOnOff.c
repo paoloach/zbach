@@ -106,20 +106,6 @@ void nextReportEvent(void) {
   osal_start_timerEx( zProxSensorTaskID, REPORT_EVT, nextReportEventSec*1000 );	
 }
 
-static void eventReport(void) {
-  if (reportSecondCounter <= 0){
-    if (connected){
-      reportDstAddr.panId=_NIB.nodeDepth;
-      reportDstAddr.endPoint=ENDPOINT;
-  #if !defined RTR_NWK   
-      powerClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
-  #endif    
-      onOffClusterSendReport(ENDPOINT, &reportDstAddr, &reportSeqNum);
-    }
-    reportSecondCounter=reportSecond;
-  }
-  nextReportEvent();
-}
 
 /*********************************************************************
  * @fn          zclSample_event_loop

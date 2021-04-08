@@ -188,7 +188,7 @@ void ZDOStateChange(devStates_t newState){
 static void newStatus(void) {
 #ifdef DISPLAY 
     
- //   clean(0,0,DISPLAY_WIDTH, 10);
+    clean(0,0,DISPLAY_WIDTH, 10);
     char buffer[10];
     setCursor(1,9);
     drawText(strStatus);

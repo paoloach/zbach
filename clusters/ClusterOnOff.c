@@ -82,11 +82,11 @@ void onOffClusterWriteAttribute(ZclWriteAttribute_t * writeAttribute) {
 
 void setIOStatus(void){
   if ( onOffValue  == LIGHT_ON ){
-      PORT(ON_OFF_PORT, ON_OFF_PIN)=1;
-      PORT(LED_BLINK_PORT, LED_BLINK_PIN)=1;
-  } else {
       PORT(ON_OFF_PORT, ON_OFF_PIN)=0;
       PORT(LED_BLINK_PORT, LED_BLINK_PIN)=0;
+  } else {
+      PORT(ON_OFF_PORT, ON_OFF_PIN)=1;
+      PORT(LED_BLINK_PORT, LED_BLINK_PIN)=1;
   }
   
   if (connected ){

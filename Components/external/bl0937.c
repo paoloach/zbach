@@ -13,7 +13,11 @@ static uint16 readCF1(void);
 #define COEF_POWER      48.54
 #define COEF_CURRENT    1990.41
 #define COEF_VOLT       86.82
-
+/*
+#define COEF_POWER      1
+#define COEF_CURRENT    1
+#define COEF_VOLT       1
+*/
 
 void BL0937_init(void){
   FUNCTION_SEL(IDENTIFY_PORT,IDENTIFY_PIN)=0;

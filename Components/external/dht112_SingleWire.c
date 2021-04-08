@@ -134,15 +134,15 @@ static enum Status readAction() {
   enum Status ret = internalReadAction();
 #ifdef DISPLAY  
   uint8_t buffer[20];
-  
   setFont(&FreeMono9pt7b);
   
   setCursor(0,27);
-  drawText("Temp: ");
+  clean(0,9,DISPLAY_WIDTH, 50);
+    
   if (ret == ERROR){
     drawText("ERROR");
   } else {
-    clean(0,27,DISPLAY_WIDTH, 80);
+    drawText("Temp: ");
     _itoa(temp/100, buffer, 10);
     drawText((char*)buffer);
     drawText(".");
@@ -156,6 +156,8 @@ static enum Status readAction() {
     _itoa(temp%100, buffer, 10);
     drawText((char*)buffer);
     drawText("%");
+
+ 
   }
   display();
   setFont(&Font5x7Fixed);

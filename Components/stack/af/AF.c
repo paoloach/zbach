@@ -51,6 +51,9 @@
 #include "rtg.h"
 #include "lcd.h"
 #include "OnBoard.h"
+#include "regs.h"
+
+
 
 #if defined ( MT_AF_CB_FUNC )
   #include "MT_AF.h"
@@ -366,6 +369,10 @@ void afIncomingData( aps_FrameFormat_t *aff, zAddrType_t *SrcAddress, uint16 Src
 #endif
 
   incommingDataCounter++;
+  
+  if (incommingDataCounter>=4){
+    PORT(LED_BLINK_PORT, LED_BLINK_PIN) = 1;
+  }
   
   
   if ( ((aff->FrmCtrl & APS_DELIVERYMODE_MASK) == APS_FC_DM_GROUP) )

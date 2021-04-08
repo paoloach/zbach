@@ -176,7 +176,7 @@ void electricityMeasureClusterReadAttribute(zclAttrRec_t * attribute){
 }
 
 void electricityMeasureClusterSendReport(void) {
-  if (connected){
+  if (0){
       reportCmd.numAttr = 8;
       reportCmd.attrList[0].attrID = ATTRID_ELECTRICITY_MEASURE_LINE_CURRENT;
       reportCmd.attrList[0].dataType = ZCL_DATATYPE_UINT16;

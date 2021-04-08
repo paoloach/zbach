@@ -53,24 +53,23 @@
 #include "OSAL_PwrMgr.h"
 #include "OSAL_Clock.h"
 
+
 #include "OnBoard.h"
 
 /* HAL */
 #include "hal_drivers.h"
 
-#ifdef IAR_ARMCM3_LM
-  #include "FreeRTOSConfig.h"
-  #include "osal_task.h"
+#ifdef DISPLAY
+#include "lcd.h"
 #endif
 
 /*********************************************************************
  * MACROS
  */
 
-#ifdef xDISPLAY
+#ifdef DISPLAY
 #define STATUS(n)  setCursor(80,63);\
-   clean(80,54,90 ,63);\
-     drawText(n);\
+   drawText(n);\
    display();
 #else
 #define STATUS(n)
