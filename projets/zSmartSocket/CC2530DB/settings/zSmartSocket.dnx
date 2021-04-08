@@ -82,7 +82,8 @@
         <Bp2>_ "STD_CODE" "{$PROJ_DIR$\..\..\..\Components\stack\zdo\ZDProfile.c}.793.3" 0 0 0 0 "" 0 ""</Bp2>
         <Bp3>_ "STD_CODE" "{$PROJ_DIR$\..\..\..\Components\stack\zdo\ZDApp.c}.1160.9" 0 0 0 0 "" 0 ""</Bp3>
         <Bp4>_ "STD_CODE" "{$PROJ_DIR$\..\..\..\Components\stack\zdo\ZDApp.c}.1004.3" 0 0 0 0 "" 0 ""</Bp4>
-        <Count>5</Count>
+        <Bp5>_ "STD_CODE" "{$PROJ_DIR$\..\..\..\Components\stack\af\AF.c}.373.3" 1 0 0 0 "" 0 ""</Bp5>
+        <Count>6</Count>
     </Breakpoints>
     <ChipconEmu>
         <StopTimersOnHalt>0</StopTimersOnHalt>
