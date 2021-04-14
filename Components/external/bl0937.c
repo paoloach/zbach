@@ -1,9 +1,15 @@
 
+#include <OnBoard.h>
+#include "hal_mcu.h"
+#include "OSAL_Timers.h"
 #include "bl0937.h"
 #include "ElectricityMeasureData.h"
 #include "regs.h"
-#include "hal_mcu.h"
-#include "OSAL_Timers.h"
+
+
+#ifdef DISPLAY
+#include "lcd.h"
+#endif
 
 static void readCFs(void);
 static uint16 readCF(void);
@@ -48,6 +54,7 @@ void BL0937_init(void){
 
                            
 void readCFs(void){
+  uint16 volt;
   apparentPower=readCF();
   activePower =(uint16)(apparentPower/COEF_POWER);
   if (PORT(SEL_PORT,SEL_PIN)==0){
@@ -55,9 +62,27 @@ void readCFs(void){
     RMSCurrent = (uint16)(peakCurrent/COEF_CURRENT );
     PORT(SEL_PORT,SEL_PIN)=1;
   } else {
+    volt = readCF1();
     RMSVolt = (uint16)( readCF1()/COEF_VOLT );
     PORT(SEL_PORT,SEL_PIN)=0;
   }
+#ifdef DISPLAY
+  clean(9,36,DISPLAY_WIDTH, 10);
+  char buffer[10];
+  setCursor(1,18);
+  drawText("apparentPower: ");
+  _itoa(apparentPower, (uint8_t*)buffer, 10);
+  drawText(buffer);
+  setCursor(1,27);
+   drawText("peakCurrent: ");
+  _itoa(peakCurrent, (uint8_t*)buffer, 10);
+  drawText(buffer);
+  setCursor(1,36);
+  drawText("vold: ");
+  _itoa(volt, (uint8_t*)buffer, 10);
+  drawText(buffer);
+#endif
+  
 }
 
 

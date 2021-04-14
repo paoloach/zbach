@@ -132,7 +132,7 @@ static enum Status startDHT12() {
 
 static enum Status readAction() {
   enum Status ret = internalReadAction();
-#ifdef DISPLAY  
+#ifdef xDISPLAY  
   uint8_t buffer[20];
   setFont(&FreeMono9pt7b);
   

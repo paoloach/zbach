@@ -7372,7 +7372,7 @@
                 </option>
                 <option>
                     <name>Compiler Extra Options Edit</name>
-                    <state>-f $PROJ_DIR$\..\Configuration\f8wEndev.cfg</state>
+                    <state>-f $PROJ_DIR$\..\Configuration\f8wRouter.cfg</state>
                     <state>-f $PROJ_DIR$\..\Configuration\f8wConfig.cfg</state>
                     <state>-f $PROJ_DIR$\..\Configuration\f8wZCL.cfg</state>
                     <state>-f $PROJ_DIR$\..\Configuration\pins.cfg</state>
@@ -7975,7 +7975,7 @@
                 </option>
                 <option>
                     <name>Linker Extra Options Edit</name>
-                    <state>-C $PROJ_DIR$\..\..\..\lib\EndDevice-Pro.lib</state>
+                    <state>-C $PROJ_DIR$\..\..\..\lib\Router-Pro.lib</state>
                     <state>-C $PROJ_DIR$\..\..\..\lib\Security.lib</state>
                     <state>-C $PROJ_DIR$\..\..\..\lib\TIMAC-CC2530.lib</state>
                 </option>

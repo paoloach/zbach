@@ -17,13 +17,10 @@
 #include "nwk.h"
 #include "ZDApp.h"
 #include "DebugTrace.h"
-
 #include "zcl.h"
 #include "zcl_general.h"
 #include "zcl_ha.h"
-
 #include "zSmartSocket.h"
-
 #include "onboard.h"
 
 #include "clusters/ClusterIdentify.h"
@@ -31,10 +28,14 @@
 #include "clusters/ClusterOnOff.h"
 #include "clusters/ClusterPower.h"
 #include "clusters/ClusterElectricityMeasure.h"
-
+#include "EventManager.h"
 #include "ledBlink.h"
 #include "Events.h"	  
 #include "bl0937.h"
+
+#ifdef DISPLAY
+#include "lcd.h"
+#endif
 
 void User_Process_Pool(void);
 	 
@@ -46,22 +47,29 @@ static void processIncomingMsh( zclIncomingMsg_t *msg );
 static uint8 processInReadRspCmd( zclIncomingMsg_t *pInMsg );
 static uint8 processInWriteRspCmd( zclIncomingMsg_t *pInMsg );
 static uint8 processInDefaultRspCmd( zclIncomingMsg_t *pInMsg );
+static void sysEvent(uint16 events);
+static void newStatus(void);
 			   
 #ifdef ZCL_DISCOVER
 static uint8 processInDiscRspCmd( zclIncomingMsg_t *pInMsg );
 #endif
 static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg );
-
+static void ZDOStateChange(devStates_t newState);
 static void initReport(void);
+
+
 uint8 reportSeqNum;
 afAddrType_t reportDstAddr;
 uint8  reportEndpoint;
+
+static const char * strStatus=NULL;;
+devStates_t prevState;
 
 uint8 connected=false;
 
 void zSmartSocketInit( byte task_id ){
   zProxSensorTaskID = task_id;
-
+  eventManagerInit();
   zcl_registerPlugin( ZCL_CLUSTER_ID_GEN_BASIC,  ZCL_CLUSTER_ID_GEN_MULTISTATE_VALUE_BASIC,    handleClusterCommands );
 
   zclHA_Init( &temperatureSimpleDesc );
@@ -88,6 +96,7 @@ void zSmartSocketInit( byte task_id ){
 #ifdef BL0937
   BL0937_init();
 #endif
+  addEventCB(SYS_EVENT_MSG_BIT,sysEvent);
 
 }
 
@@ -97,6 +106,71 @@ static void initReport(void){
   reportDstAddr.endPoint = ENDPOINT;
   reportDstAddr.addr.shortAddr = 0;
   reportDstAddr.panId=_NIB.nodeDepth;
+}
+
+
+
+
+void sysEvent(uint16 events){
+  afIncomingMSGPacket_t *MSGpkt;
+
+  while (true)  {
+    MSGpkt = (afIncomingMSGPacket_t *)osal_msg_receive( zProxSensorTaskID ); 
+    if (MSGpkt == NULL){
+      return;
+    }
+    switch ( MSGpkt->hdr.event ) {
+      case ZCL_INCOMING_MSG:
+        // Incoming ZCL Foundation command/response messages
+        processIncomingMsh( (zclIncomingMsg_t *)MSGpkt );
+      break;
+      case ZDO_STATE_CHANGE:
+        ZDOStateChange((devStates_t)(MSGpkt->hdr.status));
+        break;
+      default:
+      break;
+    }
+    osal_msg_deallocate( (uint8 *)MSGpkt );
+  }
+
+}
+
+void ZDOStateChange(devStates_t newState){
+  if(prevState !=   newState){
+    switch(newState){
+      case DEV_NWK_DISC:
+        strStatus = "DISCOVERING";
+        break;
+      case DEV_NWK_JOINING:
+        strStatus = "JOINING";
+        break;
+      case DEV_NWK_REJOIN:
+        strStatus = "REJOIN";
+        break;
+      case DEV_END_DEVICE_UNAUTH:
+        strStatus = "END_DEVICE_UNAUTH";
+        break;
+      case DEV_END_DEVICE:
+        strStatus = "CONNECTED: ";
+        initReport();
+        break;
+      case DEV_ROUTER:
+        strStatus = "CONNECTED AS ROUTER";
+        initReport();
+        break;
+      case DEV_COORD_STARTING:
+        strStatus = "CONNECTED AS COORDINATOR";
+        break;
+      case DEV_ZB_COORD:
+        strStatus="COORDINATOR";
+        break;
+      case DEV_NWK_ORPHAN:
+        strStatus="ORPHAN";
+        break;
+      }
+  prevState = newState;
+  osal_start_timerEx_cb(1000, newStatus);
+  }
 }
 
 /*********************************************************************
@@ -109,69 +183,25 @@ static void initReport(void){
  * @return      none
  */
 uint16 zSmartSocketEventLoop( uint8 task_id, uint16 events ){
-	afIncomingMSGPacket_t *MSGpkt;
-	devStates_t zclSampleSw_NwkState;
-  
-	(void)task_id;  // Intentionally unreferenced parameter
-	if ( events & SYS_EVENT_MSG ){
-		while ( (MSGpkt = (afIncomingMSGPacket_t *)osal_msg_receive( zProxSensorTaskID )) )  {
-			switch ( MSGpkt->hdr.event ) {
-				case ZCL_INCOMING_MSG:
-                                  // Incoming ZCL Foundation command/response messages
-                                  processIncomingMsh( (zclIncomingMsg_t *)MSGpkt );
-                                  break;
-				case ZDO_STATE_CHANGE:
-                                  zclSampleSw_NwkState = (devStates_t)(MSGpkt->hdr.status);
-                                    
-                                  switch(zclSampleSw_NwkState){
-                                  case DEV_NWK_DISC:
-                                    setBlinkCounter(0);
-                                    connected=false;
-                                    break;
-                                  case DEV_NWK_JOINING:
-                                    setBlinkCounter(1);
-                                    connected=false;
-                                    break;
-                                  case DEV_NWK_REJOIN:
-                                    setBlinkCounter(2);
-                                    connected=false;
-                                    break;
-                                  case DEV_END_DEVICE_UNAUTH:
-                                    setBlinkCounter(3);
-                                    connected=false;
-                                    break;
-                                  case DEV_END_DEVICE:
-                                    blinkLedEnd();
-                                    initReport();
-                                    connected=true;
-                                    break;
-                                  case DEV_ROUTER:
-                                    setBlinkCounter(5);
-                                    connected=true;
-                                    break;
-                                  case DEV_COORD_STARTING:
-                                    setBlinkCounter(6);
-                                    break;
-                                  case DEV_ZB_COORD:
-                                    setBlinkCounter(7);
-                                    break;
-                                  case DEV_NWK_ORPHAN:
-                                    setBlinkCounter(8);
-                                    connected=false;
-                                    break;
-                                  }
-                                  break;
-                                default:
-                                  break;
-      		}
-
-        osal_msg_deallocate( (uint8 *)MSGpkt );
-    	}
-
-    	return (events ^ SYS_EVENT_MSG);
-	}
-	
+  handleEvent(&events);
   return 0;
+}
+
+static void newStatus(void) {
+#ifdef DISPLAY 
+    
+    clean(0,0,DISPLAY_WIDTH, 10);
+    char buffer[10];
+    setCursor(1,9);
+    drawText(strStatus);
+    if (prevState == DEV_END_DEVICE || prevState == DEV_ROUTER ){
+        _itoa(_NIB.nwkDevAddress, (uint8_t*)buffer, 16);
+        drawText(buffer);
+    }
+    
+    display();  
+#endif  
+
 }
 
 /*********************************************************************

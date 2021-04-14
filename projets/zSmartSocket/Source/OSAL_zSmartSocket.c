@@ -23,6 +23,10 @@
   #include "aps_frag.h"
 #endif
 
+#ifdef DISPLAY
+#include "lcd.h"
+#endif
+
 #include "zSmartSocket.h"
 
 /*********************************************************************
@@ -66,6 +70,13 @@ void osalInitTasks( void )
 {
   uint8 taskID = 0;
 
+  
+ #ifdef DISPLAY  
+  initLcd();
+  
+#endif 
+  
+  
   tasksEvents = (uint16 *)osal_mem_alloc( sizeof( uint16 ) * tasksCnt);
   osal_memset( tasksEvents, 0, (sizeof( uint16 ) * tasksCnt));
 

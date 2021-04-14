@@ -45,6 +45,8 @@
 #ifdef DISPLAY
 #include "lcd.h"
 #endif
+
+#include "ZDiags.h"
 	  
 
 void User_Process_Pool(void);
@@ -74,6 +76,7 @@ afAddrType_t reportDstAddr;
 uint8  reportEndpoint;
 devStates_t prevState;
 
+static void updateDiag(void);
 
 
 void temperatureSensorInit( byte task_id ){
@@ -111,7 +114,32 @@ void temperatureSensorInit( byte task_id ){
   DS18B20_init(temperatureSensorTaskID);
 #endif
   addEventCB(SYS_EVENT_MSG_BIT,sysEvent);
-  
+ osal_start_timerEx_cb(2000, &updateDiag );
+ ZDiagsInitStats();
+ 
+}
+
+
+static void updateDiag(void) {
+  DiagStatistics_t * table = ZDiagsGetStatsTable();
+  clean(9,54,DISPLAY_WIDTH, 10);
+  char buffer[10];
+  setCursor(1,18);
+  drawText("aps DescrypFail: ");
+  _itoa(table->ApsDecryptFailures, (uint8_t*)buffer, 16);
+  drawText(buffer);
+  setCursor(1,27);
+  drawText("nwk DescrypFail: ");
+  _itoa(table->NwkDecryptFailures, (uint8_t*)buffer, 16);
+  drawText(buffer);
+  setCursor(1,36);
+  drawText("nwk pktValDrop: ");
+  _itoa(table->PacketValidateDropCount, (uint8_t*)buffer, 16);
+  drawText(buffer);
+    setCursor(1,45);
+  drawText("aps invalidPkt: ");
+  _itoa(table->ApsInvalidPackets, (uint8_t*)buffer, 16);
+  drawText(buffer);
 }
 
 
