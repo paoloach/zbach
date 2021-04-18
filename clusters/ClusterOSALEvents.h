@@ -11,6 +11,8 @@
 
 #define NEW_HUMIDITY_BIT         1
 #define NEW_TEMP_BIT             2
+#define NEW_POWER_BIT            3
+
 
 #define SWITCH1_UP_EVT_BIT        4
 #define SWITCH1_DOWN_EVT_BIT      5

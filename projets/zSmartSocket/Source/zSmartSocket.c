@@ -94,7 +94,7 @@ void zSmartSocketInit( byte task_id ){
   blinkLedstart();
   onOffInit();
 #ifdef BL0937
-  BL0937_init();
+  BL0937_init(task_id);
 #endif
   addEventCB(SYS_EVENT_MSG_BIT,sysEvent);
 

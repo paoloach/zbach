@@ -15,8 +15,11 @@
 #include "ClusterElectricityMeasure.h"
 #include "ElectricityMeasureData.h"
 #include "report.h"
+#include "ClusterOSALEvents.h"
+#include "EventManager.h"
 
 static void electricityMeasureClusterSendReport(void);	
+static void newPowerValue(uint16_t events);
 
 extern uint8 connected;
 
@@ -26,10 +29,12 @@ static uint16 frequencyMult=1;
 static uint16 frequencyDiv=1;
 static uint32 powerMult=1;
 static uint32 powerDivisor=1;
+uint16 prevRMSCurrent;
 uint16 istantaneusCurrent;
 uint16 RMSVolt;
 uint16 RMSCurrent;
 uint16 peakCurrent;
+int16 prevActivePower;
 int16 activePower;
 int16 istantaneusReactivePower;
 uint16 apparentPower;
@@ -69,12 +74,13 @@ static uint16 averageRmsVolrPeriod;
 static zclReportCmd8_t reportCmd;
 
 #ifndef ELECTRICTY_MEASURE_REPORT_TIME
- #define ELECTRICTY_MEASURE_REPORT_TIME 10
+ #define ELECTRICTY_MEASURE_REPORT_TIME 60
 #endif
 
 
 void electricityMeasureClusterReadAttributeInit(void){
    osal_start_reload_timer_cb((uint32)ELECTRICTY_MEASURE_REPORT_TIME*1000, &electricityMeasureClusterSendReport); 
+   addEventCB(NEW_POWER_BIT, &newPowerValue);
 }
 
 
@@ -211,4 +217,13 @@ void electricityMeasureClusterSendReport(void) {
     
   }
 
+}
+
+static void newPowerValue(uint16_t events) {
+  if (prevActivePower != activePower || prevRMSCurrent != RMSCurrent){
+    prevActivePower = activePower;
+    prevRMSCurrent = RMSCurrent;
+    electricityMeasureClusterSendReport();
+      
+  }
 }
