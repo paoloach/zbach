@@ -58,6 +58,8 @@ typedef unsigned short  uint16_t;
 
 typedef signed   long   int32;
 typedef unsigned long   uint32;
+typedef unsigned long   uint32_t;
+
 
 typedef unsigned char   bool;
 

@@ -66,7 +66,7 @@ static uint16 acVoltDiv=0x4000;
   
 */
 static uint16 acCurrentMult=1;
-static uint16 acCurrentDiv=1;
+static uint16 acCurrentDiv=1000;
 static uint16 acPowerMult=1;
 static uint16 acPowerDiv=1;
 
@@ -220,10 +220,10 @@ void electricityMeasureClusterSendReport(void) {
 }
 
 static void newPowerValue(uint16_t events) {
-  if (prevActivePower != activePower || prevRMSCurrent != RMSCurrent){
+ // if (prevActivePower != activePower || prevRMSCurrent != RMSCurrent){
     prevActivePower = activePower;
     prevRMSCurrent = RMSCurrent;
     electricityMeasureClusterSendReport();
       
-  }
+  //}
 }

@@ -5,6 +5,17 @@
 #include "ioCC2530.h"
 
 
+struct Byte2reg {
+  uint8_t low;
+  uint8_t high;
+};
+
+union Reg16 {
+  uint16_t value;
+  struct Byte2reg reg;
+};
+
+
 __sfr __no_init volatile union {
 	struct {
 		unsigned char T1_mode: 2;
@@ -34,6 +45,8 @@ __sfr __no_init volatile union {
 	};
 } @ 0xE5;
 
+
+
 __sfr __no_init volatile union {
 	struct {
 		unsigned char T1_CH1_CAP: 2;
@@ -44,6 +57,37 @@ __sfr __no_init volatile union {
 	};
 } @ 0xE6;
 
+__sfr __no_init volatile union {
+	struct {
+		unsigned char T1_CH2_CAP: 2;
+		unsigned char T1_CH2_MODE: 1;
+                unsigned char T1_CH2_CMP: 3;
+                unsigned char T1_CH2_IM: 1;
+                unsigned char T1_CH2_RFIRQ: 1;
+	};
+} @ 0xE7;
+
+__sfr __no_init volatile union {
+	struct {
+		unsigned char T1_CH3_CAP: 2;
+		unsigned char T1_CH3_MODE: 1;
+                unsigned char T1_CH3_CMP: 3;
+                unsigned char T1_CH3_IM: 1;
+                unsigned char T1_CH3_RFIRQ: 1;
+	};
+} @ 0xE8;
+                
+__sfr __no_init volatile union {
+	struct {
+		unsigned char T1_CH4_CAP: 2;
+		unsigned char T1_CH4_MODE: 1;
+                unsigned char T1_CH4_CMP: 3;
+                unsigned char T1_CH4_IM: 1;
+                unsigned char T1_CH4_RFIRQ: 1;
+	};
+} @ 0xE9;
+  
+          
 __sfr __no_init volatile union {
 	struct {
 		unsigned char T2_CH2_CAP: 2;

@@ -41,8 +41,7 @@
         <Bp2>_ "STD_CODE" "{$PROJ_DIR$\..\..\..\Components\external\lcd-SSD1306.c}.297.15" 0 0 0 0 "" 0 ""</Bp2>
         <Bp3>_ "STD_CODE" "{$PROJ_DIR$\..\..\..\Components\stack\zdo\ZDApp.c}.1460.9" 0 0 0 0 "" 0 ""</Bp3>
         <Bp4>_ "STD_CODE" "{$PROJ_DIR$\..\Source\OSAL_TemperatureSensor.c}.81.3" 1 0 0 0 "" 0 ""</Bp4>
-        <Bp5>_ "STD_CODE" "{$PROJ_DIR$\..\..\..\Components\external\lcd-SSD1306.c}.114.3" 1 0 0 0 "" 0 ""</Bp5>
-        <Count>6</Count>
+        <Count>5</Count>
     </Breakpoints>
     <ChipconEmu>
         <StopTimersOnHalt>0</StopTimersOnHalt>
