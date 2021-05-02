@@ -32,6 +32,7 @@
 #include "ledBlink.h"
 #include "Events.h"	  
 #include "bl0937.h"
+#include "clusters/ClusterOSALEvents.h"
 
 #ifdef DISPLAY
 #include "lcd.h"
@@ -106,6 +107,8 @@ static void initReport(void){
   reportDstAddr.endPoint = ENDPOINT;
   reportDstAddr.addr.shortAddr = 0;
   reportDstAddr.panId=_NIB.nodeDepth;
+  osal_set_event_bit( zProxSensorTaskID,  CONNECTED_BIT );
+  
 }
 
 

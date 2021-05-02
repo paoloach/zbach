@@ -67,7 +67,7 @@
  * MACROS
  */
 
-#ifdef DISPLAY
+#ifdef __DISPLAY
 #define STATUS(n)  setCursor(80,63);\
    drawText(n);\
    display();

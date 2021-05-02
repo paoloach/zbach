@@ -36,11 +36,6 @@ static uint8_t taskId;
 #define COEF_POWER      522250.0
 #define COEF_CURRENT    1270000.0
 #define COEF_VOLT       1322.0*220
-/*
-#define COEF_POWER      1
-#define COEF_CURRENT    1
-#define COEF_VOLT       1
-*/
 
 
 

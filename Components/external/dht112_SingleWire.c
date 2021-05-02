@@ -132,12 +132,12 @@ static enum Status startDHT12() {
 
 static enum Status readAction() {
   enum Status ret = internalReadAction();
-#ifdef xDISPLAY  
+#ifdef DISPLAY  
   uint8_t buffer[20];
   setFont(&FreeMono9pt7b);
   
   setCursor(0,27);
-  clean(0,9,DISPLAY_WIDTH, 50);
+  clean(0,9,displayWidth, 50);
     
   if (ret == ERROR){
     drawText("ERROR");

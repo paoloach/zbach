@@ -11393,6 +11393,9 @@
             <name>$PROJ_DIR$\..\Configuration\params.cfg</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\Configuration\pins-lavanderia.cfg</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\Configuration\pins-testdisplay.cfg</name>
         </file>
         <file>

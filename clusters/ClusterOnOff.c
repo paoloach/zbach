@@ -22,11 +22,8 @@ extern uint8 connected;
 static uint8  onOffValue = LIGHT_ON;
 static uint16 onTime=0;
 static zclReportCmd2_t reportCmd;
-static uint16 remainingSec=REPORT_POLL_TIME_SEC;
 
 
-static void eventReport(void);
-static void setTimer(void);
 
 static void setIOStatus(void);
 void onOffClusterSendReport(void);
@@ -36,7 +33,8 @@ void onOffInit(void) {
   DIR(ON_OFF_PORT, ON_OFF_PIN)=1;
   FUNCTION_SEL(ON_OFF_PORT,   ON_OFF_PIN)=0;
   PORT(ON_OFF_PORT, ON_OFF_PIN)=0;
-  setTimer();
+  osal_start_reload_timer_cb(REPORT_POLL_TIME_SEC*1000, &onOffClusterSendReport );
+  addEventCB(NEW_POWER_BIT, &onOffClusterSendReport);
 }
 
 void onOffClusterReadAttribute(zclAttrRec_t * attribute) {
@@ -120,28 +118,6 @@ ZStatus_t processOnOffClusterServerCommands(zclIncoming_t *pInMsg) {
 	}
 	setIOStatus();
 	return ZSuccess;
-}
-
-static void setTimer(void) {
-  
-  uint16 nextReportEventSec;
-  if (remainingSec==0){
-    remainingSec = REPORT_POLL_TIME_SEC;
-  }
-  if (remainingSec > MAX_TIMEOUT_SEC){
-    nextReportEventSec = MAX_TIMEOUT_SEC;
-  } else {
-    nextReportEventSec = remainingSec;
-  }
-  remainingSec -= nextReportEventSec;
-  osal_start_timerEx_cb(nextReportEventSec*1000, &eventReport );
-}
-
-static void eventReport(void) {
-  if (remainingSec == 0){
-    onOffClusterSendReport();
-  }
-  setTimer();
 }
 
 

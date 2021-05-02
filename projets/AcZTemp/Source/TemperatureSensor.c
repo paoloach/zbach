@@ -114,32 +114,8 @@ void temperatureSensorInit( byte task_id ){
   DS18B20_init(temperatureSensorTaskID);
 #endif
   addEventCB(SYS_EVENT_MSG_BIT,sysEvent);
- osal_start_timerEx_cb(2000, &updateDiag );
  ZDiagsInitStats();
  
-}
-
-
-static void updateDiag(void) {
-  DiagStatistics_t * table = ZDiagsGetStatsTable();
-  clean(9,54,DISPLAY_WIDTH, 10);
-  char buffer[10];
-  setCursor(1,18);
-  drawText("aps DescrypFail: ");
-  _itoa(table->ApsDecryptFailures, (uint8_t*)buffer, 16);
-  drawText(buffer);
-  setCursor(1,27);
-  drawText("nwk DescrypFail: ");
-  _itoa(table->NwkDecryptFailures, (uint8_t*)buffer, 16);
-  drawText(buffer);
-  setCursor(1,36);
-  drawText("nwk pktValDrop: ");
-  _itoa(table->PacketValidateDropCount, (uint8_t*)buffer, 16);
-  drawText(buffer);
-    setCursor(1,45);
-  drawText("aps invalidPkt: ");
-  _itoa(table->ApsInvalidPackets, (uint8_t*)buffer, 16);
-  drawText(buffer);
 }
 
 
@@ -216,7 +192,7 @@ void ZDOStateChange(devStates_t newState){
 static void newStatus(void) {
 #ifdef DISPLAY 
     
-    clean(0,0,DISPLAY_WIDTH, 10);
+    clean(0,0,displayWidth, 10);
     char buffer[10];
     setCursor(1,9);
     drawText(strStatus);

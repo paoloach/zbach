@@ -3,8 +3,6 @@
 
 #include "font.h"
 
-#define DISPLAY_HEIGHT 64
-#define DISPLAY_WIDTH 128
 
 void initLcd(void);
 void display(void);
@@ -17,5 +15,8 @@ void clean(uint8_t startX, uint8_t startY,uint8_t endX, uint8_t endY);
 void setRotation(uint8_t m);
 uint8_t getXCursor(void);
 uint8_t getYCursor(void);
+
+extern uint8 displayHeight;
+extern uint8 displayWidth;
 
 #endif

@@ -63,7 +63,8 @@
 #define SSD1306_SET_VERTICAL_SCROLL_AREA 0xA3             ///< Set scroll range
 
 
-
+#define DISPLAY_HEIGHT 64
+#define DISPLAY_WIDTH 128
 
 #define BUFFER_SIZE DISPLAY_HEIGHT*DISPLAY_WIDTH/8
 
@@ -79,9 +80,10 @@ static uint8_t  lastMinY;
 static uint8_t  lastMaxX;
 static uint8_t  lastMaxY;
 
+uint8 displayHeight=DISPLAY_HEIGHT;
+uint8 displayWidth=DISPLAY_WIDTH;
 
-
-static uint8 * buffer;
+static uint8  buffer[BUFFER_SIZE];
 static const GFXfont * font;
 
 static uint8 displayOnCmd[] ={
@@ -112,7 +114,6 @@ SSD1306_PAGEADDR, 0, 7,
 
 void initLcd() {
   initI2c();
-  buffer = osal_mem_alloc(BUFFER_SIZE);
   osal_memset(buffer, 0xff, BUFFER_SIZE);
   displayOn();
   setFont(&Font5x7Fixed);
@@ -292,7 +293,7 @@ void clean(uint8_t startX, uint8_t startY,uint8_t endX, uint8_t endY){
   uint8_t * bufferIter;
   uint8_t bitWrite;
   
-  
+  uint8_t * bufferEnd = buffer + BUFFER_SIZE;
   
   for (int8_t y=startY; y >= endY; y--){
     bufferIter = buffer + startX + DISPLAY_WIDTH*(y/8);
@@ -300,6 +301,9 @@ void clean(uint8_t startX, uint8_t startY,uint8_t endX, uint8_t endY){
     for(int8_t x=startX; x >= endX; x--){
       *bufferIter |= bitWrite;
       bufferIter--;
+      if (bufferIter >= bufferEnd){
+        bufferIter = bufferEnd-1;
+      }
     }
   }
 }
