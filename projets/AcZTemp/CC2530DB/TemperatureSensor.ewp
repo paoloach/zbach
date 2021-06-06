@@ -2608,7 +2608,7 @@
                 </option>
                 <option>
                     <name>OGChipConfigPath</name>
-                    <state>$TOOLKIT_DIR$\config\devices\Texas Instruments\CC2530F256.i51</state>
+                    <state>C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\8051\bin\..\config\devices\Texas Instruments\CC25xx\3x\CC2530F256.i51</state>
                 </option>
             </data>
         </settings>
@@ -2634,31 +2634,7 @@
                 </option>
                 <option>
                     <name>CCDefines</name>
-                    <state>HAL_LED=1</state>
-                    <state>DHT12=1</state>
-                    <state>SECURE=1</state>
-                    <state>OSC32K_CRYSTAL_INSTALLED=FALSE</state>
-                    <state>HAL_KEY=FALSE</state>
-                    <state>HAL_BOARD_CC2530EB_REV17</state>
-                    <state>HAL_PA_LNA_CC2592</state>
-                    <state>TC_LINKKEY_JOIN</state>
-                    <state>NV_INIT</state>
-                    <state>NV_RESTORE</state>
-                    <state>xPOWER_SAVING</state>
-                    <state>NWK_AUTO_POLL</state>
-                    <state>MULTICAST_ENABLED=FALSE</state>
-                    <state>ZCL_READ</state>
-                    <state>ZCL_WRITE</state>
-                    <state>ZCL_REPORT</state>
-                    <state>zZCL_EZMODE</state>
-                    <state>xZCL_BASIC</state>
-                    <state>xZCL_IDENTIFY</state>
-                    <state>xZCL_ON_OFF</state>
-                    <state>xZCL_SCENES</state>
-                    <state>xZCL_GROUPS</state>
-                    <state>xxZCL_LEVEL_CTRL</state>
-                    <state>xZCL_DIAGNOSTIC</state>
-                    <state>xFEATURE_SYSTEM_STATS</state>
+                    <state></state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -2814,9 +2790,11 @@
                 </option>
                 <option>
                     <name>Compiler Extra Options Edit</name>
-                    <state>-f $PROJ_DIR$\..\..\..\Tools\f8wEndev.cfg</state>
-                    <state>-f $PROJ_DIR$\..\..\..\Tools\f8wConfig.cfg</state>
-                    <state>-f $PROJ_DIR$\..\..\..\Tools\f8wZCL.cfg</state>
+                    <state>-f $PROJ_DIR$\..\Configuration\f8wEndev.cfg</state>
+                    <state>-f $PROJ_DIR$\..\Configuration\f8wConfig.cfg</state>
+                    <state>-f $PROJ_DIR$\..\Configuration\f8wZCL.cfg</state>
+                    <state>-f $PROJ_DIR$\..\Configuration\pins-lavanderia.cfg</state>
+                    <state>-f $PROJ_DIR$\..\Configuration\params-PA-DHT12.cfg</state>
                 </option>
                 <option>
                     <name>CCIncludePath2</name>
@@ -8951,6 +8929,7 @@
         <file>
             <name>$PROJ_DIR$\..\..\..\Components\external\ILI9163.c</name>
             <excluded>
+                <configuration>EndDevicePA</configuration>
                 <configuration>Lavanderia</configuration>
                 <configuration>LavanderiaRouter</configuration>
             </excluded>
@@ -9171,6 +9150,7 @@
             <excluded>
                 <configuration>RouterEB</configuration>
                 <configuration>EndDeviceEB</configuration>
+                <configuration>EndDevicePA</configuration>
                 <configuration>Lavanderia</configuration>
                 <configuration>TestDisplay</configuration>
                 <configuration>LavanderiaRouter</configuration>
@@ -11388,6 +11368,9 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\Configuration\params-DS18B20.cfg</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Configuration\params-PA-DHT12.cfg</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\Configuration\params.cfg</name>

@@ -120,6 +120,8 @@ void temperatureSensorInit( byte task_id ){
 
 
 static void initReport(void){
+  reportEndpoint = ENDPOINT;
+  
   reportDstAddr.addrMode = afAddr16Bit;
   reportDstAddr.endPoint = ENDPOINT;
   reportDstAddr.addr.shortAddr = 0;
@@ -168,6 +170,7 @@ void ZDOStateChange(devStates_t newState){
         break;
       case DEV_END_DEVICE:
         strStatus = "CONNECTED: ";
+        blinkLedEnd();
         initReport();
         break;
       case DEV_ROUTER:

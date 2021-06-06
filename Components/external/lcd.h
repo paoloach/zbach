@@ -3,8 +3,10 @@
 
 #include "font.h"
 
-
 void initLcd(void);
+void displayOn(void);
+void displayOff(void);
+
 void display(void);
 
 void setCursor(uint8_t x, uint8_t y);

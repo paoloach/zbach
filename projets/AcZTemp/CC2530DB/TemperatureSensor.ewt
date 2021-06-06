@@ -8363,6 +8363,9 @@
             <name>$PROJ_DIR$\..\Configuration\params-DS18B20.cfg</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\Configuration\params-PA-DHT12.cfg</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\Configuration\params.cfg</name>
         </file>
         <file>

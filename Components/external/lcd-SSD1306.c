@@ -68,7 +68,7 @@
 
 #define BUFFER_SIZE DISPLAY_HEIGHT*DISPLAY_WIDTH/8
 
-static void displayOn(void);
+static void displayInit(void);
 static void sendCmds(uint8 * cmds, uint8 len);
 
 static uint8_t   pow2[8] = {0x01, 0x02,0x04,0x08,0x10,0x20,0x40,0x80};
@@ -86,7 +86,7 @@ uint8 displayWidth=DISPLAY_WIDTH;
 static uint8  buffer[BUFFER_SIZE];
 static const GFXfont * font;
 
-static uint8 displayOnCmd[] ={
+static uint8 displayInitCmd[] ={
 SSD1306_DISPLAYOFF,
 SSD1306_SETDISPLAYCLOCKDIV, 0xF0,
 SSD1306_SETMULTIPLEX, DISPLAY_HEIGHT-1,
@@ -106,23 +106,36 @@ SSD1306_DEACTIVATE_SCROLL,
 SSD1306_DISPLAYON,
 SSD1306_COLUMNADDR, 0, DISPLAY_WIDTH-1,
 SSD1306_PAGEADDR, 0, 7,
-
 };
 
 
+static uint8 displayOnCmd[] ={
+  SSD1306_DISPLAYON
+};
 
+static uint8 displayOffCmd[] ={
+  SSD1306_DISPLAYOFF
+};
 
 void initLcd() {
   initI2c();
   osal_memset(buffer, 0xff, BUFFER_SIZE);
-  displayOn();
+  displayInit();
   setFont(&Font5x7Fixed);
   clean(0,0,DISPLAY_WIDTH, DISPLAY_HEIGHT);
   display();
  }
 
-static void displayOn(void){
+void displayOn(void) {
   sendCmds(displayOnCmd, sizeof(displayOnCmd));
+}
+void displayOff(void){
+  sendCmds(displayOffCmd, sizeof(displayOffCmd));
+}
+
+
+static void displayInit(void){
+  sendCmds(displayInitCmd, sizeof(displayInitCmd));
  
 }
 

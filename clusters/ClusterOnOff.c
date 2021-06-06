@@ -13,6 +13,10 @@
 #include "onboard.h"
 #include "regs.h"    
 #include "report.h"
+#include "EventManager.h"
+#ifdef DISPLAY
+#include "lcd.h"
+#endif
 
 #define MAX_TIMEOUT_SEC 30
 #define REPORT_POLL_TIME_SEC 300
@@ -26,15 +30,21 @@ static zclReportCmd2_t reportCmd;
 
 
 static void setIOStatus(void);
-void onOffClusterSendReport(void);
+static void onOffClusterSendReport(void);
+static void onOffClusterStart(uint16_t);
 
 
 void onOffInit(void) {
   DIR(ON_OFF_PORT, ON_OFF_PIN)=1;
   FUNCTION_SEL(ON_OFF_PORT,   ON_OFF_PIN)=0;
   PORT(ON_OFF_PORT, ON_OFF_PIN)=0;
-  osal_start_reload_timer_cb(REPORT_POLL_TIME_SEC*1000, &onOffClusterSendReport );
-  addEventCB(NEW_POWER_BIT, &onOffClusterSendReport);
+  osal_start_reload_timer_cb((uint32_t)REPORT_POLL_TIME_SEC*1000, &onOffClusterSendReport );
+  addEventCB(NEW_POWER_BIT, &onOffClusterStart);
+}
+
+
+void onOffClusterStart(uint16_t events) {
+  onOffClusterSendReport();
 }
 
 void onOffClusterReadAttribute(zclAttrRec_t * attribute) {
@@ -82,9 +92,16 @@ void setIOStatus(void){
   if ( onOffValue  == LIGHT_ON ){
       PORT(ON_OFF_PORT, ON_OFF_PIN)=0;
       PORT(LED_BLINK_PORT, LED_BLINK_PIN)=0;
+#ifdef DISPLAY
+      displayOn();
+#endif
   } else {
       PORT(ON_OFF_PORT, ON_OFF_PIN)=1;
       PORT(LED_BLINK_PORT, LED_BLINK_PIN)=1;
+#ifdef DISPLAY
+      displayOff();
+#endif
+
   }
   
   if (connected ){

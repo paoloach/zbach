@@ -143,22 +143,28 @@ void ZDOStateChange(devStates_t newState){
     switch(newState){
       case DEV_NWK_DISC:
         strStatus = "DISCOVERING";
+        connected=false;
         break;
       case DEV_NWK_JOINING:
         strStatus = "JOINING";
+        connected=false;
         break;
       case DEV_NWK_REJOIN:
         strStatus = "REJOIN";
+        connected=false;
         break;
       case DEV_END_DEVICE_UNAUTH:
         strStatus = "END_DEVICE_UNAUTH";
+        connected=false;
         break;
       case DEV_END_DEVICE:
         strStatus = "CONNECTED: ";
+        connected=true;
         initReport();
         break;
       case DEV_ROUTER:
         strStatus = "CONNECTED AS ROUTER";
+        connected=true;
         initReport();
         break;
       case DEV_COORD_STARTING:
@@ -169,6 +175,7 @@ void ZDOStateChange(devStates_t newState){
         break;
       case DEV_NWK_ORPHAN:
         strStatus="ORPHAN";
+        connected=false;
         break;
       }
   prevState = newState;
@@ -193,7 +200,7 @@ uint16 zSmartSocketEventLoop( uint8 task_id, uint16 events ){
 static void newStatus(void) {
 #ifdef DISPLAY 
     
-    clean(0,0,DISPLAY_WIDTH, 10);
+    clean(0,0,displayWidth, 10);
     char buffer[10];
     setCursor(1,9);
     drawText(strStatus);

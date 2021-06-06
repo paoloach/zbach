@@ -112,7 +112,7 @@ void readCFs(void) {
 #ifdef DISPLAY  
   setFont(&FreeMono9pt7b);
   char buffer[10];
-  clean(0,9,DISPLAY_WIDTH, 27);
+  clean(0,9,displayWidth, 27);
   setCursor(1,27);
   _itoa(activePower, (uint8_t*)buffer, 10);
   drawText(buffer);
@@ -135,7 +135,7 @@ void readCFs(void) {
   RMSVolt = 0;
 #ifdef DISPLAY  
   setFont(&FreeMono9pt7b);
-  clean(0,27,DISPLAY_WIDTH, 45);
+  clean(0,27,displayWidth, 45);
   setCursor(1,45);
   _itoa(RMSCurrent/1000, (uint8_t*)buffer, 10);
   drawText(buffer);
