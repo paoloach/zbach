@@ -45,8 +45,8 @@ void blinkLedEnd(){
   osal_stop_timerEx_cb( &blinkLedAction);
   lifeSignal=1;
   osal_start_reload_timer_cb(2000, &blinkLedAction );      
-  PORT(LED_BLINK_PORT, LED_BLINK_PIN) = 1;
-  stop=0;
+  PORT(LED_BLINK_PORT, LED_BLINK_PIN) = 0;
+  stop=1;
   
 }
 

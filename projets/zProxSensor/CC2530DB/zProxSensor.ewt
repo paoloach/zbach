@@ -3304,7 +3304,7 @@
             <name>$PROJ_DIR$\settings\f8wZCL.cfg</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\settings\pin.cfg</name>
+            <name>$PROJ_DIR$\settings\pins.cfg</name>
         </file>
         <file>
             <name>$PROJ_DIR$\settings\zProxySensor.cfg</name>

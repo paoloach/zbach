@@ -1,34 +1,10 @@
 #include "onboard.h"
 #include "OSAL_Timers.h"
-
+#include "regs.h"
 #include "ClusterOSALEvents.h"
+#include "EventManager.h"
 
 #include "ledBlink.h"
-#include "regs.h"
-
-__sfr __no_init volatile struct  {
-	unsigned char DIR0_0: 1;
-	unsigned char DIR0_1: 1;
-	unsigned char DIR0_2: 1;
-	unsigned char DIR0_3: 1;
-	unsigned char DIR0_4: 1;
-	unsigned char DIR0_5: 1;
-	unsigned char DIR0_6: 1;
-	unsigned char DIR0_7: 1;
-} @ 0xFD;
-
-__sfr __no_init volatile struct  {
-	unsigned char P0SEL_0: 1;
-	unsigned char P0SEL_1: 1;
-	unsigned char P0SEL_2: 1;
-	unsigned char P0SEL_3: 1;
-	unsigned char P0SEL_4: 1;
-	unsigned char P0SEL_5: 1;
-	unsigned char P0SEL_6: 1;
-	unsigned char P0SEL_7: 1;
-} @ 0xF3;
-
-
 
 #define FAST_BLINK_TIME_ON 100	 
 #define FAST_BLINK_TIME_OFF_LONG 2000	 
@@ -37,48 +13,62 @@ __sfr __no_init volatile struct  {
 static byte counter=0;
 static byte blink=1;
 static  byte stop=1;
+static byte lifeSignal=0;
+
+static void blinkLedAction(void);
 
 
 void setBlinkCounter(byte blinkCount) {
-	blink = blinkCount;	
+  osal_stop_timerEx_cb( &blinkLedAction);
+  blink = blinkCount;	
+  blinkLedstart();
 }
 
-void blinkLedInit(void) {
-	DIR1_5 = 1;
-        
-        P1SEL &=0xDF;
- 	P1_5 = 0;
-        stop=0;
-}
-
-
-void blinkLedstart(byte taskid){
-	osal_start_timerEx( taskid, FAST_BLINK, FAST_BLINK_TIME_ON );
-	P1_5 = 1;
-        stop=0;
-}
-
-void blinkLedEnd(byte taskid){
-	osal_stop_timerEx( taskid, FAST_BLINK );
-	P1_5 = 0;
-        stop=1;
+void blinkLedInit(uint8 deviceTaskId) {
+  FUNCTION_SEL(LED_BLINK_PORT, LED_BLINK_PIN)=0;
+  DIR(LED_BLINK_PORT, LED_BLINK_PIN)=1;
+  PORT(LED_BLINK_PORT, LED_BLINK_PIN)=1;
+  lifeSignal=0;
+  stop=0;
 }
 
 
-void blinkLedAction(byte taskid){
+void blinkLedstart(){
+  osal_start_timerEx_cb(FAST_BLINK_TIME_ON, &blinkLedAction );      
+  PORT(LED_BLINK_PORT, LED_BLINK_PIN) = 1;
+  stop=0;
+  lifeSignal=0;
+}
+
+void blinkLedEnd(){
+  PORT(LED_BLINK_PORT, LED_BLINK_PIN) = 0;
+  osal_stop_timerEx_cb( &blinkLedAction);
+  lifeSignal=1;
+  osal_start_reload_timer_cb(2000, &blinkLedAction );      
+  PORT(LED_BLINK_PORT, LED_BLINK_PIN) = 0;
+  stop=1;
+  
+}
+
+
+void blinkLedAction(void){
   if (stop)
     return;
-  if (P1_5){
-          P1_5 = 0;
-          if (counter > 0){
-                  osal_start_timerEx( taskid, FAST_BLINK, FAST_BLINK_TIME_OFF_SHORT );
-                  counter--;
-          } else {
-                  osal_start_timerEx( taskid, FAST_BLINK, FAST_BLINK_TIME_OFF_LONG );
-                  counter=blink;
+  if (PORT(LED_BLINK_PORT, LED_BLINK_PIN)){
+          PORT(LED_BLINK_PORT, LED_BLINK_PIN) = 0;
+          if (!lifeSignal){
+            if (counter > 0){
+              osal_start_timerEx_cb(FAST_BLINK_TIME_OFF_SHORT, &blinkLedAction );      
+              counter--;
+            } else {
+              osal_start_timerEx_cb(FAST_BLINK_TIME_OFF_LONG, &blinkLedAction );      
+              counter=blink;
+            }
           }
   }else{
-          P1_5 = 1;
-          osal_start_timerEx( taskid, FAST_BLINK, FAST_BLINK_TIME_ON );
+          PORT(LED_BLINK_PORT, LED_BLINK_PIN) = 1;
+          if (!lifeSignal){
+            osal_start_timerEx_cb(FAST_BLINK_TIME_ON, &blinkLedAction );      
+          }
   }
 }
