@@ -192,6 +192,20 @@ __sfr __no_init volatile struct  {
 	unsigned char P1SEL_7: 1;
 } @ 0xF4;
 
+__sfr __no_init volatile struct  {
+	unsigned char P0ICON: 1;
+	unsigned char P1ICONL: 1;
+	unsigned char P1ICONH: 1;
+	unsigned char P2ICON: 1;
+	unsigned char PICTL_RESERVED3: 1;
+	unsigned char PICTL_RESERVED2: 1;
+	unsigned char PICTL_RESERVED1: 1;
+	unsigned char PADSC: 1;
+} @ 0x8C;
+
+
+
+
 
 __sfr __no_init volatile struct  {
 	unsigned char MDP0_0: 1;

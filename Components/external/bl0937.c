@@ -33,8 +33,9 @@ static uint16_t CF1Mean=0;
 static uint16_t T1CC;
 static uint8_t taskId;
 
-#define COEF_POWER      522250.0
-#define COEF_CURRENT    1270000.0
+#define COEF_POWER     670250
+//#define COEF_CURRENT    1270000.0
+#define COEF_CURRENT    1660000
 #define COEF_VOLT       1322.0*220
 
 
@@ -56,7 +57,7 @@ void BL0937_init(uint8_t _taskId){
   P2DIR |= 0x80;
   P2SEL &= 0xE0;
   P2SEL |= 0x08;
-  T1_div=1;
+  T1_div=2;
   T1_mode=1;
   
   T1_CH1_MODE=0;
@@ -177,7 +178,7 @@ HAL_ISR_FUNCTION( IOisr, P0INT_VECTOR )
     }
     CF1accCount += period;
     CF1Count++;
-    if (CF1Count >= 1000){
+    if (CF1Count >= 100){
       CF1Mean = CF1accCount / CF1Count;
       CF1accCount = 0;
       CF1Count = 0;
@@ -208,7 +209,7 @@ HAL_ISR_FUNCTION( Timer1Isr, T1_VECTOR )
     }
     CFaccCount += period;
     CFCount++;
-    if (CFCount >= 1000){
+    if (CFCount >= 100){
       CFMean = CFaccCount / CFCount;
       CFaccCount = 0;
       CFCount = 0;
