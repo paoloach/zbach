@@ -5793,6 +5793,12 @@
             <name>$PROJ_DIR$\..\Source\OSAL_zSmartSocket.c</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\Source\ui.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Source\ui.h</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\Source\zSmartSocket.c</name>
         </file>
         <file>

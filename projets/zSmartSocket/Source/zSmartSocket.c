@@ -22,6 +22,7 @@
 #include "zcl_ha.h"
 #include "zSmartSocket.h"
 #include "onboard.h"
+#include "mac_mcu.h"
 
 #include "clusters/ClusterIdentify.h"
 #include "clusters/ClusterBasic.h"
@@ -33,6 +34,8 @@
 #include "Events.h"	  
 #include "bl0937.h"
 #include "clusters/ClusterOSALEvents.h"
+#include "regs.h"
+#include "ui.h"
 
 #ifdef DISPLAY
 #include "lcd.h"
@@ -49,7 +52,10 @@ static uint8 processInReadRspCmd( zclIncomingMsg_t *pInMsg );
 static uint8 processInWriteRspCmd( zclIncomingMsg_t *pInMsg );
 static uint8 processInDefaultRspCmd( zclIncomingMsg_t *pInMsg );
 static void sysEvent(uint16 events);
+static void shortPress(uint16 events);
+void displayMenu(void);
 static void newStatus(void);
+
 			   
 #ifdef ZCL_DISCOVER
 static uint8 processInDiscRspCmd( zclIncomingMsg_t *pInMsg );
@@ -97,8 +103,13 @@ void zSmartSocketInit( byte task_id ){
 #ifdef BL0937
   BL0937_init(task_id);
 #endif
+  initUI(displayMenu, shortPress);
   addEventCB(SYS_EVENT_MSG_BIT,sysEvent);
 
+  FUNCTION_SEL(BUTTON_PORT,BUTTON_PIN)=0;
+  DIR(BUTTON_PORT,BUTTON_PIN)=0;
+  PULLUP_DOWN(BUTTON_PORT, BUTTON_PIN)=0;
+  PULL_UP(BUTTON_PORT);
 }
 
 static void initReport(void){
@@ -109,6 +120,10 @@ static void initReport(void){
   reportDstAddr.panId=_NIB.nodeDepth;
   osal_set_event_bit( zProxSensorTaskID,  CONNECTED_BIT );
   
+}
+
+
+void shortPress(uint16 events){
 }
 
 
@@ -197,19 +212,23 @@ uint16 zSmartSocketEventLoop( uint8 task_id, uint16 events ){
   return 0;
 }
 
+void displayMenu(void){
+  newStatus();
+}
+
 static void newStatus(void) {
 #ifdef DISPLAY 
     
     clean(0,0,displayWidth, 10);
     char buffer[10];
-    setCursor(1,9);
-    drawText(strStatus);
+    setCursor_c(1,9,0);
+    drawText_c(strStatus,0,0);
     if (prevState == DEV_END_DEVICE || prevState == DEV_ROUTER ){
         _itoa(_NIB.nwkDevAddress, (uint8_t*)buffer, 16);
-        drawText(buffer);
+        drawText_c(buffer,0,0);
     }
     
-    display();  
+    display_c(0);  
 #endif  
 
 }
@@ -409,8 +428,38 @@ static ZStatus_t handleClusterCommands( zclIncoming_t *pInMsg ){
 }
 
 
+static uint8 buttonPressed;
+static uint32 startButtonPress;
 
 void User_Process_Pool(void) {
+  halIntState_t intState;
+  if (PORT(BUTTON_PORT, BUTTON_PIN) == 0){
+    if (buttonPressed==0){
+      HAL_ENTER_CRITICAL_SECTION(intState);
+      startButtonPress = macMcuPrecisionCount();
+      HAL_EXIT_CRITICAL_SECTION(intState);
+      buttonPressed=1;
+    } 
+  } else {
+    if (buttonPressed){
+      uint16 event ;
+      HAL_ENTER_CRITICAL_SECTION(intState);
+      uint32 endTimer = macMcuPrecisionCount();
+      HAL_EXIT_CRITICAL_SECTION(intState);
+      uint32 duration = endTimer - startButtonPress;
+      buttonPressed=0;
+      if (duration  < 40){
+        return;
+      }
+     
+      if (duration < 2500){
+        event = PRESS_BUTTON;
+      } else {
+        event = PRESS_BUTTON_LONG;
+      }
+      handleEvent(&event);
+    }
+  }
   
 }
 

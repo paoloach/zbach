@@ -71,6 +71,9 @@
 static void displayInit(void);
 static void sendCmds(uint8 * cmds, uint8 len);
 
+static uint8_t context=0;
+
+
 static uint8_t   pow2[8] = {0x01, 0x02,0x04,0x08,0x10,0x20,0x40,0x80};
 static uint8_t  cursorX;
 static uint8_t  cursorY;
@@ -151,7 +154,19 @@ static void sendCmds(uint8 * cmds, uint8 len) {
 }
 
 
-void display(void) {
+void setContext(uint8_t newContext) {
+  context = newContext;
+}
+
+
+void display() {
+  display_c(0);
+}
+
+void display_c(uint8_t usedContext){
+  if (usedContext != context){
+    return;
+  }
   if (lastMinX > lastMaxX || lastMinY > lastMaxY)
     return;
   if (lastMinX == 0 &&   lastMaxX==DISPLAY_WIDTH && lastMinY == 0 && lastMaxY==DISPLAY_HEIGHT){
@@ -176,6 +191,12 @@ void display(void) {
 }
 
 void setCursor(uint8_t x, uint8_t y) {
+  setCursor_c(x,y,0);
+}
+void setCursor_c(uint8_t x, uint8_t y, uint8_t usedContext) {
+  if (usedContext != context){
+    return;
+  }
   cursorX = DISPLAY_WIDTH-x;
   cursorY = DISPLAY_HEIGHT-y;
 }
@@ -192,15 +213,30 @@ void setFont(const GFXfont * newFont) {
 }
 
 void drawText(const char * text) {
+  drawText_c(text, 0, 0);
+}
+
+void drawText_c(const char * text,uint8_t usedContext, uint8_t inverted){
+  if (usedContext != context){
+    return;
+  }
+
   uint8_t i=0;
   char c;
   while ( (c=text[i]) != 0){
-    drawChar(c);
+    drawChar_c(c, context, inverted);
     i++;
   }
 }
 
 void drawChar(char c) {
+  drawChar_c(c,0,0);
+}
+void drawChar_c(char c, uint8_t usedContext, uint8_t inverted) {
+  if (usedContext != context){
+    return;
+  }
+
   if (c < font->first || c > font->last){
     return;
   }
@@ -229,33 +265,46 @@ void drawChar(char c) {
   uint8_t  bitFont = *bitmap;
   uint8_t x;
   
-  
-  for(uint8_t y=startY-1; y >= endY; y--){
+  for(uint8_t y=cursorY+1; y < cursorY+1+font->yAdvance; y++){
     bufferStart = buffer + startX + DISPLAY_WIDTH*(y/8);
     bitWrite = pow2[y & 0x07];
-    for (uint8_t x=startX-1; x >= endXClean; x--){
-      *bufferStart |= bitWrite;
+    for (uint8_t x=0; x < glyph->xAdvance; x++){
+      if (inverted){
+        *bufferStart &= ~bitWrite;
+      } else {
+         *bufferStart |= bitWrite;
+      }
       bufferStart--;
     }
   }
 
+ 
   for (uint8_t y=0; y < glyph->height; y++){
     bufferStart = buffer + startX + DISPLAY_WIDTH*(startY/8);
     bitWrite = pow2[startY & 0x07];
     for(x=0; x < glyph->width; x++){
-       uint8_t bitMask = pow2[7-bitRead];
-       if (bitFont & bitMask){
-         *bufferStart  &= ~bitWrite;
-       } else {
-         *bufferStart |= bitWrite;
-       }
-       bitRead++;
-       if (bitRead == 8){
+      uint8_t bitMask = pow2[7-bitRead];
+        if (bitFont & bitMask){
+         if (inverted){
+           *bufferStart |= bitWrite;
+         } else {
+           *bufferStart  &= ~bitWrite;
+         }
+        } else {
+         if (inverted){
+           *bufferStart  &= ~bitWrite;
+         } else {
+           *bufferStart |= bitWrite;
+         }
+        }
+        bitRead++;
+        if (bitRead == 8){
          bitmap++;
          bitFont=*bitmap;
          bitRead = 0;
-       }
-       bufferStart--;
+        }
+      
+      bufferStart--;
     }
     startY--;
   }
@@ -263,7 +312,15 @@ void drawChar(char c) {
 }
 
 void clean(uint8_t startX, uint8_t startY,uint8_t endX, uint8_t endY){
-   if (startX >= endX)
+  clean_c(startX, startY, endX, endY, 0);
+}
+
+void clean_c(uint8_t startX, uint8_t startY,uint8_t endX, uint8_t endY, uint8_t usedContext){
+  if (usedContext != context){
+    return;
+  }
+
+  if (startX >= endX)
     return;
   if (startY >= endY)
     return;

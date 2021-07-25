@@ -7,6 +7,9 @@
 #include "ElectricityMeasureData.h"
 #include "regs.h"
 #include "ClusterOSALEvents.h"
+#include "OSAL_Nv.h"
+#include "OSAL_Clock.h"
+
 
 #ifdef DISPLAY
 #include "lcd.h"
@@ -14,10 +17,13 @@
 extern const GFXfont Font5x7Fixed;
 #endif
 
+struct Bl0937Flash{
+  double coefPower;
+  double coefCurrent;
+};
 
 
 static void readCFs(void);
-
 
 static uint16_t CFprevValue=0;
 static uint32_t CFaccCount=0;
@@ -32,16 +38,24 @@ static uint16_t CF1Mean=0;
 
 static uint16_t T1CC;
 static uint8_t taskId;
+static struct Bl0937Flash bl0937Flash;
 
+
+#define SNV_ID          0x80
 #define COEF_POWER     670250
-//#define COEF_CURRENT    1270000.0
 #define COEF_CURRENT    1660000
 #define COEF_VOLT       1322.0*220
 
 
-
 void BL0937_init(uint8_t _taskId){
   taskId = _taskId;
+  bl0937Flash.coefPower = COEF_POWER;
+  bl0937Flash.coefCurrent = COEF_VOLT;
+    
+  if (osal_nv_item_init(SNV_ID, sizeof(struct Bl0937Flash), &bl0937Flash) == SUCCESS){
+    osal_nv_read(SNV_ID, 0, sizeof(struct Bl0937Flash), &bl0937Flash);
+  } 
+  
  
   FUNCTION_SEL(CF_PORT,CF_PIN)=1;
   FUNCTION_SEL(CF1_PORT,CF1_PIN)=0;
@@ -108,17 +122,17 @@ void readCFs(void) {
   if (tempCFMean == 0){
     activePower = 0;
   } else {
-     activePower =(uint16)(COEF_POWER/tempCFMean);
+     activePower =(uint16)(bl0937Flash.coefPower/tempCFMean);
   }
 #ifdef DISPLAY  
   setFont(&FreeMono9pt7b);
   char buffer[10];
   clean(0,9,displayWidth, 27);
-  setCursor(1,27);
+  setCursor_c(1,27,0);
   _itoa(activePower, (uint8_t*)buffer, 10);
-  drawText(buffer);
+  drawText_c(buffer,0,0);
   setFont(&Font5x7Fixed); 
-  drawText(" W");
+  drawText_c(" W",0,0);
 #endif
 
   HAL_ENTER_CRITICAL_SECTION( intState );  // Hold off interrupts.
@@ -131,32 +145,60 @@ void readCFs(void) {
   if (tempCF1Mean == 0){
     RMSCurrent=0;
   } else {
-    RMSCurrent = (uint16_t) (COEF_CURRENT/ tempCF1Mean);
+    RMSCurrent = (uint16_t) (bl0937Flash.coefCurrent/ tempCF1Mean);
   }
   RMSVolt = 0;
 #ifdef DISPLAY  
   setFont(&FreeMono9pt7b);
   clean(0,27,displayWidth, 45);
-  setCursor(1,45);
+  setCursor_c(1,45,0);
   _itoa(RMSCurrent/1000, (uint8_t*)buffer, 10);
-  drawText(buffer);
-  drawText(".");
+  drawText_c(buffer,0,0);
+  drawText_c(".",0,0);
   uint16_t mils = RMSCurrent%1000;
   if (mils < 100){
-    drawText("0");
+    drawText_c("0",0,0);
   }
   if (mils < 10){
-    drawText("0");
+    drawText_c("0",0,0);
   }
   _itoa(mils, (uint8_t*)buffer, 10);
-  drawText(buffer);
+  drawText_c(buffer,0,0);
   setFont(&Font5x7Fixed); 
-  drawText(" A");
-  display();
+  drawText_c(" A",0,0);
+  display_c(0);
 #endif
   
   osal_set_event_bit( taskId,  NEW_POWER_BIT );
 
+}
+
+
+uint16_t getCFMean(void){
+  halIntState_t intState;
+  uint16_t result;
+  HAL_ENTER_CRITICAL_SECTION( intState );  // Hold off interrupts.
+  result = CFMean;
+  CFMean=0;
+  HAL_EXIT_CRITICAL_SECTION( intState );   // Re-enable interrupts
+  return result;
+}
+
+uint16_t getCF1Mean(void){
+  halIntState_t intState;
+  uint16_t result;
+  HAL_ENTER_CRITICAL_SECTION( intState );  // Hold off interrupts.
+  result = CF1Mean;
+  CF1Mean=0;
+  HAL_EXIT_CRITICAL_SECTION( intState );   // Re-enable interrupts
+  return result;
+}
+
+void saveConvertCoeff(double coefPower, double coefCurrent) {
+  bl0937Flash.coefPower = coefPower;
+  bl0937Flash.coefCurrent = coefCurrent;
+  
+  osal_nv_write(SNV_ID, 0, sizeof(struct Bl0937Flash), &bl0937Flash);
 }
 
 
